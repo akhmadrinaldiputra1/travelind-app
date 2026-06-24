@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
-import dataWilayahSumatera from '../utils/dataWilayah';
+import dataWilayahSumatera from '../utils/datawilayah';
 import '../styles/home.css';
 
 const HomeView = () => {
