@@ -1,0 +1,580 @@
+/* ==========================================================================
+   HEADER & PROGRESS FOR SUCCESS REVIEW VIEW
+   ========================================================================== */
+.main-header-success {
+    background-color: #02596b;
+    padding: 24px 24px 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #ffffff;
+}
+
+.main-header-success .back-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.progress-container-success {
+    background-color: #02596b;
+    padding: 0 24px 20px 24px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+/* ==========================================================================
+   DYNAMiC MUTATION BANNER STATUS CARDS (PENDING & LUNAS STYLES)
+   ========================================================================== */
+.status-banner-card {
+    background-color: #fffbeb;
+    border: 1px solid #fef3c7;
+    padding: 16px;
+}
+
+.status-banner-card.lunas-style-card {
+    background-color: #f0fdf4;
+    border-color: #dcfce7;
+}
+
+.status-flex-box {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.animated-sandglass-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fef3c7;
+    color: #d97706;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.animated-sandglass-icon i {
+    animation: sandglassRotate 2.5s infinite ease-in-out;
+}
+
+@keyframes sandglassRotate {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(180deg); }
+}
+
+.animated-sandglass-icon.lunas-icon-box {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.animated-sandglass-icon.lunas-icon-box i {
+    animation: popScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popScale {
+    from { transform: scale(0.6); }
+    to { transform: scale(1); }
+}
+
+.status-message-text h4 {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.status-message-text p {
+    font-size: 11.5px;
+    line-height: 1.4;
+    margin-top: 6px;
+}
+
+.badge-warning-inline {
+    display: inline-block;
+    background-color: #fff1cc;
+    color: #b78103;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+
+.badge-success-outline-pay {
+    display: inline-block;
+    background-color: #e6f7ef;
+    color: #27ae60;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+}
+
+.estimation-alert-bar {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(217, 119, 6, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #92400e;
+    font-weight: 600;
+}
+
+.lunas-style-card .estimation-alert-bar {
+    border-top-color: rgba(22, 163, 74, 0.15);
+    color: #166534;
+}
+
+/* ==========================================================================
+   METADATA GRID RESI CARD
+   ========================================================================== */
+.metadata-grid-card {
+    display: flex;
+    padding: 12px 16px;
+}
+
+.meta-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.meta-item.border-left {
+    border-left: 1px dashed #e2e8f0;
+    padding-left: 14px;
+}
+
+.meta-icon-frame {
+    font-size: 16px;
+    color: #02596b;
+}
+
+.meta-texts span {
+    font-size: 10px;
+    color: #8c96a3;
+    font-weight: 500;
+}
+
+.meta-texts h5 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2b2b2b;
+    margin-top: 1px;
+}
+
+/* ==========================================================================
+   TICKET PROFILE & MANIFEST ADDRESS TIMELINE
+   ========================================================================== */
+.card-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #013e4b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.armada-mini-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #f8fafc;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.armada-avatar-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.armada-meta-info h5 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2b2b2b;
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #8c96a3;
+    margin-top: 1px;
+}
+
+.rating-row i {
+    color: #f2994a;
+}
+
+.ticket-horiz-info-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.horiz-grid-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.horiz-grid-item i {
+    color: #02596b;
+    margin-top: 2px;
+}
+
+.horiz-grid-item b {
+    color: #2b2b2b;
+    font-size: 12px;
+}
+
+.horiz-grid-item span {
+    color: #8c96a3;
+}
+
+/* Vertical Manifesto Timeline */
+.manifest-address-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+    position: relative;
+    padding-left: 6px;
+}
+
+.manifest-address-timeline::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 11px;
+    width: 1px;
+    border-left: 1px dashed #cbd5e0;
+}
+
+.timeline-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+    z-index: 5;
+}
+
+.icon-marker-teal {
+    width: 12px;
+    font-size: 11px;
+    color: #02596b;
+    background-color: #ffffff;
+    text-align: center;
+    margin-top: 2px;
+}
+
+.timeline-text span {
+    font-size: 10px;
+    color: #8c96a3;
+    font-weight: 600;
+}
+
+.timeline-text p {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2b2b2b;
+    margin-top: 1px;
+    line-height: 1.3;
+}
+
+.btn-secondary-outline-action {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e0;
+    color: #4a5568;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: all 0.2s;
+}
+
+.btn-secondary-outline-action:hover {
+    background-color: #f8fafc;
+    color: #02596b;
+    border-color: #02596b;
+}
+
+/* ==========================================================================
+   FINANCIAL THREE COLUMN BLOCKS
+   ========================================================================== */
+.finance-grid-three-col {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.fin-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.fin-col span {
+    font-size: 10px;
+    color: #8c96a3;
+    font-weight: 500;
+}
+
+.fin-col h5 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2b2b2b;
+}
+
+.teal-amount-text {
+    color: #02596b !important;
+}
+
+.view-receipt-row-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding: 12px 4px 2px 4px;
+    border-top: 1px solid #f1f5f9;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: #02596b;
+}
+
+.arrow-muted {
+    color: #cbd5e0;
+    font-size: 11px;
+}
+
+/* ==========================================================================
+   HELP CUSTOMER BANNER CARDS
+   ========================================================================== */
+.help-cs-banner-card {
+    background-color: #ffffff;
+    border: 1px solid #eef2f5;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.cs-left-side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cs-headset-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #e6f2f5;
+    color: #02596b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.cs-strings h6 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2b2b2b;
+}
+
+.cs-strings p {
+    font-size: 11px;
+    color: #8c96a3;
+    margin-top: 1px;
+}
+
+.btn-call-cs-action {
+    background-color: #02596b;
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.bottom-policy-notice-text {
+    text-align: center;
+    font-size: 10.5px;
+    color: #8c96a3;
+    font-weight: 500;
+    margin-top: 4px;
+    margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   MODAL OVERLAY SHEET FOR POP-UP CONTROLS (IMAGE & MANIFEST LISTS)
+   ========================================================================== */
+.modal-success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.modal-success-content {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 450px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpModal {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+/* Modifiers Layout Tengah Khusus Gambar */
+.modal-center-layout {
+    border-radius: 20px !important;
+    width: 90% !important;
+    align-self: center;
+    margin-bottom: auto;
+    margin-top: auto;
+    animation: fadeInCenter 0.25s ease-out forwards;
+}
+
+@keyframes fadeInCenter {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-success-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.modal-success-header h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2b2b2b;
+}
+
+.modal-success-close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #8c96a3;
+    cursor: pointer;
+}
+
+.modal-success-body {
+    overflow-y: auto;
+    padding: 14px 0 6px 0;
+}
+
+.modal-success-body.image-housing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 180px;
+    background-color: #f8fafc;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.img-fluid-preview {
+    max-width: 100%;
+    max-height: 380px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.img-fluid-preview.hidden {
+    display: none;
+}
+
+.loader-box-text {
+    font-size: 12px;
+    color: #8c96a3;
+    text-align: center;
+    font-weight: 500;
+}
+
+.loader-box-text i {
+    color: #02596b;
+    margin-right: 4px;
+}
+
+/* Interior Menu Item untuk Laci Detail Tiket Manifes */
+.manifes-popup-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f8fafc;
+    color: #4a5568;
+}
+
+.manifes-popup-row span {
+    color: #8c96a3;
+}
+
+.manifes-popup-row b {
+    color: #2b2b2b;
+    font-weight: 600;
+}
+
+.manifest-alert-footer-badge {
+    margin-top: 14px;
+    background-color: #f0fdf4;
+    border: 1px solid #dcfce7;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

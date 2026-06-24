@@ -1,0 +1,17 @@
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: #e5e9ec !important;
+    overflow: hidden !important;
+    -webkit-text-size-adjust: 100%;
+}
+
+#root {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+}

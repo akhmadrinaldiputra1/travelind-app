@@ -1,0 +1,427 @@
+/* ==========================================================================
+   💎 PREMIUM ARCHITECTURE: TRAVELIND CLEAN DESIGNS
+   ========================================================================== */
+.app-promo-container {
+  height: 100vh !important;
+  overflow-y: hidden !important;
+  background-color: #f8fafc;
+}
+
+.app-promo-container .content-wrapper {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 20px;
+  padding-bottom: 60px !important;
+}
+
+.premium-header {
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  position: relative;
+}
+
+.header-right-icon {
+  color: #02596b;
+  font-size: 18px;
+  cursor: pointer;
+  position: relative;
+  padding: 6px;
+  transition: transform 0.2s;
+}
+.header-right-icon:active { transform: scale(0.9); }
+
+/* Titik merah kecil penanda ada notif baru di lonceng */
+.notif-badge-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background-color: #e11d48;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.promo-intro h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #02596b;
+  letter-spacing: -0.3px;
+}
+
+.promo-intro p {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   🎫 VIP VOUCHER CARD STYLING
+   ========================================================================== */
+.promo-card {
+  background: linear-gradient(135deg, #02596b 0%, #012b34 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(2, 89, 107, 0.18);
+}
+
+.promo-card::before, .promo-card::after {
+  content: '';
+  position: absolute;
+  top: 63%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-color: #f8fafc;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: inset 2px 0 4px rgba(0,0,0,0.05);
+}
+.promo-card::before { left: -10px; }
+.promo-card::after { right: -10px; }
+
+.ticket-divider {
+  border-top: 2px dashed rgba(255, 255, 255, 0.15);
+  margin: 18px 0;
+}
+
+.promo-badge {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 30px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.promo-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.promo-desc {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Warna bawaan tag potongan harga boks biru */
+.highlight-tag {
+  color: #f2994a;
+}
+
+.coupon-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.code-box {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  flex: 1;
+  text-align: center;
+}
+
+.copy-coupon-btn {
+  background-color: #ffffff;
+  color: #02596b;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.copy-coupon-btn:hover {
+  background-color: #f2994a;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   🎨 STRUKTUR ATURAN BARU: BOKS ORANYE PREMIUM CONTRAST FIX
+   ========================================================================== */
+.promo-card.gaya-orange {
+  background: linear-gradient(135deg, #f2994a 0%, #c26d23 100%);
+  box-shadow: 0 12px 24px rgba(242, 153, 74, 0.18);
+}
+
+/* Paksa tulisan deskripsi menjadi toska gelap */
+.promo-card.gaya-orange .promo-desc {
+  color: #012b34 !important;
+}
+
+/* 🌟 KUNCI PERBAIKAN: Paksa tulisan (Potongan Rp...) ikut menjadi toska gelap */
+.promo-card.gaya-orange .highlight-tag {
+  color: #012b34 !important;
+  font-weight: 800;
+}
+
+/* Paksa tulisan tanggal kalender menjadi toska gelap */
+.promo-card.gaya-orange .expiry-date {
+  color: #012b34 !important;
+  font-weight: 700;
+}
+
+.promo-card.gaya-orange .copy-coupon-btn { color: #c26d23; }
+.promo-card.gaya-orange .copy-coupon-btn:hover { background-color: #02596b; color: #ffffff; }
+
+
+/* ==========================================================================
+   📺 PREMIUM CAROUSEL ADS COMPONENT
+   ========================================================================== */
+.ads-section-wrapper {
+  margin-top: 32px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f5f9;
+}
+
+.ads-section-header {
+  font-size: 12px;
+  font-weight: 800;
+  color: #02596b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-dot-pulse {
+  width: 7px;
+  height: 7px;
+  background-color: #27ae60;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4);
+  animation: pulseAnimation 1.6s infinite;
+}
+
+@keyframes pulseAnimation {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(39, 174, 96, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
+}
+
+.ads-container-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.ads-container-scroll::-webkit-scrollbar { display: none; }
+
+.ad-banner-card {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  height: 165px;
+  background-color: #f1f5f9;
+}
+
+.ad-banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ad-banner-overlay-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  padding: 40px 16px 16px 16px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.ad-banner-overlay-gradient h4 {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.ads-carousel-dots-group {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #cbd5e1;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.carousel-dot.active {
+  width: 18px;
+  background-color: #02596b;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   🛎️ CSS SPECIFICATION: DESIGN POPUP NOTIFIKASI LUXURY MODAL
+   ========================================================================== */
+.premium-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px; /* Menyesuaikan lebar app container HP */
+  height: 100vh;
+  background-color: rgba(1, 43, 52, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.premium-modal-card {
+  background-color: #ffffff;
+  width: 100%;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(1, 43, 52, 0.15);
+  text-align: center;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.premium-modal-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #02596b;
+  margin-top: 14px;
+}
+
+.premium-modal-header p {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.bell-animated-icon {
+  width: 56px;
+  height: 56px;
+  background-color: #f0fdf4;
+  color: #27ae60;
+  font-size: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.premium-modal-body {
+  margin: 24px 0;
+  background-color: #f8fafc;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: left;
+  border: 1px solid #f1f5f9;
+}
+
+.notif-item-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.notif-dot-active {
+  width: 8px;
+  height: 8px;
+  background-color: #27ae60;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.notif-text-content h5 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.notif-text-content p {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.notif-text-content span {
+  font-size: 10px;
+  color: #94a3b8;
+  display: block;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.premium-modal-close-btn {
+  width: 100%;
+  background-color: #02596b;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.premium-modal-close-btn:hover { background-color: #012b34; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Loader & State Info */
+.state-info-loading { text-align: center; padding: 40px 0; color: #64748b; font-size: 13px; }
+.premium-spinner { width: 28px; height: 28px; border: 3px solid #e2e8f0; border-top-color: #02596b; border-radius: 50%; margin: 0 auto 12px auto; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

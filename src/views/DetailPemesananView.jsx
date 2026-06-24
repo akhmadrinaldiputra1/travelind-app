@@ -1,0 +1,580 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabaseClient';
+import '../styles/detailPemesanan.css';
+
+const DetailPemesananView = () => {
+  const navigate = useNavigate();
+
+  // ----------------==========================================================
+  // ⚡️ LAYER STATE CONTROLLER
+  // ----------------------------------------------------------------==========
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showMapTujuan, setShowMapTujuan] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+
+  // ----------------==========================================================
+  // ⚡️ CORE DATA STATE & FORM
+  // ----------------------------------------------------------------==========
+  const [travelInfo, setTravelInfo] = useState({ nama: '', jam: '', harga: 0, pickup: '', tujuan: '', tanggal: '', penumpang: 1, labelMerekDinamis: '' });
+  const [pricing, setPricing] = useState({ totalTiket: 0, grandTotal: 0 });
+  
+  const [alamatPickupText, setAlamatPickupText] = useState('Mencari area penjemputan...');
+  const [alamatTujuanMain, setAlamatTujuanMain] = useState('Klik untuk isi tujuan');
+  const [alamatTujuanSub, setAlamatTujuanSub] = useState('Masukkan alamat tujuan pengantaran');
+
+  const [formPassenger, setFormPassenger] = useState({ nama: '', whatsapp: '', email: '' });
+  const [isAgreed, setIsAgreed] = useState(false);
+  const [userProfile, setUserProfile] = useState({ nama: 'Masuk / Daftar', email: 'Akses riwayat perjalanan kamu', inisial: '?' });
+
+  // ----------------==========================================================
+  // 🗺️ LEAFLET INSTANCE REFS
+  // ----------------------------------------------------------------==========
+  const mapPickupRef = useRef(null);
+  const markerPickupRef = useRef(null);
+  const mapTujuanRef = useRef(null);
+  const markerTujuanRef = useRef(null);
+  const scrollerRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
+
+  const DEFAULT_LAT_SUMATERA = -0.9471;
+  const DEFAULT_LNG_SUMATERA = 100.4172;
+
+  useEffect(() => {
+    if (!localStorage.getItem("travelId")) {
+      navigate('/hasil-pencarian');
+      return;
+    }
+
+    const nama = localStorage.getItem("travelNama") || 'Travel Agen';
+    const jam = localStorage.getItem("travelJam") || '--:--';
+    const harga = parseInt(localStorage.getItem("travelHarga")) || 0;
+    const pickup = localStorage.getItem("travelPickup") || localStorage.getItem("pickup_kota") || '';
+    const tujuan = localStorage.getItem("travelTujuan") || localStorage.getItem("tujuan_kota") || '';
+    const tanggal = localStorage.getItem("tanggal") || '';
+    const penumpang = parseInt(localStorage.getItem("penumpang")) || 1;
+
+    let labelMerek = "";
+    const nameUpper = nama.toUpperCase();
+    if (nameUpper.includes("INNOVA")) labelMerek = " &nbsp;•&nbsp; Kategori: INNOVA";
+    if (nameUpper.includes("HIACE")) labelMerek = " &nbsp;•&nbsp; Kategori: HIACE";
+
+    const total = harga * penumpang;
+    const grand = total + 2000;
+
+    setTravelInfo({ nama, jam, harga, pickup, tujuan, tanggal, penumpang, labelMerekDinamis: labelMerek });
+    setPricing({ totalTiket: total, grandTotal: grand });
+
+    if (localStorage.getItem("fresh_search_trigger") === "true") {
+      setAlamatPickupText("Klik pada peta untuk menentukan titik penjemputan");
+      setAlamatTujuanMain("Klik tombol peta atau ketik alamat tujuan");
+      setAlamatTujuanSub("Masukkan alamat tujuan pengantaran");
+    } else {
+      if (localStorage.getItem("pickup_alamat")) setAlamatPickupText(localStorage.getItem("pickup_alamat"));
+      if (localStorage.getItem("tujuan_alamat")) {
+        setAlamatTujuanMain(localStorage.getItem("tujuan_alamat"));
+        setAlamatTujuanSub("Lokasi tujuan dikonfirmasi");
+      }
+    }
+
+    const intervalCekLeaflet = setInterval(() => {
+      if (window.L) {
+        clearInterval(intervalCekLeaflet);
+        setTimeout(() => {
+          initPickupMapEngine(pickup);
+        }, 300);
+      }
+    }, 100);
+
+    const syncSessionUser = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user) {
+          const emailUser = session.user.email;
+          const namaUser = emailUser.split("@")[0].toUpperCase();
+          setUserProfile({ nama: namaUser, email: emailUser, inisial: namaUser.charAt(0) });
+          setFormPassenger(prev => ({ ...prev, nama: prev.nama || namaUser, email: prev.email || emailUser }));
+        }
+      } catch (e) { console.warn(e); }
+    };
+    syncSessionUser();
+
+    return () => {
+      clearInterval(intervalCekLeaflet);
+      if (mapPickupRef.current) { mapPickupRef.current.remove(); mapPickupRef.current = null; }
+      if (mapTujuanRef.current) { mapTujuanRef.current.remove(); mapTujuanRef.current = null; }
+    };
+  }, [navigate]);
+
+  const dapatkanKoordinatKotaSumatera = async (namaKota) => {
+    try {
+      if (!namaKota) return null;
+      if (namaKota.toLowerCase().includes("muko")) return { lat: -2.5833, lng: 101.1167 };
+      let kotaBersih = namaKota.replace(/Kab\./gi, '').replace(/Kabupaten/gi, '').replace(/Kota/gi, '').replace(/-/g, ' ').trim();
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(kotaBersih + ", Indonesia")}&limit=1`);
+      const data = await res.json();
+      if (data && data.length > 0) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    } catch (e) { console.error(e); }
+    return null;
+  };
+
+  const initPickupMapEngine = async (kotaAsal) => {
+    if (!window.L || !document.getElementById('mapPickupCanvas') || mapPickupRef.current) return;
+
+    const targetKota = kotaAsal || localStorage.getItem("pickup_kota") || "Padang";
+    const coords = await dapatkanKoordinatKotaSumatera(targetKota);
+    const latStart = coords ? coords.lat : DEFAULT_LAT_SUMATERA;
+    const lngStart = coords ? coords.lng : DEFAULT_LNG_SUMATERA;
+
+    const mapInstance = window.L.map('mapPickupCanvas', { zoomControl: true }).setView([latStart, lngStart], 13);
+    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
+    mapPickupRef.current = mapInstance;
+
+    setTimeout(() => {
+      mapInstance.invalidateSize();
+      const savedLat = localStorage.getItem("pickup_lat");
+      const savedLng = localStorage.getItem("pickup_lng");
+      if (savedLat && savedLng) {
+        setPickupMarker(parseFloat(savedLat), parseFloat(savedLng), mapInstance);
+      } else {
+        setPickupMarker(latStart, lngStart, mapInstance);
+      }
+    }, 200);
+
+    mapInstance.on('click', async (e) => {
+      const { lat, lng } = e.latlng;
+      localStorage.setItem("fresh_search_trigger", "false");
+      setPickupMarker(lat, lng, mapInstance);
+      fetchReverseGeocodeEngine(lat, lng, 'pickup');
+    });
+  };
+
+  const initTujuanMapEngine = async (kotaTujuan, targetLat, targetLng) => {
+    if (!window.L || !document.getElementById('mapTujuanCanvas') || mapTujuanRef.current) return;
+
+    const targetKota = kotaTujuan || localStorage.getItem("tujuan_kota") || "Medan";
+    const coords = await dapatkanKoordinatKotaSumatera(targetKota);
+    const latStart = targetLat || (coords ? coords.lat : DEFAULT_LAT_SUMATERA);
+    const lngStart = targetLng || (coords ? coords.lng : DEFAULT_LNG_SUMATERA);
+
+    const mapInstance = window.L.map('mapTujuanCanvas', { zoomControl: true }).setView([latStart, lngStart], 13);
+    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
+    mapTujuanRef.current = mapInstance;
+
+    setTimeout(() => {
+      mapInstance.invalidateSize();
+      if (targetLat && targetLng) {
+        setTujuanMarker(targetLat, targetLng, mapInstance);
+      } else {
+        const savedLat = localStorage.getItem("tujuan_lat");
+        const savedLng = localStorage.getItem("tujuan_lng");
+        if (savedLat && savedLng) setTujuanMarker(parseFloat(savedLat), parseFloat(savedLng), mapInstance);
+      }
+    }, 200);
+
+    mapInstance.on('click', async (e) => {
+      const { lat, lng } = e.latlng;
+      localStorage.setItem("fresh_search_trigger", "false");
+      setTujuanMarker(lat, lng, mapInstance);
+      fetchReverseGeocodeEngine(lat, lng, 'tujuan');
+      setShowMapTujuan(false);
+    });
+  };
+
+  const setPickupMarker = (lat, lng, instance) => {
+    const mapObj = instance || mapPickupRef.current;
+    if (!mapObj || !window.L) return;
+    if (!markerPickupRef.current) {
+      markerPickupRef.current = window.L.marker([lat, lng]).addTo(mapObj);
+    } else {
+      markerPickupRef.current.setLatLng([lat, lng]);
+    }
+    localStorage.setItem("pickup_lat", lat);
+    localStorage.setItem("pickup_lng", lng);
+  };
+
+  const setTujuanMarker = (lat, lng, instance) => {
+    const mapObj = instance || mapTujuanRef.current;
+    if (!mapObj || !window.L) return;
+    if (!markerTujuanRef.current) {
+      markerTujuanRef.current = window.L.marker([lat, lng]).addTo(mapObj);
+    } else {
+      markerTujuanRef.current.setLatLng([lat, lng]);
+    }
+    localStorage.setItem("tujuan_lat", lat);
+    localStorage.setItem("tujuan_lng", lng);
+  };
+
+  const fetchReverseGeocodeEngine = async (lat, lng, tipe) => {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const data = await res.json();
+      const alamat = data.display_name || "Alamat tidak dikenal";
+      const booking_id = localStorage.getItem("booking_id");
+
+      if (tipe === 'pickup') {
+        setAlamatPickupText(alamat);
+        localStorage.setItem("pickup_alamat", alamat);
+        if (booking_id) await supabase.from("booking_temp").update({ pickup_alamat: alamat, pickup_lat: lat, pickup_lng: lng }).eq("id", booking_id);
+      } else {
+        setAlamatTujuanMain(alamat);
+        setAlamatTujuanSub("Lokasi tujuan dikonfirmasi via Peta");
+        localStorage.setItem("tujuan_alamat", alamat);
+        if (booking_id) await supabase.from("booking_temp").update({ tujuan_alamat: alamat, tujuan_lat: lat, tujuan_lng: lng }).eq("id", booking_id);
+      }
+    } catch (e) { console.error(e); }
+  };
+
+  const handleLocateMyGPS = () => {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      localStorage.setItem("fresh_search_trigger", "false");
+      if (mapPickupRef.current) {
+        mapPickupRef.current.setView([lat, lng], 16);
+        setPickupMarker(lat, lng, mapPickupRef.current);
+        fetchReverseGeocodeEngine(lat, lng, 'pickup');
+      }
+    }, () => { alert("Gagal mendeteksi koordinat GPS Handphone Anda."); });
+  };
+
+  const handleAutocompleteTyping = (e) => {
+    const keyword = e.target.value;
+    setSearchKeyword(keyword);
+    clearTimeout(searchTimeoutRef.current);
+    if (keyword.trim().length < 3) { setSuggestions([]); return; }
+
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(keyword)}&limit=5`);
+        const data = await res.json();
+        setSuggestions(data || []);
+      } catch (err) { console.error(err); }
+    }, 400);
+  };
+
+  const handleSelectSuggestion = async (place) => {
+    const lat = parseFloat(place.lat);
+    const lon = parseFloat(place.lon);
+    localStorage.setItem("fresh_search_trigger", "false");
+
+    setShowMapTujuan(true);
+    setAlamatTujuanMain(place.display_name);
+    setAlamatTujuanSub("Lokasi terkonfirmasi via ketikan otomatis");
+    localStorage.setItem("tujuan_alamat", place.display_name);
+
+    await initTujuanMapEngine(travelInfo.tujuan, lat, lon);
+
+    const booking_id = localStorage.getItem("booking_id");
+    if (booking_id) await supabase.from("booking_temp").update({ tujuan_alamat: place.display_name, tujuan_lat: lat, tujuan_lng: lon }).eq("id", booking_id);
+
+    setSuggestions([]);
+    setSearchKeyword('');
+  };
+
+ // ----------------==========================================================
+  // 💾 PROSES UTAMA: UPSERT AUTOMATION (INSERT OR UPDATE) KE booking_temp & transaksi
+  // ----------------------------------------------------------------==========
+  const handleExecuteBookingFinal = async () => {
+    const namaClean = formPassenger.nama.trim();
+    const whatsappClean = formPassenger.whatsapp.trim();
+    const emailClean = formPassenger.email.trim();
+
+    if (!namaClean || !whatsappClean || !emailClean) {
+      alert("Mohon lengkapi Data Diri Penumpang!");
+      return;
+    }
+    if (!isAgreed) {
+      alert("Mohon setujui Syarat & Ketentuan.");
+      return;
+    }
+
+    const booking_id = localStorage.getItem("booking_id");
+    
+    // Objek data yang sinkron dengan kolom tabel booking_temp Anda
+    const payload = {
+      nama_penumpang: namaClean,
+      whatsapp_penumpang: whatsappClean,
+      email_penumpang: emailClean,
+      pickup_alamat: localStorage.getItem("pickup_alamat") || alamatPickupText,
+      tujuan_alamat: localStorage.getItem("tujuan_alamat") || alamatTujuanMain,
+      pickup_lat: parseFloat(localStorage.getItem("pickup_lat")) || DEFAULT_LAT_SUMATERA,
+      pickup_lng: parseFloat(localStorage.getItem("pickup_lng")) || DEFAULT_LNG_SUMATERA,
+      tujuan_lat: parseFloat(localStorage.getItem("tujuan_lat")) || DEFAULT_LAT_SUMATERA,
+      tujuan_lng: parseFloat(localStorage.getItem("tujuan_lng")) || DEFAULT_LNG_SUMATERA,
+      // Field lain yang sudah ada dari awal pencarian
+      pickup_kota: localStorage.getItem("pickup_kota") || travelInfo.pickup,
+      tujuan_kota: localStorage.getItem("tujuan_kota") || travelInfo.tujuan,
+      tanggal: travelInfo.tanggal,
+      penumpang: travelInfo.penumpang
+    };
+
+    try {
+      // 1. Amankan data manifes ke memori browser lokal
+      localStorage.setItem("nama_penumpang", namaClean);
+      localStorage.setItem("whatsapp_penumpang", whatsappClean);
+      localStorage.setItem("email_penumpang", emailClean);
+
+      // 2. Strategi: Gunakan upsert agar Supabase menangani ID (Insert jika baru, Update jika ada)
+      const { data, error } = await supabase
+        .from("booking_temp")
+        .upsert({ id: booking_id, ...payload })
+        .select();
+
+      if (error) throw error;
+
+      // Jika ID baru terbuat, simpan ke storage
+      if (data && data[0] && !booking_id) {
+        localStorage.setItem("booking_id", data[0].id);
+      }
+
+      // 🚨 SUNTIKAN BARU: Kirim data langsung ke tabel transaksi agar Dashboard Admin menangkap secara instan
+      const current_booking_id = booking_id || (data && data[0] ? data[0].id : "TRV-TEMP");
+      await supabase
+        .from("transaksi")
+        .upsert({
+          booking_id: current_booking_id,
+          nama_penumpang: namaClean,
+          whatsapp_penumpang: whatsappClean,
+          email_penumpang: emailClean,
+          nama_travel: localStorage.getItem("travelNama") || "Armada Travelind",
+          total_bayar: pricing.grandTotal,
+          status_pesanan: "Menunggu Pembayaran"
+        }, { onConflict: 'booking_id' }); // Mencegah duplikasi baris jika user menekan tombol berkali-kali
+
+      console.log("✅ Manifest perjalanan sukses tersimpan di booking_temp dan transaksi!");
+      navigate('/pembayaran');
+
+    } catch (err) {
+      console.error("❌ Eror Sinkronisasi:", err);
+      // Fallback: Jika database gagal, tetap izinkan lanjut ke pembayaran 
+      // agar user tidak frustrasi, data tetap tersimpan di localStorage
+      navigate('/pembayaran');
+    }
+  };
+
+  const handleOpenHelpCS = () => {
+    const pAsal = travelInfo.pickup || "Kota Asal";
+    const pTujuan = travelInfo.tujuan || "Kota Tujuan";
+    const txtWA = encodeURIComponent(`Halo CS TRAVELIND, saya butuh bantuan kendala pengisian peta lokasi koordinat untuk rute travel dari ${pAsal} menuju ${pTujuan}.`);
+    window.open(`https://wa.me/6281234567890?text=${txtWA}`, '_blank');
+  };
+
+  return (
+    <div className="travelind-booking-wrapper">
+      
+      <header className="main-header">
+        <div className="header-left">
+          <button type="button" className="back-btn" onClick={() => navigate(-1)} title="Kembali">
+            <i className="fa-solid fa-arrow-left"></i>
+          </button>
+          <h2 className="page-title">Pemesanan</h2>
+        </div>
+        <button type="button" className="menu-btn" onClick={() => setIsSidebarOpen(true)} aria-label="Menu">
+          <i className="fa-solid fa-bars-staggered"></i>
+        </button>
+      </header>
+
+      <div className="progress-container">
+        <div className="steps">
+          <div className="step active"><i className="fa-solid fa-check"></i><span>Pencarian</span></div>
+          <div className="step active"><i className="fa-solid fa-check"></i><span>Pilih Travel</span></div>
+          <div className="step current"><span className="step-num">3</span><span>Pemesanan</span></div>
+          <div className="step"><span className="step-num">4</span><span>Pembayaran</span></div>
+        </div>
+      </div>
+
+      <div className="booking-content-scroller" ref={scrollerRef}>
+        
+        <section className="premium-card">
+          <h3 className="title">{travelInfo.nama}</h3>
+          <div className="subtitle">
+            <i className="fa-solid fa-star" style={{ color: 'var(--accent-orange)' }}></i> 4.9 &nbsp;•&nbsp; Rekomendasi Agen
+            <span dangerouslySetInnerHTML={{ __html: travelInfo.labelMerekDinamis }}></span>
+          </div>
+          <div className="item"><i className="fa-regular fa-clock"></i> <b>{travelInfo.jam}</b> WIB Berangkat</div>
+          <div className="item"><i className="fa-solid fa-route"></i> Rute Utama: {travelInfo.pickup} → {travelInfo.tujuan}</div>
+        </section>
+
+        <section className="premium-card">
+          <h4 className="section-title">Informasi Perjalanan</h4>
+          <div className="row">
+            <div><small style={{ color: 'var(--text-muted)' }}>Tanggal Keberangkatan</small><br /><b>{travelInfo.tanggal}</b></div>
+            <div><small style={{ color: 'var(--text-muted)' }}>Kapasitas Dipesan</small><br /><b>{travelInfo.penumpang} Orang</b></div>
+          </div>
+        </section>
+
+        <section className="premium-card">
+          <h4 className="section-title"><i className="fa-solid fa-address-card icon-teal"></i> Data Diri Penumpang</h4>
+          <div className="passenger-form-group">
+            <div className="input-field-wrapper">
+              <label className="input-label-styled">Nama Lengkap Penumpang</label>
+              <div className="input-with-icon">
+                <i className="fa-regular fa-user"></i>
+                <input type="text" value={formPassenger.nama} onChange={(e) => setFormPassenger(prev => ({ ...prev, nama: e.target.value }))} placeholder="Masukkan nama sesuai KTP" className="form-input-styled" />
+              </div>
+            </div>
+
+            <div className="input-field-wrapper">
+              <label className="input-label-styled">No. WhatsApp Aktif</label>
+              <div className="input-with-icon">
+                <i className="fa-brands fa-whatsapp"></i>
+                <input type="tel" value={formPassenger.whatsapp} onChange={(e) => setFormPassenger(prev => ({ ...prev, whatsapp: e.target.value }))} placeholder="Contoh: 08xx-xxxx-xxxx" className="form-input-styled" />
+              </div>
+            </div>
+
+            <div className="input-field-wrapper">
+              <label className="input-label-styled">Alamat Email</label>
+              <div className="input-with-icon">
+                <i className="fa-regular fa-envelope"></i>
+                <input type="email" value={formPassenger.email} onChange={(e) => setFormPassenger(prev => ({ ...prev, email: e.target.value }))} placeholder="Contoh: nama@email.com" className="form-input-styled" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="premium-card sticky-map-card">
+          <h4 className="section-title"><i className="fa-solid fa-location-dot icon-teal"></i> Lokasi Penjemputan Detail</h4>
+          <div className="address-display-box">
+            <div className="address-text-wrapper">
+              <div className="address-main-text">{alamatPickupText}</div>
+              <div className="address-sub-text">Driver akan menjemput sesuai titik ini</div>
+            </div>
+            <button type="button" className="gps-locate-btn" onClick={handleLocateMyGPS} title="Deteksi Lokasi Saya">
+              <i className="fa-solid fa-location-crosshairs"></i>
+            </button>
+          </div>
+          <div id="mapPickupCanvas"></div>
+        </section>
+
+        <section className="premium-card">
+          <h4 className="section-title"><i className="fa-solid fa-flag-checkered icon-teal"></i> Lokasi Tujuan Detail</h4>
+          <div className="address-display-box">
+            <div className="address-text-wrapper">
+              <div className="tujuan-main">{alamatTujuanMain}</div>
+              <div className="tujuan-sub">{alamatTujuanSub}</div>
+            </div>
+            <button type="button" className="gps-locate-btn" onClick={async () => { const nextState = !showMapTujuan; setShowMapTujuan(nextState); if (nextState) setTimeout(() => initTujuanMapEngine(travelInfo.tujuan), 100); }} title="Buka Peta">
+              <i className="fa-solid fa-map-location-dot"></i>
+            </button>
+          </div>
+
+          <div className="search-input-wrapper">
+            <i className="fa-solid fa-magnifying-glass search-bar-icon"></i>
+            <input type="text" value={searchKeyword} onChange={handleAutocompleteTyping} placeholder="Ketik nama jalan / gedung / kota..." className="input-lokasi-styled" />
+            {suggestions.length > 0 && (
+              <div className="autocomplete-suggestions-box">
+                {suggestions.map((place, idx) => (
+                  <div key={idx} className="suggestion-item" onClick={() => handleSelectSuggestion(place)}>{place.display_name}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div id="mapTujuanWrapper" className={showMapTujuan ? "map-show" : "map-hidden"}>
+            <div id="mapTujuanCanvas"></div>
+          </div>
+        </section>
+
+        <section className="premium-card">
+          <h4 className="section-title">Rincian Harga</h4>
+          <div className="row"><div>Harga Tiket (x{travelInfo.penumpang})</div><b>Rp {pricing.totalTiket.toLocaleString('id-ID')}</b></div>
+          <div className="row"><div>Biaya Layanan Aplikasi</div><b>Rp 2.000</b></div>
+          <hr style={{ border: 'none', borderTop: '1px dashed #edf2f7', margin: '12px 0' }} />
+          <div className="row total">
+            <div>Total Pembayaran</div>
+            <div>Rp {pricing.grandTotal.toLocaleString('id-ID')}</div>
+          </div>
+        </section>
+
+        <section className="security-lock-card">
+          <i className="fa-solid fa-user-shield security-icon"></i>
+          <div className="security-text">
+            <h6>Pembayaran Terenkripsi & Aman</h6>
+            <p>TRAVELIND melindungi seluruh data transaksi pemesanan Anda.</p>
+          </div>
+        </section>
+
+        <div className="terms-checkbox-wrapper">
+          <input type="checkbox" id="agree" checked={isAgreed} onChange={(e) => setIsAgreed(e.target.checked)} />
+          <label htmlFor="agree">
+            Saya telah membaca dan menyetujui{' '}
+            <span className="clickable-terms-trigger" onClick={() => setIsTermsOpen(true)}>
+              Syarat & Ketentuan
+            </span>{' '}
+            serta <a href="#privacy">Kebijakan Privasi</a>
+          </label>
+        </div>
+
+      </div>
+
+      {/* BOTTOM FOOTER BAR */}
+      <div className="bottom-sticky-checkout-bar">
+        <div className="checkout-bar-content">
+          <div className="price-summary-box">
+            <span className="label-total">Total Bayar</span>
+            <b className="grand-total-amount">Rp {pricing.grandTotal.toLocaleString('id-ID')}</b>
+          </div>
+          <button type="button" className="btn-checkout-submit" onClick={handleExecuteBookingFinal}>
+            Lanjut ke Pembayaran <i className="fa-solid fa-chevron-right" style={{ fontSize: '12px', marginLeft: '4px' }}></i>
+          </button>
+        </div>
+        <p className="cancellation-policy-note">
+          <i className="fa-solid fa-clock-rotate-left"></i> Pembatalan gratis hingga 10 jam sebelum keberangkatan
+        </p>
+      </div>
+
+      {/* MODAL DIALOG POP-UP DI TENGAH LAYAR */}
+      {isTermsOpen && (
+        <div className="premium-popup-overlay" onClick={() => setIsTermsOpen(false)}>
+          <div className="premium-popup-box" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-header">
+              <h4>📄 Syarat & Ketentuan TRAVELIND</h4>
+              <button type="button" className="close-popup-btn" onClick={() => setIsTermsOpen(false)}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            
+            <div className="popup-body">
+              <p>Selamat datang di <b>TRAVELIND</b>. Mohon baca regulasi pembelian tiket berikut sebelum melanjutkan pembayaran:</p>
+              <ol className="popup-ol-list">
+                <li><b>Manifes Penumpang:</b> Data nama, email, dan WhatsApp wajib diisi secara valid demi keperluan asuransi perjalanan.</li>
+                <li><b>Ketepatan Waktu:</b> Penumpang diharapkan standby di titik jemput paling lambat 30 menit sebelum jam keberangkatan tertera.</li>
+                <li><b>Kebijakan Bagasi:</b> Batas bagasi gratis per penumpang adalah maksimal 10 kg. Kelebihan muatan akan dikenakan biaya tambahan oleh driver.</li>
+                <li><b>Regulasi Pembatalan:</b> Pembatalan gratis dan pengembalian dana penuh berlaku maksimal hingga <b>10 jam sebelum jam keberangkatan</b>.</li>
+              </ol>
+            </div>
+
+            <div className="popup-footer">
+              <button type="button" className="btn-popup-agree" onClick={() => { setIsAgreed(true); setIsTermsOpen(false); }}>
+                Saya Mengerti & Setuju
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DRAWER SIDEBAR NAV */}
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      <nav className={`sidebar-menu ${isSidebarOpen ? 'active' : ''}`}>
+        <div className="sidebar-header">
+          <span className="sidebar-title"><i className="fa-solid fa-layer-group"></i> Menu Navigasi</span>
+          <button type="button" className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        <div className="sidebar-links" style={{ paddingTop: '10px' }}>
+          <button type="button" className="sidebar-item" onClick={() => { setIsSidebarOpen(false); navigate('/home'); }}><i className="fa-solid fa-house"></i> Beranda Utama</button>
+          <button type="button" className="sidebar-item" onClick={() => { setIsSidebarOpen(false); navigate('/home'); localStorage.setItem('buka_tab_langsung', 'akun'); }}><i className="fa-solid fa-circle-user"></i> Akun Saya</button>
+          <button type="button" className="sidebar-item" onClick={() => { setIsSidebarOpen(false); navigate('/cek-tiket'); }}><i className="fa-solid fa-ticket-simple"></i> Pesanan Saya</button>
+          <button type="button" className="sidebar-item" onClick={handleOpenHelpCS} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', fontFamily: 'inherit', cursor: 'pointer' }}><i className="fa-solid fa-headset"></i> Pusat Bantuan</button>
+        </div>
+        <div className="sidebar-footer"><p>©️ 2026 TRAVELIND Startup. v2.0.0</p></div>
+      </nav>
+
+    </div>
+  );
+};
+
+export default DetailPemesananView;
