@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import useAuthStore from '../store/authStore'; // 🌟 1. Import Zustand Store
 import '../styles/cek-tiket.css'; 
 
 const CekTiketView = () => {
   const navigate = useNavigate();
+
+  // 🌟 2. Tarik State Bahasa dari Store
+  const { bahasaGlobal } = useAuthStore();
 
   // ----------------==========================================================
   // ⚡️ LAYER STATE CONTROLLER
@@ -17,6 +21,50 @@ const CekTiketView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  // 🌟 3. Kamus Terjemahan Dinamis (Sinkronisasi dengan Beranda)
+  const t = {
+    ID: {
+      pageTitle: 'Cek Status Tiket',
+      searchTitle: 'Lacak Tiket Perjalanan',
+      searchDesc: 'Masukkan Nomor WhatsApp penumpang yang didaftarkan saat memesan tiket.',
+      placeholderWa: 'Contoh: 08xx-xxxx-xxxx',
+      btnGunakanNomor: 'Gunakan Nomor WhatsApp Saya',
+      btnCari: 'Cari Tiket Saya',
+      loadingText: 'Menghubungkan ke Supabase Cloud Server...',
+      errorTitle: 'Terjadi Gangguan Sistem',
+      errorDesc: 'Gagal memuat data dari cloud server database.',
+      emptyTitle: 'Belum ada pencarian',
+      emptyDesc: 'Silakan ketik nomor WhatsApp Anda di atas untuk melihat status manifes e-tiket.',
+      notFoundTitle: 'Tiket Tidak Ditemukan',
+      notFoundDesc: 'Nomor tidak ditemukan di tabel transaksi TRAVELIND.',
+      ikutiKami: 'Ikuti kami',
+      navBtmHome: 'Beranda',
+      navBtmTiket: 'Tiket Saya',
+      navBtmProfil: 'Profil',
+      alertEmpty: 'Silakan ketik nomor WhatsApp Anda terlebih dahulu!'
+    },
+    EN: {
+      pageTitle: 'Check Ticket Status',
+      searchTitle: 'Track Travel Ticket',
+      searchDesc: 'Enter the passenger\'s WhatsApp Number registered when booking the ticket.',
+      placeholderWa: 'Example: 08xx-xxxx-xxxx',
+      btnGunakanNomor: 'Use My WhatsApp Number',
+      btnCari: 'Find My Ticket',
+      loadingText: 'Connecting to Supabase Cloud Server...',
+      errorTitle: 'System Error Occurred',
+      errorDesc: 'Failed to load data from the cloud database server.',
+      emptyTitle: 'No Search Yet',
+      emptyDesc: 'Please type your WhatsApp number above to see the e-ticket manifest status.',
+      notFoundTitle: 'Ticket Not Found',
+      notFoundDesc: 'Number not found in TRAVELIND transaction table.',
+      ikutiKami: 'Follow us',
+      navBtmHome: 'Home',
+      navBtmTiket: 'My Tickets',
+      navBtmProfil: 'Profile',
+      alertEmpty: 'Please enter your WhatsApp number first!'
+    }
+  }[bahasaGlobal || 'ID'];
 
   // ----------------==========================================================
   // 🔄 LIFECYCLE DETECTION: SHORTCUT WHATSAPP SESSION ENGINE
@@ -52,7 +100,7 @@ const CekTiketView = () => {
     const nomorTarget = (overrideNomor || whatsappInput).trim().replace(/[^0-9]/g, '');
     
     if (!nomorTarget) {
-      alert("Silakan ketik nomor WhatsApp Anda terlebih dahulu!");
+      alert(t.alertEmpty);
       return;
     }
 
@@ -145,14 +193,12 @@ const CekTiketView = () => {
     const statusSaatIni = item.status_pesanan || "Menunggu Pembayaran";
     const isLunas = statusSaatIni === "Terkonfirmasi" || statusSaatIni === "Selesai";
 
-    // 1. Buat elemen kontainer temporer di memori lokal agar tidak mengganggu UI layar utama
     const wadahNotaUIPdf = document.createElement('div');
     wadahNotaUIPdf.style.position = 'absolute';
-    wadahNotaUIPdf.style.left = '-9999px'; // Sembunyikan dari pandangan mata user
+    wadahNotaUIPdf.style.left = '-9999px'; 
     wadahNotaUIPdf.style.top = '0px';
-    wadahNotaUIPdf.style.width = '450px'; // Set ukuran layout mobile ideal profesional
+    wadahNotaUIPdf.style.width = '450px'; 
 
-    // 2. Susun template e-ticket premium dengan gaya borderless modern nan anggun
     wadahNotaUIPdf.innerHTML = `
       <div style="background-color: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; padding-bottom: 30px;">
         <div style="background: linear-gradient(135deg, #02596b 0%, #013e4b 100%); padding: 30px; color: #ffffff; position: relative;">
@@ -210,24 +256,20 @@ const CekTiketView = () => {
 
     document.body.appendChild(wadahNotaUIPdf);
 
-    // 3. Eksekusi Render Canvas & Konversi instan ke File PDF Tanpa Pop-up Layar Cetak!
     try {
       const canvas = await html2canvas(wadahNotaUIPdf, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const lebarKomponenPDF = 140; // Menyesuaikan proporsi kertas agar presisi dan elegan
+      const lebarKomponenPDF = 140; 
       const tinggiKomponenPDF = (canvas.height * lebarKomponenPDF) / canvas.width;
       
       pdf.addImage(imgData, 'PNG', 35, 20, lebarKomponenPDF, tinggiKomponenPDF);
-      
-      // Kirim file langsung ke folder download HP pengguna!
       pdf.save(`E-Tiket_TRAVELIND_${kodeTiketFix}.pdf`);
     } catch (err) {
       console.error("Gagal mengunduh file berkas PDF secara instan:", err);
       alert("Gagal mendownload PDF otomatis. Harap coba lagi.");
     } finally {
-      // Bersihkan kembali memori DOM temporer browser
       document.body.removeChild(wadahNotaUIPdf);
     }
   };
@@ -238,10 +280,10 @@ const CekTiketView = () => {
       {/* HEADER BAR */}
       <header className="main-header">
         <div className="header-left">
-          <div className="back-btn" onClick={() => navigate('/home')} title="Kembali ke Beranda">
+          <div className="back-btn" onClick={() => navigate('/home')} title={t.navBtmHome}>
             <i className="fa-solid fa-arrow-left"></i>
           </div>
-          <h2 className="page-title">Cek Status Tiket</h2>
+          <h2 className="page-title">{t.pageTitle}</h2>
         </div>
         <div style={{ width: '24px' }}></div>
       </header>
@@ -252,8 +294,8 @@ const CekTiketView = () => {
         <section className="premium-card search-card">
           <div className="search-header">
             <i className="fa-solid fa-ticket-simple icon-teal-large"></i>
-            <h4>Lacak Tiket Perjalanan</h4>
-            <p>Masukkan Nomor WhatsApp penumpang yang didaftarkan saat memesan tiket.</p>
+            <h4>{t.searchTitle}</h4>
+            <p>{t.searchDesc}</p>
           </div>
 
           <div className="input-field-wrapper">
@@ -264,7 +306,7 @@ const CekTiketView = () => {
                 value={whatsappInput} 
                 onChange={(e) => setWhatsappInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && tanganiPencarianTiket()}
-                placeholder="Contoh: 08xx-xxxx-xxxx" 
+                placeholder={t.placeholderWa}
                 className="form-input-styled" 
               />
             </div>
@@ -272,14 +314,14 @@ const CekTiketView = () => {
             {nomorSesiAkun && (
               <div className="shortcut-number-wrapper">
                 <button type="button" className="btn-use-my-number" onClick={jalankanShortcutNomorSaya}>
-                  <i className="fa-solid fa-user-check"></i> Gunakan Nomor WhatsApp Saya
+                  <i className="fa-solid fa-user-check"></i> {t.btnGunakanNomor}
                 </button>
               </div>
             )}
           </div>
 
           <button type="button" className="btn-search-submit" onClick={() => tanganiPencarianTiket()}>
-            <i className="fa-solid fa-magnifying-glass"></i> Cari Tiket Saya
+            <i className="fa-solid fa-magnifying-glass"></i> {t.btnCari}
           </button>
         </section>
 
@@ -289,31 +331,31 @@ const CekTiketView = () => {
           {isLoading && (
             <div style={{ textAlign: 'center', padding: '40px', color: '#8c96a3', fontSize: '13px' }}>
               <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '28px', color: '#02596b', marginBottom: '12px' }}></i>
-              <br />Menghubungkan ke Supabase Cloud Server...
+              <br />{t.loadingText}
             </div>
           )}
 
           {isError && (
             <div className="empty-state-box" style={{ textAlign: 'center', padding: '40px 20px' }}>
               <i className="fa-solid fa-circle-xmark" style={{ fontSize: '36px', color: '#e11d48', margin: '0 0 10px 0' }}></i>
-              <h6>Terjadi Gangguan Sistem</h6>
-              <p>Gagal memuat data dari cloud server database.</p>
+              <h6>{t.errorTitle}</h6>
+              <p>{t.errorDesc}</p>
             </div>
           )}
 
           {!hasSearched && !isLoading && (
             <div className="empty-state-box">
               <i className="fa-solid fa-folder-open empty-icon"></i>
-              <h6>Belum ada pencarian</h6>
-              <p>Silakan ketik nomor WhatsApp Anda di atas untuk melihat status manifes e-tiket.</p>
+              <h6>{t.emptyTitle}</h6>
+              <p>{t.emptyDesc}</p>
             </div>
           )}
 
           {hasSearched && !isLoading && !isError && listTiket.length === 0 && (
             <div className="empty-state-box" style={{ textAlign: 'center', padding: '40px 20px' }}>
               <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: '36px', color: '#f2994a', marginBottom: '12px' }}></i>
-              <h6>Tiket Tidak Ditemukan</h6>
-              <p>Nomor tidak ditemukan di tabel transaksi TRAVELIND.</p>
+              <h6>{t.notFoundTitle}</h6>
+              <p>{t.notFoundDesc}</p>
             </div>
           )}
 
@@ -382,7 +424,7 @@ const CekTiketView = () => {
         </div>
 
         <footer className="main-footer" style={{ marginTop: 'auto', padding: '20px 0', textAlign: 'center', background: 'transparent' }}>
-          <p className="footer-title" style={{ fontSize: '13px', color: '#2b2b2b', margin: '0 0 10px 0', fontWeight: '700' }}>Ikuti kami</p>
+          <p className="footer-title" style={{ fontSize: '13px', color: '#2b2b2b', margin: '0 0 10px 0', fontWeight: '700' }}>{t.ikutiKami}</p>
           <div className="social-icons" style={{ display: 'flex', justifyContent: 'center', gap: '20px', fontSize: '20px' }}>
             <a href="#" aria-label="TikTok" style={{ color: '#02596b' }}><i className="fa-brands fa-tiktok"></i></a>
             <a href="#" aria-label="Instagram" style={{ color: '#02596b' }}><i className="fa-brands fa-instagram"></i></a>
@@ -392,20 +434,20 @@ const CekTiketView = () => {
 
       </main>
 
-      {/* STICKY BOTTOM NAV BAR */}
-      <nav className="bottom-nav">
-        <div className="nav-link" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
+     {/* 🌟 FIXED BOTTOM NAV BAR (TERISOLASI AMAN - TIDAK MERUSAK BERANDA) */}
+      <nav className="bottom-nav-cek-tiket">
+        <button type="button" className="nav-link-cek-tiket" onClick={() => navigate('/home')}>
           <i className="fa-solid fa-house"></i>
-          <span>Beranda</span>
-        </div>
-        <div className="nav-link active" style={{ cursor: 'default' }}>
-          <i className="fa-solid fa-ticket-simple"></i>
-          <span>Tiket Saya</span>
-        </div>
-        <div className="nav-link" onClick={() => { navigate('/home'); localStorage.setItem('buka_tab_langsung', 'akun'); }} style={{ cursor: 'pointer' }}>
+          <span>{t.navBtmHome}</span>
+        </button>
+        <button type="button" className="nav-link-cek-tiket active" onClick={() => navigate('/cek-tiket')}>
+          <i className="fa-solid fa-ticket"></i>
+          <span>{t.navBtmTiket}</span>
+        </button>
+        <button type="button" className="nav-link-cek-tiket" onClick={() => navigate('/profil')}>
           <i className="fa-solid fa-user"></i>
-          <span>Profil</span>
-        </div>
+          <span>{t.navBtmProfil}</span>
+        </button>
       </nav>
 
     </div>

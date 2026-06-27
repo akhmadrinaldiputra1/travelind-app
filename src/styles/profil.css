@@ -25,17 +25,17 @@
     flex-direction: column;
 }
 
-/* 🟢 HEADER DENGAN CURVE */
 .profil-curved-header-bg {
-    background-color: var(--primary-teal);
-    height: 140px;
-    width: 100%;
     position: absolute;
     top: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-60%);
+    width: 160%; /* Dibuat lebih lebar dari container untuk efek lengkungan elips */
+    height: 200px; /* Sesuaikan tinggi background toska di sini */
+    background: linear-gradient(135deg, #02596b, #013e4b); /* Kombinasi gradient toska premium agar lebih hidup */
+    border-bottom-left-radius: 50% 40px; /* Membuat sudut kiri melengkung halus */
+    border-bottom-right-radius: 40% 40px; /* Membuat sudut kanan melengkung halus */
     z-index: 1;
-    border-bottom-left-radius: 40px;
-    border-bottom-right-radius: 40px;
 }
 
 .profil-header-nav {

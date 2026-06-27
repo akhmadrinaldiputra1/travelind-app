@@ -102,18 +102,63 @@ body {
 }
 
 /* ==========================================================================
-   📌 STYLES BAR NAVIGASI BAGIAN BAWAH HALAMAN CEK TIKET
+   📌 STYLES BAR NAVIGASI BAGIAN BAWAH HALAMAN CEK TIKET (ISOLASI AMAN)
    ========================================================================== */
-.bottom-nav {
-    background-color: #ffffff; border-top: 1px solid #edf2f7;
-    display: flex; justify-content: space-around; padding: 10px 0; margin-top: auto;
+.bottom-nav-cek-tiket {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 450px;
+    height: 64px;
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
+    padding: 0;
 }
-.nav-link {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    color: #8c96a3; font-size: 11px; font-weight: 600; text-decoration: none;
+
+.nav-link-cek-tiket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #8c96a3;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    flex: 1;
+    height: 100%;
+    
+    /* Pembersih khusus button cek tiket */
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    transition: color 0.2s ease, transform 0.1s ease;
 }
-.nav-link.active { color: var(--primary-teal); }
-.nav-link i { font-size: 18px; }
+
+.nav-link-cek-tiket:active {
+    transform: scale(0.95);
+}
+
+.nav-link-cek-tiket.active {
+    color: var(--primary-teal);
+    background: none !important;
+}
+
+.nav-link-cek-tiket i {
+    font-size: 18px;
+    display: block;
+}
 /* Sembunyikan tombol aksi interaktif saat proses konversi mesin html2pdf berjalan */
 .html2pdf__page-break + .action-box-row,
 .ignore-pdf-print {

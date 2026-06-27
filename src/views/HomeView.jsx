@@ -8,17 +8,18 @@ import '../styles/home.css';
 const HomeView = () => {
   const navigate = useNavigate();
 
-  // Ambil data sesi global dari Zustand
-  const { user, logout } = useAuthStore();
+  // 🌟 Ambil data sesi global, fungsi logout, dan bahasa global dari Zustand Store
+  const { user, logout, bahasaGlobal } = useAuthStore();
 
   // ----------------==========================================================
-  // ⚡️ STATE CONTROLLER: UI LAYERS (SIDEBAR OPEN/CLOSE)
-  // ------------------------------------------------==========================
+  // ⚡️ LAYER STATE CONTROLLER: UI LAYERS (SIDEBAR OPEN/CLOSE)
+  // ----------------==========================================================
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false); // 🌟 State untuk mengontrol popup konfirmasi keluar
 
-  // --------------------------------==========================================
+  // --------------------------------------------------------------------------
   // ⚡️ STATE CONTROLLER: REACTIVE SEARCH FORM ENGINE
-  // ------------------------------------------------==========================
+  // --------------------------------------------------------------------------
   const [pickup, setPickup] = useState('');
   const [tujuan, setTujuan] = useState('');
   const [tanggal, setTanggal] = useState('');
@@ -35,30 +36,84 @@ const HomeView = () => {
   const asalRef = useRef(null);
   const tujuanRef = useRef(null);
 
-  // Profil Text Resolver berdasarkan Zustand Store
-  const namaProfile = user?.email ? user.email.split("@")[0].toUpperCase() : 'MASUK / DAFTAR';
-  const emailProfile = user?.email ? user.email : 'Akses riwayat perjalanan kamu';
-  const inisialProfile = user?.email ? namaProfile.charAt(0) : '?';
+  // Dictionary Kamus Kamar Terjemahan Bahasa Dinamis
+  const t = {
+    ID: {
+      brandSub: 'Mitra Perjalanan Antar Kota',
+      placeholderAsal: 'Ketik Kota / Kabupaten Asal',
+      placeholderTujuan: 'Mau Ke Kota / Kabupaten Mana?',
+      hariIni: 'Hari Ini',
+      besok: 'Besok',
+      btnCari: 'Cari travel',
+      noteCari: 'Pesan travel antar kota dengan mudah dan cepat',
+      ikutiKami: 'Ikuti kami',
+      navTitle: 'Menu Navigasi',
+      menuHome: 'Beranda Utama',
+      menuAkun: 'Akun Saya',
+      menuTiket: 'Pesanan Saya',
+      menuPromo: 'Promo Spesial',
+      menuBantuan: 'Pusat Bantuan',
+      menuKeluar: 'Keluar Akun',
+      logoutPrompt: 'Kamu yakin mau keluar nih?',
+      iya: 'Iya',
+      tidak: 'Tidak',
+      alertLengkapi: 'Silakan lengkapi semua data pencarian terlebih dahulu!',
+      navBtmHome: 'Beranda',
+      navBtmTiket: 'Tiket Saya',
+      navBtmProfil: 'Profil',
+      anonim: 'MASUK / DAFTAR',
+      subAnonim: 'Akses riwayat perjalanan kamu'
+    },
+    EN: {
+      brandSub: 'Intercity Travel Partner',
+      placeholderAsal: 'Type Origin City / Regency',
+      placeholderTujuan: 'Where City / Regency Are You Going?',
+      hariIni: 'Today',
+      besok: 'Tomorrow',
+      btnCari: 'Search Travel',
+      noteCari: 'Book intercity travel easily and quickly',
+      ikutiKami: 'Follow us',
+      navTitle: 'Navigation Menu',
+      menuHome: 'Main Home',
+      menuAkun: 'My Account',
+      menuTiket: 'My Bookings',
+      menuPromo: 'Special Promo',
+      menuBantuan: 'Help Center',
+      menuKeluar: 'Log Out Account',
+      logoutPrompt: 'Are you sure you want to log out?',
+      iya: 'Yes',
+      tidak: 'No',
+      alertLengkapi: 'Please complete all search data first!',
+      navBtmHome: 'Home',
+      navBtmTiket: 'My Tickets',
+      navBtmProfil: 'Profile',
+      anonim: 'SIGN IN / SIGN UP',
+      subAnonim: 'Access your travel history'
+    }
+  }[bahasaGlobal || 'ID'];
+
+  // 🌟 PERBAIKAN: Menarik Nama Asli Lengkap dari metadata registrasi
+  const namaProfile = user ? (user.user_metadata?.full_name || user.email.split("@")[0].toUpperCase()) : t.anonim;
+  const emailProfile = user?.email ? user.email : t.subAnonim;
+  const inisialProfile = user ? namaProfile.charAt(0).toUpperCase() : '?';
 
   // ----------------=========================================================
   // 🔄 CORE APPLICATION LIFE-CYCLE
-  // ------------------------------------------------=========================
+  // ----------------=========================================================
   useEffect(() => {
-    // Deteksi ketukan di luar box autocomplete untuk menutup daftar laci wilayah
     const handleClickOutside = (e) => {
       if (asalRef.current && !asalRef.current.contains(e.target)) setShowAsalDropdown(false);
       if (tujuanRef.current && !tujuanRef.current.contains(e.target)) setShowTujuanDropdown(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   // ----------------==========================================================
-  // 🛫 STREAM MEMORY CACHE FILTER: AUTOCOMPLETE IN-MEMORY DETECTOR
-  // ------------------------------------------------==========================
+  // 🛫 STREAM MEMORY CACHE FILTER: AUTOCOMPLETE
+  // ----------------------------------------------------------------==========
   const handleMencariAsalManual = (inputTarget) => {
     setPickup(inputTarget);
     const textKetik = inputTarget ? inputTarget.toLowerCase() : '';
@@ -83,15 +138,15 @@ const HomeView = () => {
 
   // ----------------==========================================================
   // 💾 TRANSACTION DATA MECHANISM: INITIAL PUSH BACKEND SYSTEM
-  // ------------------------------------------------==========================
+  // ----------------------------------------------------------------==========
   const handleCariTravel = async () => {
     if (!pickup || !tujuan || !tanggal) {
-      alert("Silakan lengkapi semua data pencarian terlebih dahulu!");
+      alert(t.alertLengkapi);
       return;
     }
 
     const emailTerbaca = user?.email || localStorage.getItem("email_penumpang") || null;
-    const namaTerbaca = user?.email ? user.email.split("@")[0].toUpperCase() : "Pengguna Anonim";
+    const namaTerbaca = user?.user_metadata?.full_name || "Pengguna Anonim";
 
     const dataPayload = {
       pickup_kota: pickup,
@@ -141,19 +196,16 @@ const HomeView = () => {
     setIsDateActive(type === 'hariIni' ? 0 : 1);
   };
 
-  // 🌟 NAVIGATOR HANDLER SINKRON: Langsung arahkan ke halaman profil baru kita
-  // Baik user sudah login atau belum, agar ProfilView yang menangani UI dinamisnya.
   const handleNavigasiAkun = () => {
     setIsSidebarOpen(false);
     navigate('/profil'); 
   };
 
-  const handleLogoutSistem = async () => {
-    if (window.confirm("Apakah Anda yakin ingin keluar dari akun TRAVELIND?")) {
-      await logout();
-      setIsSidebarOpen(false);
-      alert("Berhasil keluar akun.");
-    }
+  // 🌟 PERBAIKAN: Fungsi logout final pasca klik popup iya
+  const handleEksekusiLogout = async () => {
+    setIsLogoutConfirmOpen(false);
+    await logout();
+    window.location.reload();
   };
 
   return (
@@ -163,7 +215,7 @@ const HomeView = () => {
       <header className="main-header">
         <div className="brand-wrapper">
           <h1 className="brand-title">TRAVELIND</h1>
-          <p className="brand-subtitle">Mitra Perjalanan Antar Kota</p>
+          <p className="brand-subtitle">{t.brandSub}</p>
         </div>
         <button type="button" className="menu-btn" onClick={() => setIsSidebarOpen(true)} aria-label="Buka Menu Drawer">
           <i className="fa-solid fa-bars-staggered"></i>
@@ -181,7 +233,7 @@ const HomeView = () => {
                 <i className="fa-solid fa-location-dot input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
                 <input 
                   type="text" 
-                  placeholder="Ketik Kota / Kabupaten Asal"
+                  placeholder={t.placeholderAsal}
                   value={pickup}
                   onFocus={() => {
                     setShowAsalDropdown(true);
@@ -214,7 +266,7 @@ const HomeView = () => {
                 <i className="fa-solid fa-car input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
                 <input 
                   type="text" 
-                  placeholder="Mau Ke Kota / Kabupaten Mana?"
+                  placeholder={t.placeholderTujuan}
                   value={tujuan}
                   onFocus={() => {
                     setShowTujuanDropdown(true);
@@ -248,7 +300,6 @@ const HomeView = () => {
                   <i className="fa-solid fa-calendar input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
                   <input 
                     type="date" 
-                    placeholder="Pilih tanggal" 
                     value={tanggal}
                     onChange={(e) => {
                       setTanggal(e.target.value);
@@ -258,8 +309,8 @@ const HomeView = () => {
                   />
                 </div>
                 <div className="quick-date">
-                  <button type="button" className={isDateActive === 0 ? 'active' : ''} onClick={() => handleSetQuickDate('hariIni')}>Hari Ini</button>
-                  <button type="button" className={isDateActive === 1 ? 'active' : ''} onClick={() => handleSetQuickDate('besok')}>Besok</button>
+                  <button type="button" className={isDateActive === 0 ? 'active' : ''} onClick={() => handleSetQuickDate('hariIni')}>{t.hariIni}</button>
+                  <button type="button" className={isDateActive === 1 ? 'active' : ''} onClick={() => handleSetQuickDate('besok')}>{t.besok}</button>
                 </div>
               </div>
             </div>
@@ -278,12 +329,12 @@ const HomeView = () => {
               </div>
             </div>
 
-            <button type="button" className="btn-primary" onClick={handleCariTravel}>Cari travel</button>
-            <p className="search-note">Pesan travel antar kota dengan mudah dan cepat</p>
+            <button type="button" className="btn-primary" onClick={handleCariTravel}>{t.btnCari}</button>
+            <p className="search-note">{t.noteCari}</p>
           </div>
 
           <footer className="main-footer">
-              <p className="footer-title">Ikuti kami</p>
+              <p className="footer-title">{t.ikutiKami}</p>
               <div className="social-icons">
                   <a href="#" aria-label="TikTok"><i className="fa-brands fa-tiktok"></i></a>
                   <a href="#" aria-label="Instagram"><i className="fa-brands fa-instagram"></i></a>
@@ -294,12 +345,12 @@ const HomeView = () => {
       </div>
 
       {/* ====================================================================
-         ⚡️ COMPONENT INTERAKTIF: NAVIGATION DRAWER SIDEBAR LACI SIDE
+         ⚡️ NAVIGATION DRAWER SIDEBAR LACI SIDE
          ==================================================================== */}
       <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <nav className={`sidebar-menu ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
-          <span className="sidebar-title"><i className="fa-solid fa-layer-group"></i> Menu Navigasi</span>
+          <span className="sidebar-title"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
           <button type="button" className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)} aria-label="Tutup Menu">
             <i className="fa-solid fa-xmark"></i>
           </button>
@@ -315,31 +366,32 @@ const HomeView = () => {
         
         <div className="sidebar-content">
           <button type="button" className="menu-item menu-item-active" onClick={() => setIsSidebarOpen(false)}>
-            <i className="fa-solid fa-house"></i> Beranda Utama
+            <i className="fa-solid fa-house"></i> {t.menuHome}
           </button>
           
           <button type="button" className="menu-item" onClick={handleNavigasiAkun}>
-            <i className="fa-solid fa-circle-user"></i> Akun Saya
+            <i className="fa-solid fa-circle-user"></i> {t.menuAkun}
           </button>
 
           <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); navigate('/cek-tiket'); }}>
-            <i className="fa-solid fa-ticket-simple"></i> Pesanan Saya
+            <i className="fa-solid fa-ticket"></i> {t.menuTiket}
           </button>
 
           <div className="menu-divider"></div>
 
           <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); navigate('/promo'); }}>
-            <i className="fa-solid fa-tags"></i> Promo Spesial
+            <i className="fa-solid fa-tags"></i> {t.menuPromo}
           </button>
 
           <a href="https://wa.me/6281234567890?text=Halo%20CS%20TRAVELIND,%20saya%20butuh%20bantuan%20terkait%20pemesanan%20travel." 
              target="_blank" rel="noreferrer" className="menu-item">
-            <i className="fa-solid fa-headset"></i> Pusat Bantuan
+            <i className="fa-solid fa-headset"></i> {t.menuBantuan}
           </a>
           
           {user && (
-            <button type="button" className="menu-item" onClick={handleLogoutSistem} style={{ color: '#eb5757' }}>
-              <i className="fa-solid fa-arrow-right-from-bracket" style={{ color: '#eb5757' }}></i> Keluar Akun
+            /* 🌟 PERBAIKAN: Mengganti window.confirm lama dengan menembak modal sheet konfirmasi */
+            <button type="button" className="menu-item" onClick={() => setIsSidebarOpen(false) || setIsLogoutConfirmOpen(true)} style={{ color: '#eb5757', width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}>
+              <i className="fa-solid fa-arrow-right-from-bracket" style={{ color: '#eb5757' }}></i> {t.menuKeluar}
             </button>
           )}
         </div>
@@ -350,20 +402,39 @@ const HomeView = () => {
       </nav>
 
       {/* ====================================================================
+         🌟 POPUP BOTTOM SHEET CONFIRM LOGOUT (MEMINJAM GAYA PROFIL.CSS)
+         ==================================================================== */}
+      <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+          <div className="popup-sheet-notch"></div>
+          <i className="fa-solid fa-circle-question" style={{ fontSize: '48px', color: 'var(--danger-red)', marginBottom: '16px' }}></i>
+          <h5 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 24px 0', color: '#2d3748' }}>{t.logoutPrompt}</h5>
+          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+            <button className="btn-login-primary" onClick={handleEksekusiLogout} style={{ margin: 0, background: 'var(--danger-red)' }}>
+              {t.iya}
+            </button>
+            <button className="btn-login-primary" onClick={() => setIsLogoutConfirmOpen(false)} style={{ margin: 0, background: '#e2e8f0', color: '#4a5568' }}>
+              {t.tidak}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ====================================================================
          📌 COMPONENT STICKY: MOBILE FIXED BOTTOM NAVIGATION
          ==================================================================== */}
       <nav className="bottom-nav">
         <button type="button" className="nav-link active" onClick={() => navigate('/home')}>
           <i className="fa-solid fa-house"></i>
-          <span>Beranda</span>
+          <span>{t.navBtmHome}</span>
         </button>
         <button type="button" className="nav-link" onClick={() => navigate('/cek-tiket')}>
-          <i className="fa-solid fa-ticket-simple"></i>
-          <span>Tiket Saya</span>
+          <i className="fa-solid fa-ticket"></i>
+          <span>{t.navBtmTiket}</span>
         </button>
         <button type="button" className="nav-link" onClick={handleNavigasiAkun}>
           <i className="fa-solid fa-user"></i>
-          <span>Profil</span>
+          <span>{t.navBtmProfil}</span>
         </button>
       </nav>
 
