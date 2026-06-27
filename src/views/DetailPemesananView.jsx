@@ -32,7 +32,7 @@ const DetailPemesananView = () => {
   const [formPassenger, setFormPassenger] = useState({ nama: '', whatsapp: '', email: '' });
   const [isAgreed, setIsAgreed] = useState(false);
 
-  // Kamus Terjemahan Otomatis
+  // 🌟 Kamus Terjemahan Otomatis Dinamis 100% Konsisten Global
   const t = {
     ID: {
       pageTitle: 'Pemesanan',
@@ -82,7 +82,25 @@ const DetailPemesananView = () => {
       terms4: 'Pembatalan gratis dan pengembalian dana penuh berlaku maksimal hingga 10 jam sebelum jam keberangkatan.',
       btnMengerti: 'Saya Mengerti & Setuju',
       anonim: 'MASUK / DAFTAR',
-      subAnonim: 'Akses riwayat perjalanan kamu'
+      subAnonim: 'Akses riwayat perjalanan kamu',
+      mencariPickup: 'Mencari area penjemputan...',
+      klikIsiTujuan: 'Klik untuk isi tujuan',
+      masukanAlamatTujuan: 'Masukkan alamat tujuan pengantaran',
+      klikPetaPickup: 'Klik pada peta untuk menentukan titik penjemputan',
+      klikPetaTujuan: 'Klik tombol peta atau ketik alamat tujuan',
+      dikonfirmasiPeta: 'Lokasi tujuan dikonfirmasi via Peta',
+      dikonfirmasiKetik: 'Lokasi terkonfirmasi via ketikan otomatis',
+      gagalGps: 'Gagal mendeteksi koordinat GPS Handphone Anda.',
+      loadingText: 'Memproses...',
+      kategoriText: 'Kategori',
+      sertaText: ' serta ',
+      alertGpsTitle: 'GPS',
+      alertMapTitle: 'Peta',
+      
+      // Teks Baru Popup Validasi Modern & Friendly
+      popupTitle: 'Yuk, Cek Datamu Kembali!',
+      popupDesc: 'Ada bagian data diri yang belum terisi lengkap, nomor WhatsApp yang kurang tepat, atau Syarat & Ketentuan yang belum dicentang. Sedikit lagi data Anda siap untuk melanjutkan pemesanan!',
+      popupBtn: 'Lengkapi Data Saya'
     },
     EN: {
       pageTitle: 'Booking',
@@ -132,7 +150,25 @@ const DetailPemesananView = () => {
       terms4: 'Free cancellation and full refund apply up to a maximum of 10 hours before departure time.',
       btnMengerti: 'I Understand & Agree',
       anonim: 'SIGN IN / SIGN UP',
-      subAnonim: 'Access your travel history'
+      subAnonim: 'Access your travel history',
+      mencariPickup: 'Searching pickup area...',
+      klikIsiTujuan: 'Click to fill destination',
+      masukanAlamatTujuan: 'Enter delivery destination address',
+      klikPetaPickup: 'Click on the map to determine the pickup point',
+      klikPetaTujuan: 'Click the map button or type the destination address',
+      dikonfirmasiPeta: 'Destination location confirmed via Map',
+      dikonfirmasiKetik: 'Location confirmed via autotyping',
+      gagalGps: 'Failed to detect your Phone GPS coordinates.',
+      loadingText: 'Processing...',
+      kategoriText: 'Category',
+      sertaText: ' and ',
+      alertGpsTitle: 'GPS',
+      alertMapTitle: 'Map',
+
+      // Teks Baru Popup Validasi Modern & Friendly
+      popupTitle: 'Let\'s Double-Check Your Details!',
+      popupDesc: 'Some personal details are incomplete, the WhatsApp number format might be incorrect, or the Terms & Conditions haven\'t been checked yet. Just a few more adjustments and you are good to go!',
+      popupBtn: 'Complete My Details'
     }
   }[bahasaGlobal || 'ID'];
 
@@ -140,9 +176,9 @@ const DetailPemesananView = () => {
   const emailProfile = user?.email ? user.email : t.subAnonim;
   const inisialProfile = user ? namaProfile.charAt(0).toUpperCase() : '?';
 
-  // ----------------==========================================================
+  // --------------------------------------------------------------------------
   // 🗺️ LEAFLET INSTANCE REFS
-  // ----------------------------------------------------------------==========
+  // --------------------------------------------------------------------------
   const mapPickupRef = useRef(null);
   const markerPickupRef = useRef(null);
   const mapTujuanRef = useRef(null);
@@ -169,8 +205,8 @@ const DetailPemesananView = () => {
 
     let labelMerek = "";
     const nameUpper = nama.toUpperCase();
-    if (nameUpper.includes("INNOVA")) labelMerek = " &nbsp;•&nbsp; Kategori: INNOVA";
-    if (nameUpper.includes("HIACE")) labelMerek = " &nbsp;•&nbsp; Kategori: HIACE";
+    if (nameUpper.includes("INNOVA")) labelMerek = ` &nbsp;•&nbsp; ${t.kategoriText}: INNOVA`;
+    if (nameUpper.includes("HIACE")) labelMerek = ` &nbsp;•&nbsp; ${t.kategoriText}: HIACE`;
 
     const total = harga * penumpang;
     const grand = total + 2000;
@@ -179,14 +215,14 @@ const DetailPemesananView = () => {
     setPricing({ totalTiket: total, grandTotal: grand });
 
     if (localStorage.getItem("fresh_search_trigger") === "true") {
-      setAlamatPickupText("Klik pada peta untuk menentukan titik penjemputan");
-      setAlamatTujuanMain("Klik tombol peta atau ketik alamat tujuan");
-      setAlamatTujuanSub("Masukkan alamat tujuan pengantaran");
+      setAlamatPickupText(t.klikPetaPickup);
+      setAlamatTujuanMain(t.klikPetaTujuan);
+      setAlamatTujuanSub(t.masukanAlamatTujuan);
     } else {
       if (localStorage.getItem("pickup_alamat")) setAlamatPickupText(localStorage.getItem("pickup_alamat"));
       if (localStorage.getItem("tujuan_alamat")) {
         setAlamatTujuanMain(localStorage.getItem("tujuan_alamat"));
-        setAlamatTujuanSub("Lokasi tujuan dikonfirmasi");
+        setAlamatTujuanSub(t.dikonfirmasiPeta);
       }
     }
 
@@ -211,7 +247,7 @@ const DetailPemesananView = () => {
       if (mapPickupRef.current) { mapPickupRef.current.remove(); mapPickupRef.current = null; }
       if (mapTujuanRef.current) { mapTujuanRef.current.remove(); mapTujuanRef.current = null; }
     };
-  }, [navigate, user]);
+  }, [navigate, user, t.kategoriText, t.klikPetaPickup, t.klikPetaTujuan, t.masukanAlamatTujuan, t.dikonfirmasiPeta]);
 
   const dapatkanKoordinatKotaSumatera = async (namaKota) => {
     try {
@@ -325,7 +361,7 @@ const DetailPemesananView = () => {
         if (booking_id) await supabase.from("booking_temp").update({ pickup_alamat: alamat, pickup_lat: lat, pickup_lng: lng }).eq("id", booking_id);
       } else {
         setAlamatTujuanMain(alamat);
-        setAlamatTujuanSub("Lokasi tujuan dikonfirmasi via Peta");
+        setAlamatTujuanSub(t.dikonfirmasiPeta);
         localStorage.setItem("tujuan_alamat", alamat);
         if (booking_id) await supabase.from("booking_temp").update({ tujuan_alamat: alamat, tujuan_lat: lat, tujuan_lng: lng }).eq("id", booking_id);
       }
@@ -342,7 +378,7 @@ const DetailPemesananView = () => {
         setPickupMarker(lat, lng, mapPickupRef.current);
         fetchReverseGeocodeEngine(lat, lng, 'pickup');
       }
-    }, () => { alert("Gagal mendeteksi koordinat GPS Handphone Anda."); });
+    }, () => { alert(t.gagalGps); });
   };
 
   const handleAutocompleteTyping = (e) => {
@@ -367,7 +403,7 @@ const DetailPemesananView = () => {
 
     setShowMapTujuan(true);
     setAlamatTujuanMain(place.display_name);
-    setAlamatTujuanSub("Lokasi terkonfirmasi via ketikan otomatis");
+    setAlamatTujuanSub(t.dikonfirmasiKetik);
     localStorage.setItem("tujuan_alamat", place.display_name);
 
     await initTujuanMapEngine(travelInfo.tujuan, lat, lon);
@@ -379,42 +415,36 @@ const DetailPemesananView = () => {
     setSearchKeyword('');
   };
 
-  // 🌟 SANITASI KETIKAN WA: Tolak semua huruf & batasi panjang nomor telpon
   const handleWhatsappTypingEngine = (e) => {
     const rawVal = e.target.value;
-    const cleanDigits = rawVal.replace(/[^0-9]/g, ''); // Buang semua karakter selain angka otomatis
+    const cleanDigits = rawVal.replace(/[^0-9]/g, ''); 
     if (cleanDigits.length <= 15) {
       setFormPassenger(prev => ({ ...prev, whatsapp: cleanDigits }));
     }
   };
 
-  // 🌟 PROSES VALIDASI UTAMA PREMIUM ANTI-ANTI JAIL ENGINE
   const handleExecuteBookingFinal = async () => {
     const namaClean = formPassenger.nama.trim();
     const whatsappClean = formPassenger.whatsapp.trim();
     const emailClean = formPassenger.email.trim();
 
-    // A. Deteksi Box Kosong Mandatori
     if (!namaClean || !whatsappClean || !emailClean || !isAgreed) {
       setShowValidationAlert(true);
       return;
     }
 
-    // B. Deteksi Orang Jail Memakai Angka Berulang Berlebihan (Regex match 5x berurutan)
     const patternAngkaBerulang = /([0-9])\1{4}/; 
     if (patternAngkaBerulang.test(whatsappClean)) {
       setShowValidationAlert(true);
       return;
     }
 
-    // C. Validasi Struktur Format Email Benar Mengandung Karakter @
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailClean.includes('@') || !emailRegex.test(emailClean)) {
       setShowValidationAlert(true);
       return;
     }
 
-    // D. Validasi Panjang Minimum Nomor Handphone Seluler Indonesia
     if (whatsappClean.length < 10) {
       setShowValidationAlert(true);
       return;
@@ -489,7 +519,7 @@ const DetailPemesananView = () => {
   };
 
   return (
-    <div className="travelind-booking-wrapper">
+    <div className="travelind-booking-wrapper page-pemesanan-scroller-layout">
       
       {/* HEADER COLOURED PANEL STATIC BLOCK */}
       <div className="sticky-top-layout-block">
@@ -588,7 +618,7 @@ const DetailPemesananView = () => {
               <div className="address-main-text">{alamatPickupText}</div>
               <div className="address-sub-text">{t.pickupSub}</div>
             </div>
-            <button type="button" className="gps-locate-btn" onClick={handleLocateMyGPS} title="GPS">
+            <button type="button" className="gps-locate-btn" onClick={handleLocateMyGPS} title={t.alertGpsTitle}>
               <i className="fa-solid fa-location-crosshairs"></i>
             </button>
           </div>
@@ -602,7 +632,7 @@ const DetailPemesananView = () => {
               <div className="tujuan-main">{alamatTujuanMain}</div>
               <div className="tujuan-sub">{alamatTujuanSub}</div>
             </div>
-            <button type="button" className="gps-locate-btn" onClick={async () => { const nextState = !showMapTujuan; setShowMapTujuan(nextState); if (nextState) setTimeout(() => initTujuanMapEngine(travelInfo.tujuan), 100); }} title="Peta">
+            <button type="button" className="gps-locate-btn" onClick={async () => { const nextState = !showMapTujuan; setShowMapTujuan(nextState); if (nextState) setTimeout(() => initTujuanMapEngine(travelInfo.tujuan), 100); }} title={t.alertMapTitle}>
               <i className="fa-solid fa-map-location-dot"></i>
             </button>
           </div>
@@ -649,13 +679,13 @@ const DetailPemesananView = () => {
             {t.bacaSetuju}
             <span className="clickable-terms-trigger" onClick={() => setIsTermsOpen(true)}>
               {t.syaratKetentuan}
-            </span>{' '}
-            serta <span className="non-clickable-privacy">{t.kebijakanPrivasi}</span>
+            </span>
+            {t.sertaText}<span className="non-clickable-privacy">{t.kebijakanPrivasi}</span>
           </label>
         </div>
 
         <div className="page-bottom-copyright-footer">
-          <p>© 2026 TRAVELIND Startup. v2.0.0</p>
+          <p>©️ 2026 TRAVELIND Startup. v2.0.0</p>
         </div>
 
       </div>
@@ -670,7 +700,7 @@ const DetailPemesananView = () => {
           <button type="button" className="btn-checkout-submit" disabled={isSubmitting} onClick={handleExecuteBookingFinal}>
             {isSubmitting ? (
               <>
-                <i className="fa-solid fa-circle-notch fa-spin" style={{ marginRight: '6px' }}></i> Loading...
+                <i className="fa-solid fa-circle-notch fa-spin" style={{ marginRight: '6px' }}></i> {t.loadingText}
               </>
             ) : (
               <>
@@ -697,10 +727,10 @@ const DetailPemesananView = () => {
             <div className="popup-body-scroll">
               <p className="terms-alert-banner">{t.sheetTermsIntro}</p>
               <ol className="popup-list-ol">
-                <li><b>Manifes Penumpang:</b> {t.terms1}</li>
-                <li><b>Ketepatan Waktu:</b> {t.terms2}</li>
-                <li><b>Kebijakan Bagasi:</b> {t.terms3}</li>
-                <li><b>Regulasi Pembatalan:</b> {t.terms4}</li>
+                <li><b>{bahasaGlobal === 'ID' ? 'Manifes Penumpang:' : 'Passenger Manifest:'}</b> {t.terms1}</li>
+                <li><b>{bahasaGlobal === 'ID' ? 'Ketepatan Waktu:' : 'Punctuality:'}</b> {t.terms2}</li>
+                <li><b>{bahasaGlobal === 'ID' ? 'Kebijakan Bagasi:' : 'Baggage Policy:'}</b> {t.terms3}</li>
+                <li><b>{bahasaGlobal === 'ID' ? 'Regulasi Pembatalan:' : 'Cancellation Regulation:'}</b> {t.terms4}</li>
               </ol>
             </div>
             <div className="popup-footer-row">
@@ -713,25 +743,23 @@ const DetailPemesananView = () => {
       )}
 
       {/* ====================================================================
-         🌟 NEW UX POPUP: "Yaah…Data Kamu Belum Lengkap Nih" MODAL CONTEXT
+         🌟 NEW LUXURY FRIENDLY UX VALIDATION POPUP MODAL
          ==================================================================== */}
       {showValidationAlert && (
         <div className="popup-container-overlay fade-in-fast" onClick={() => setShowValidationAlert(false)}>
           <div className="popup-center-card-box alert-error-bounce" onClick={(e) => e.stopPropagation()}>
             <div className="alert-lottie-mock-icon-zone">
-              <div className="circle-exclamation-pulse animate-pulse">
-                <i className="fa-solid fa-circle-exclamation"></i>
+              <div className="circle-exclamation-pulse">
+                <i className="fa-solid fa-user-check"></i>
               </div>
             </div>
             <div className="popup-body-scroll alert-text-center">
-              <h3 className="alert-title-main">Yaah…Data Kamu Belum Lengkap Nih</h3>
-              <p className="alert-subtitle-desc">
-                Mohon periksa kembali nama, nomor WhatsApp yang valid (tidak berulang), format email dengan tanda (@), serta centang persetujuan Syarat & Ketentuan TRAVELIND sebelum melanjutkan pembayaran.
-              </p>
+              <h3 className="alert-title-main">{t.popupTitle}</h3>
+              <p className="alert-subtitle-desc">{t.popupDesc}</p>
             </div>
             <div className="popup-footer-row no-top-border">
               <button type="button" className="btn-alert-dismiss" onClick={() => setShowValidationAlert(false)}>
-                Perbaiki Data Sekarang
+                {t.popupBtn}
               </button>
             </div>
           </div>

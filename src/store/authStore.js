@@ -5,11 +5,14 @@ const useAuthStore = create((set) => ({
   user: null,
   profile: null,
   isLoading: true,
-  // 🌐 State Bahasa Global (Default: ID)
-  bahasaGlobal: 'ID', 
+  // 🌐 State Bahasa Global (Mengambil dari localStorage jika ada, default: 'ID')
+  bahasaGlobal: localStorage.getItem('travelind_bahasa') || 'ID', 
 
-  // Fungsi untuk mengubah bahasa dari halaman mana pun
-  setBahasaGlobal: (lang) => set({ bahasaGlobal: lang }),
+  // Fungsi untuk mengubah bahasa dari halaman mana pun + mengunci di localStorage
+  setBahasaGlobal: (lang) => {
+    localStorage.setItem('travelind_bahasa', lang);
+    set({ bahasaGlobal: lang });
+  },
 
   // 📡 Radar otomatis memantau perubahan sesi (Login/Logout)
   initializeAuth: () => {
@@ -49,10 +52,13 @@ const useAuthStore = create((set) => ({
     }
   },
 
-  // 🚪 Logout bersih tanpa jejak cache hantu
+  // 🚪 Logout bersih tanpa jejak cache hantu (Menyisakan preference bahasa agar tidak reset)
   logout: async () => {
+    const bahasaSaatIni = useAuthStore.getState().bahasaGlobal;
     await supabase.auth.signOut();
     localStorage.clear();
+    // Kembalikan preference bahasa setelah clear
+    localStorage.setItem('travelind_bahasa', bahasaSaatIni);
     set({ user: null, profile: null });
   }
 }));

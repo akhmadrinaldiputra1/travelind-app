@@ -42,12 +42,12 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
 }
 
-/* AREA KONTEN SCROLLER */
-.travelind-booking-wrapper .booking-content-scroller {
+/* 🌟 POIN 3: PENGUNCIAN PADDING AMAN SCROLLER (ANTI-LEAKAGE SINKRONISASI) */
+.travelind-booking-wrapper.page-pemesanan-scroller-layout .booking-content-scroller {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 16px 16px 20px 16px;
+    padding: 16px 16px 130px 16px !important; /* Diberikan ruang longgar 130px khusus halaman isi data */
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -140,7 +140,7 @@
 .travelind-booking-wrapper .page-bottom-copyright-footer { text-align: center; padding: 18px 0 6px 0; color: #a0aec0; font-size: 11px; }
 
 /* ==========================================================================
-   🚨 POIN 2: STICKY CHECKOUT BAR MODIFIKASI UKURAN TOMBOL PANJANG & PREMIUM
+   🚨 STICKY CHECKOUT BAR
    ========================================================================== */
 .travelind-booking-wrapper .bottom-sticky-checkout-bar { 
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
@@ -155,16 +155,15 @@
 }
 
 .travelind-booking-wrapper .price-summary-box { 
-    flex: 0.9; /* Menyeimbangkan area teks harga sebelah kiri */
+    flex: 0.9; 
     display: flex; flex-direction: column; 
 }
 
 .travelind-booking-wrapper .label-total { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 .travelind-booking-wrapper .grand-total-amount { font-size: 19px; font-weight: 700; color: var(--primary-teal); margin-top: 1px; }
 
-/* Tombol dipanjangkan ke kiri secara estetik profesional */
 .travelind-booking-wrapper .btn-checkout-submit { 
-    flex: 1.4; /* Melebarkan proporsi ukuran tombol ke kiri */
+    flex: 1.4; 
     background-color: var(--primary-teal); color: #ffffff; border: none; 
     padding: 13px 18px; border-radius: 25px; font-size: 14px; 
     font-weight: 700; cursor: pointer; text-align: center;
@@ -177,7 +176,7 @@
 .travelind-booking-wrapper .cancellation-policy-note { text-align: center; font-size: 10px; color: var(--text-muted); margin-top: 8px; font-weight: 500; }
 
 /* ==========================================================================
-   🌟 MODAL CENTERED INTERFACE ARCHITECTURE (FIX GLASSMORPHISM BACKGROUND)
+   🌟 MODAL CENTERED INTERFACE ARCHITECTURE & NEW UX ALERTS MOCK RADAR
    ========================================================================== */
 .travelind-booking-wrapper .popup-container-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -206,83 +205,79 @@
 
 .btn-confirm-terms { width: 100%; background-color: var(--primary-teal); color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 89, 107, 0.15); }
 
-
-/* Mengecilkan ukuran kontainer utama popup agar ramping & proporsional */
+/* 🌟 POPUP VALIDASI REVISI: MODERN, ELEGAN, PROFESIONAL & FRIENDLY */
 .travelind-booking-wrapper .alert-error-bounce {
-    width: 85% !important;
-    max-width: 300px !important; /* Dikecilkan dari ukuran raksasa sebelumnya */
+    width: 88% !important;
+    max-width: 320px !important; 
     background: #ffffff !important;
     border-radius: 24px !important;
-    padding: 24px 20px 20px 20px !important;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.22) !important;
+    padding: 26px 22px 22px 22px !important;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18) !important;
     animation: luxurySoftBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards !important;
 }
 
-/* Mengubah ikon lingkaran tanda seru menjadi jauh lebih estetik & interaktif */
+/* Lingkaran Ikon Bernuansa Teal Friendly & Profesional */
 .travelind-booking-wrapper .alert-lottie-mock-icon-zone {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    margin-bottom: 12px !important;
+    margin-bottom: 16px !important;
 }
 
 .travelind-booking-wrapper .circle-exclamation-pulse {
-    width: 54px !important;
-    height: 54px !important;
+    width: 60px !important;
+    height: 60px !important;
     border-radius: 50% !important;
-    background-color: #fff1f2 !important; /* Merah rose muda yang mewah */
-    color: #e11d48 !important; /* Merah premium kontras */
-    font-size: 24px !important;
+    background-color: #e6f2f5 !important; /* Teal muda lembut ramah */
+    color: var(--primary-teal) !important; /* Warna utama kontras terpercaya */
+    font-size: 26px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4) !important;
-    animation: luxuryPulseRadar 1.8s infinite !important;
+    animation: friendlyPulseRadar 2s infinite !important;
 }
 
-/* Merampingkan teks judul dan deskripsi di dalam popup */
 .travelind-booking-wrapper .alert-text-center {
     text-align: center !important;
     padding: 0 4px !important;
 }
 
 .travelind-booking-wrapper .alert-title-main {
-    font-size: 15px !important; /* Lebih kecil & tajam */
+    font-size: 16px !important; 
     font-weight: 700 !important;
     color: #0f172a !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 10px 0 !important;
     line-height: 1.4 !important;
 }
 
 .travelind-booking-wrapper .alert-subtitle-desc {
-    font-size: 12px !important; /* Ramping standar aplikasi iOS/Android */
+    font-size: 12.5px !important; 
     color: #64748b !important;
     margin: 0 !important;
     line-height: 1.6 !important;
 }
 
-/* Mengubah tombol penutup menjadi bergaya minimalis modern gelap */
+/* Tombol Berwarna Teal Selaras Identitas Aplikasi */
 .travelind-booking-wrapper .btn-alert-dismiss {
     width: 100% !important;
-    background-color: #0f172a !important; /* Hitam arang elegan */
+    background-color: var(--primary-teal) !important; 
     color: #ffffff !important;
     border: none !important;
-    padding: 11px 16px !important;
+    padding: 12px 16px !important;
     border-radius: 14px !important;
     font-size: 13px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15) !important;
+    box-shadow: 0 4px 14px rgba(2, 89, 107, 0.2) !important;
     transition: all 0.2s ease !important;
 }
 
 .travelind-booking-wrapper .btn-alert-dismiss:hover {
-    background-color: #1e293b !important;
+    background-color: var(--dark-teal) !important;
 }
 
 .travelind-booking-wrapper .btn-alert-dismiss:active {
     transform: scale(0.97) !important;
-    box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -293,10 +288,10 @@
     100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
-@keyframes luxuryPulseRadar {
-    0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
-    70% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+@keyframes friendlyPulseRadar {
+    0% { box-shadow: 0 0 0 0 rgba(2, 89, 107, 0.4); }
+    70% { box-shadow: 0 0 0 14px rgba(2, 89, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(2, 89, 107, 0); }
 }
 
 /* LEAFLET AND SIDEBARS STANDARD NAV */

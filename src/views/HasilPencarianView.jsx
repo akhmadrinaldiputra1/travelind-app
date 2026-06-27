@@ -10,7 +10,7 @@ const HasilPencarianView = () => {
 
   // ----------------==========================================================
   // ⚡️ STATE CONTROLLER
-  // ----------------==========================================================
+  // ----------------------------------------------------------------==========
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeBottomSheet, setActiveBottomSheet] = useState(null); 
 
@@ -98,7 +98,7 @@ const HasilPencarianView = () => {
 
   // ----------------==========================================================
   // 🔄 CORE LIFE-CYCLE ENGINE
-  // ----------------==========================================================
+  // ----------------------------------------------------------------==========
   useEffect(() => {
     const fetchCoreManifestEngine = async () => {
       const booking_id = localStorage.getItem("booking_id");
@@ -144,7 +144,6 @@ const HasilPencarianView = () => {
   const processAndRenderEngine = (rawArray, targetFilter, targetSort) => {
     let result = [...rawArray];
 
-    // 1. Eksekusi Penyaringan Tipe Mobil HANYA JIKA filter bukan 'ALL'
     if (targetFilter !== 'ALL') {
       result = result.filter(item => {
         const dbType = item.tipe_mobil ? item.tipe_mobil.toUpperCase().trim() : "";
@@ -152,7 +151,6 @@ const HasilPencarianView = () => {
       });
     }
 
-    // 2. Eksekusi Pengurutan Nilai Harga Kursi
     if (targetSort === 'murah') {
       result.sort((a, b) => Number(a.harga) - Number(b.harga));
     } else if (targetSort === 'mahal') {
@@ -191,7 +189,6 @@ const HasilPencarianView = () => {
     navigate('/pemesanan'); 
   };
 
-  // 🌟 FUNGSI NAVIGASI KE PROFILE (UNTUK FIX CRASH ERROR)
   const handleNavigasiAkun = () => {
     setIsSidebarOpen(false);
     navigate('/profil'); 
@@ -214,39 +211,36 @@ const HasilPencarianView = () => {
           </button>
         </header>
 
-       {/* --- PROGRESS TRACKER BAR SINKRON (NODE 2 ACTIVE) --- */}
-<div className="progress-container">
-  <div className="steps-row-modern">
-    {/* Node 1: Selesai */}
-    <div className="step-node completed">
-      <span className="circle-node">
-        <i className="fa-solid fa-check" style={{ fontSize: '10px' }}></i>
-      </span>
-      <span className="node-label">{t.step1}</span>
-    </div>
-    <div className="line-connector full"></div>
+        {/* PROGRESS TRACKER BAR SINKRON */}
+        <div className="progress-container">
+          <div className="steps-row-modern">
+            <div className="step-node completed">
+              <span className="circle-node">
+                <i className="fa-solid fa-check" style={{ fontSize: '10px' }}></i>
+              </span>
+              <span className="node-label">{t.step1}</span>
+            </div>
+            <div className="line-connector full"></div>
 
-    {/* Node 2: Sedang Aktif di Halaman Ini */}
-    <div className="step-node active">
-      <span className="circle-node">2</span>
-      <span className="node-label">{t.step2}</span>
-    </div>
-    <div className="line-connector"></div>
+            <div className="step-node active">
+              <span className="circle-node">2</span>
+              <span className="node-label">{t.step2}</span>
+            </div>
+            <div className="line-connector"></div>
 
-    {/* Node 3: Belum Aktif */}
-    <div className="step-node">
-      <span className="circle-node">3</span>
-      <span className="node-label">{t.step3}</span>
-    </div>
-    <div className="line-connector"></div>
+            <div className="step-node">
+              <span className="circle-node">3</span>
+              <span className="node-label">{t.step3}</span>
+            </div>
+            <div className="line-connector"></div>
 
-    {/* Node 4: Belum Aktif */}
-    <div className="step-node">
-      <span className="circle-node">4</span>
-      <span className="node-label">{t.step4}</span>
-    </div>
-  </div>
-</div>
+            <div className="step-node">
+              <span className="circle-node">4</span>
+              <span className="node-label">{t.step4}</span>
+            </div>
+          </div>
+        </div>
+
         {/* UPPER ROUTE INFO BOX */}
         <div className="info-card-wrapper-fixed">
           <section className="info-card">
@@ -283,21 +277,25 @@ const HasilPencarianView = () => {
         </div>
       </div>
 
-      {/* 🌟 MURNI LIST DI BAWAH INI YANG BISA DI-SCROLL */}
+      {/* 🌟 AREA SCROLLER KONTEN UTAMA */}
       <div className="search-content-scroller">
-        <section className="travel-list">
-          {loadingData ? (
-            <div style={{ textAlign: 'center', padding: '40px 0', color: '#8c96a3' }}>
-              <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '24px', marginBottom: '8px', color: '#02596b' }}></i>
-              <p>{t.mencariArmada}</p>
-            </div>
-          ) : filteredTravelData.length === 0 ? (
-            <div className="empty-state">
-              <i className="fa-solid fa-car-tunnel" style={{ fontSize: '42px', marginBottom: '14px', color: '#cbd5e0' }}></i>
+        
+        {loadingData ? (
+          <div className="loading-state-wrapper">
+            <i className="fa-solid fa-circle-notch fa-spin"></i>
+            <p>{t.mencariArmada}</p>
+          </div>
+        ) : filteredTravelData.length === 0 ? (
+          /* 🌟 DATA KOSONG DIKUNCI DI TENGAH LAYAR & TINGGI SEJAJAR ELASTIS */
+          <div className="empty-state-container">
+            <div className="empty-state-box">
+              <i className="fa-solid fa-car-tunnel"></i>
               <p>{t.emptyState}</p>
             </div>
-          ) : (
-            filteredTravelData.map((item) => {
+          </div>
+        ) : (
+          <section className="travel-list">
+            {filteredTravelData.map((item) => {
               const typeClean = item.tipe_mobil ? item.tipe_mobil.toUpperCase().trim() : "";
               const vehicleIcon = item.foto_armada && item.foto_armada !== "-" 
                 ? item.foto_armada 
@@ -314,7 +312,7 @@ const HasilPencarianView = () => {
                       <h4 className="travel-name">{item.nama}</h4>
                       <div className="rating-wrapper">
                         <i className="fa-solid fa-star"></i> 4.9 
-                        <span className="review-count">(142) {typeClean && typeClean !== "-" && ` • Kategori: ${typeClean}`}</span>
+                        <span className="review-count">{typeClean && typeClean !== "-" && ` • Kategori: ${typeClean}`}</span>
                       </div>
                     </div>
                     <span className="status-badge">Tersedia</span>
@@ -342,36 +340,36 @@ const HasilPencarianView = () => {
                   </div>
                 </div>
               );
-            })
-          )}
-        </section>
+            })}
+          </section>
+        )}
 
-        {/* TRUST BANNER & HELP SECTION */}
-        <section className="trust-banner">
-          <div className="trust-icon"><i className="fa-solid fa-shield-halved"></i></div>
-          <div className="trust-text">
-            <h5>{t.amanTitle}</h5>
-            <p>{t.amanDesc}</p>
-          </div>
-        </section>
-
-        <section className="help-section" onClick={handleOpenHelpCS}>
-          <div className="help-content">
-            <div className="help-left">
-              <i className="fa-solid fa-headset help-icon"></i>
-              <div className="help-text">
-                <h5>{t.bantuanTitle}</h5>
-                <p>{t.bantuanDesc}</p>
-              </div>
+        {/* TRUST BANNER & HELP SECTION (Hanya muncul di paling bawah daftar scroll) */}
+        <div className="scroller-footer-group">
+          <section className="trust-banner">
+            <div className="trust-icon"><i className="fa-solid fa-shield-halved"></i></div>
+            <div className="trust-text">
+              <h5>{t.amanTitle}</h5>
+              <p>{t.amanDesc}</p>
             </div>
-            <i className="fa-solid fa-chevron-right arrow-muted"></i>
-          </div>
-        </section>
+          </section>
+
+          <section className="help-section" onClick={handleOpenHelpCS}>
+            <div className="help-content">
+              <div className="help-left">
+                <i className="fa-solid fa-headset help-icon"></i>
+                <div className="help-text">
+                  <h5>{t.bantuanTitle}</h5>
+                  <p>{t.bantuanDesc}</p>
+                </div>
+              </div>
+              <i className="fa-solid fa-chevron-right arrow-muted"></i>
+            </div>
+          </section>
+        </div>
       </div>
 
-      {/* ====================================================================
-         ⚡️ SIDEBAR LACI SINKRON (MURNI TANPA INTEGRASI TOMBOL BAHASA LAGI)
-         ==================================================================== */}
+      {/* NAVIGATION SIDEBAR */}
       <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <nav className={`sidebar-menu ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
@@ -405,11 +403,11 @@ const HasilPencarianView = () => {
           </button>
         </div>
         <div className="sidebar-footer">
-          <p>© 2026 TRAVELIND Startup. v2.0.0</p>
+          <p>©️ 2026 TRAVELIND Startup. v2.0.0</p>
         </div>
       </nav>
 
-      {/* BOTTOM SHEET PORTAL */}
+      {/* BOTTOM SHEETS PORTAL CONTAINER */}
       <div className={`sheet-overlay ${activeBottomSheet ? 'active' : ''}`} onClick={() => setActiveBottomSheet(null)}></div>
       
       {/* Sheet Urutkan */}
