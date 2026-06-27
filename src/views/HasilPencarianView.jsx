@@ -214,31 +214,39 @@ const HasilPencarianView = () => {
           </button>
         </header>
 
-        {/* 🌟 PROGRESS TRACKER MINIMALIS SEPERTI GAMBAR CONTOH */}
-        <div className="progress-container">
-          <div className="steps-row-modern">
-            <div className="step-node completed">
-              <span className="circle-node">1</span>
-              <span className="node-label">{t.step1}</span>
-            </div>
-            <div className="line-connector full"></div>
-            <div className="step-node active">
-              <span className="circle-node">2</span>
-              <span className="node-label">{t.step2}</span>
-            </div>
-            <div className="line-connector"></div>
-            <div className="step-node">
-              <span className="circle-node">3</span>
-              <span className="node-label">{t.step3}</span>
-            </div>
-            <div className="line-connector"></div>
-            <div className="step-node">
-              <span className="circle-node">4</span>
-              <span className="node-label">{t.step4}</span>
-            </div>
-          </div>
-        </div>
+       {/* --- PROGRESS TRACKER BAR SINKRON (NODE 2 ACTIVE) --- */}
+<div className="progress-container">
+  <div className="steps-row-modern">
+    {/* Node 1: Selesai */}
+    <div className="step-node completed">
+      <span className="circle-node">
+        <i className="fa-solid fa-check" style={{ fontSize: '10px' }}></i>
+      </span>
+      <span className="node-label">{t.step1}</span>
+    </div>
+    <div className="line-connector full"></div>
 
+    {/* Node 2: Sedang Aktif di Halaman Ini */}
+    <div className="step-node active">
+      <span className="circle-node">2</span>
+      <span className="node-label">{t.step2}</span>
+    </div>
+    <div className="line-connector"></div>
+
+    {/* Node 3: Belum Aktif */}
+    <div className="step-node">
+      <span className="circle-node">3</span>
+      <span className="node-label">{t.step3}</span>
+    </div>
+    <div className="line-connector"></div>
+
+    {/* Node 4: Belum Aktif */}
+    <div className="step-node">
+      <span className="circle-node">4</span>
+      <span className="node-label">{t.step4}</span>
+    </div>
+  </div>
+</div>
         {/* UPPER ROUTE INFO BOX */}
         <div className="info-card-wrapper-fixed">
           <section className="info-card">

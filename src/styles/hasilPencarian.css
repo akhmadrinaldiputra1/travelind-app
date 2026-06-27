@@ -125,13 +125,14 @@
 }
 
 /* ==========================================================================
-   📈 STEPPER PROGRESS TRACKER (MODERN STYLE - SEPERTI GAMBER REFERENSI)
+   📈 STEPPER PROGRESS TRACKER (MODERN MINIMALIS - SINKRON 100%)
    ========================================================================== */
 .travelind-search-wrapper .progress-container {
     background-color: var(--primary-teal);
-    padding: 8px 24px 18px 24px;
+    padding: 8px 24px 16px 24px;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
+    margin-top: -1px;
 }
 
 .steps-row-modern {
@@ -168,7 +169,6 @@
     white-space: nowrap;
 }
 
-/* Line bar connectors */
 .line-connector {
     width: 14px;
     height: 2px;
@@ -177,19 +177,21 @@
     flex-shrink: 0;
 }
 
-/* Active & Complete Stepper states */
-.step-node.active, .step-node.completed {
-    opacity: 1;
+.step-node.active, .step-node.completed { 
+    opacity: 1; 
 }
-.step-node.active .circle-node, .step-node.completed .circle-node {
-    background-color: #ffffff;
-    color: var(--primary-teal);
+
+.step-node.active .circle-node, .step-node.completed .circle-node { 
+    background-color: #ffffff; 
+    color: var(--primary-teal); 
 }
-.step-node.active .node-label {
-    font-weight: 700;
+
+.step-node.active .node-label { 
+    font-weight: 700; 
 }
-.line-connector.full {
-    background-color: #ffffff;
+
+.line-connector.full { 
+    background-color: #ffffff; 
 }
 
 /* ==========================================================================
