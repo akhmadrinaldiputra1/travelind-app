@@ -47,7 +47,7 @@
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 16px 16px 150px 16px;
+    padding: 16px 16px 20px 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -206,36 +206,98 @@
 
 .btn-confirm-terms { width: 100%; background-color: var(--primary-teal); color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 89, 107, 0.15); }
 
+
+/* Mengecilkan ukuran kontainer utama popup agar ramping & proporsional */
+.travelind-booking-wrapper .alert-error-bounce {
+    width: 85% !important;
+    max-width: 300px !important; /* Dikecilkan dari ukuran raksasa sebelumnya */
+    background: #ffffff !important;
+    border-radius: 24px !important;
+    padding: 24px 20px 20px 20px !important;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.22) !important;
+    animation: luxurySoftBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards !important;
+}
+
+/* Mengubah ikon lingkaran tanda seru menjadi jauh lebih estetik & interaktif */
+.travelind-booking-wrapper .alert-lottie-mock-icon-zone {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-bottom: 12px !important;
+}
+
+.travelind-booking-wrapper .circle-exclamation-pulse {
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 50% !important;
+    background-color: #fff1f2 !important; /* Merah rose muda yang mewah */
+    color: #e11d48 !important; /* Merah premium kontras */
+    font-size: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4) !important;
+    animation: luxuryPulseRadar 1.8s infinite !important;
+}
+
+/* Merampingkan teks judul dan deskripsi di dalam popup */
+.travelind-booking-wrapper .alert-text-center {
+    text-align: center !important;
+    padding: 0 4px !important;
+}
+
+.travelind-booking-wrapper .alert-title-main {
+    font-size: 15px !important; /* Lebih kecil & tajam */
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 0 8px 0 !important;
+    line-height: 1.4 !important;
+}
+
+.travelind-booking-wrapper .alert-subtitle-desc {
+    font-size: 12px !important; /* Ramping standar aplikasi iOS/Android */
+    color: #64748b !important;
+    margin: 0 !important;
+    line-height: 1.6 !important;
+}
+
+/* Mengubah tombol penutup menjadi bergaya minimalis modern gelap */
+.travelind-booking-wrapper .btn-alert-dismiss {
+    width: 100% !important;
+    background-color: #0f172a !important; /* Hitam arang elegan */
+    color: #ffffff !important;
+    border: none !important;
+    padding: 11px 16px !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15) !important;
+    transition: all 0.2s ease !important;
+}
+
+.travelind-booking-wrapper .btn-alert-dismiss:hover {
+    background-color: #1e293b !important;
+}
+
+.travelind-booking-wrapper .btn-alert-dismiss:active {
+    transform: scale(0.97) !important;
+    box-shadow: none !important;
+}
+
 /* ==========================================================================
-   🚨 POIN 5: GAYA KUSTOM MODAL PERINGATAN DATA BELUM LENGKAP PREMIUM UX
+   🔑 ANIMATION TIMELINE FOR LUXURY SYSTEM
    ========================================================================== */
-.alert-error-bounce {
-    animation: alertBounceEffect 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    padding: 24px 14px 12px 14px !important;
+@keyframes luxurySoftBounce {
+    0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
-.alert-lottie-mock-icon-zone {
-    display: flex; justify-content: center; align-items: center; margin-bottom: 8px;
+@keyframes luxuryPulseRadar {
+    0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
+    70% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
 }
-
-.circle-exclamation-pulse {
-    width: 60px; height: 60px; border-radius: 50%; background-color: #fef2f2;
-    color: #ef4444; font-size: 32px; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-    animation: alertPulseIcon 1.6s infinite;
-}
-
-.alert-text-center { text-align: center !important; padding: 10px 14px !important; }
-.alert-title-main { font-size: 16px; font-weight: 800; color: #1e293b; margin: 0 0 10px 0; line-height: 1.4; }
-.alert-subtitle-desc { font-size: 12.5px; color: #64748b; margin: 0; line-height: 1.5; text-align: center; }
-
-.btn-alert-dismiss {
-    width: 100%; background-color: #ef4444; color: #ffffff; border: none;
-    padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700;
-    cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
-    transition: all 0.2s ease;
-}
-.btn-alert-dismiss:active { transform: scale(0.97); background-color: #dc2626; }
 
 /* LEAFLET AND SIDEBARS STANDARD NAV */
 .travelind-booking-wrapper .sidebar-overlay { display: none !important; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(3px); z-index: 2000; opacity: 0; pointer-events: none; }

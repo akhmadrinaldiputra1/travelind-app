@@ -1,55 +1,26 @@
 /* ==========================================================================
-   HEADER & PROGRESS FOR SUCCESS REVIEW VIEW
+   🔒 ISOLATED STYLE ARCHITECTURE: SUCCESS VIEW ONLY (ANTI-LEAKAGE SYSTEM)
    ========================================================================== */
-.main-header-success {
-    background-color: #02596b;
-    padding: 24px 24px 16px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    color: #ffffff;
-}
 
-.main-header-success .back-btn {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 16px;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-}
-
-.progress-container-success {
-    background-color: #02596b;
-    padding: 0 24px 20px 24px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-}
-
-/* ==========================================================================
-   DYNAMiC MUTATION BANNER STATUS CARDS (PENDING & LUNAS STYLES)
-   ========================================================================== */
-.status-banner-card {
+.travelind-booking-wrapper .status-banner-card {
     background-color: #fffbeb;
     border: 1px solid #fef3c7;
     padding: 16px;
+    border-radius: 14px;
 }
 
-.status-banner-card.lunas-style-card {
+.travelind-booking-wrapper .status-banner-card.lunas-style-card {
     background-color: #f0fdf4;
     border-color: #dcfce7;
 }
 
-.status-flex-box {
+.travelind-booking-wrapper .status-flex-box {
     display: flex;
     gap: 14px;
     align-items: flex-start;
 }
 
-.animated-sandglass-icon {
+.travelind-booking-wrapper .animated-sandglass-icon {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -62,41 +33,45 @@
     flex-shrink: 0;
 }
 
-.animated-sandglass-icon i {
-    animation: sandglassRotate 2.5s infinite ease-in-out;
+.travelind-booking-wrapper .animated-sandglass-icon i {
+    animation: successSandglassRotate 2.5s infinite ease-in-out;
 }
 
-@keyframes sandglassRotate {
+@keyframes successSandglassRotate {
     0%, 100% { transform: rotate(0deg); }
     50% { transform: rotate(180deg); }
 }
 
-.animated-sandglass-icon.lunas-icon-box {
+.travelind-booking-wrapper .animated-sandglass-icon.lunas-icon-box {
     background-color: #dcfce7;
     color: #16a34a;
 }
 
-.animated-sandglass-icon.lunas-icon-box i {
-    animation: popScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+.travelind-booking-wrapper .animated-sandglass-icon.lunas-icon-box i {
+    animation: successPopScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-@keyframes popScale {
+@keyframes successPopScale {
     from { transform: scale(0.6); }
     to { transform: scale(1); }
 }
 
-.status-message-text h4 {
+.travelind-booking-wrapper .status-message-text h4 {
     font-size: 15px;
     font-weight: 700;
+    color: #1e293b;
+    margin: 0;
 }
 
-.status-message-text p {
+.travelind-booking-wrapper .status-message-text p {
     font-size: 11.5px;
     line-height: 1.4;
     margin-top: 6px;
+    color: #475569;
+    text-align: left;
 }
 
-.badge-warning-inline {
+.travelind-booking-wrapper .badge-warning-inline {
     display: inline-block;
     background-color: #fff1cc;
     color: #b78103;
@@ -107,7 +82,7 @@
     margin-top: 4px;
 }
 
-.badge-success-outline-pay {
+.travelind-booking-wrapper .badge-success-outline-pay {
     display: inline-block;
     background-color: #e6f7ef;
     color: #27ae60;
@@ -118,7 +93,7 @@
     margin-top: 4px;
 }
 
-.estimation-alert-bar {
+.travelind-booking-wrapper .estimation-alert-bar {
     margin-top: 12px;
     padding-top: 10px;
     border-top: 1px dashed rgba(217, 119, 6, 0.15);
@@ -130,7 +105,7 @@
     font-weight: 600;
 }
 
-.lunas-style-card .estimation-alert-bar {
+.travelind-booking-wrapper .lunas-style-card .estimation-alert-bar {
     border-top-color: rgba(22, 163, 74, 0.15);
     color: #166534;
 }
@@ -138,54 +113,55 @@
 /* ==========================================================================
    METADATA GRID RESI CARD
    ========================================================================== */
-.metadata-grid-card {
+.travelind-booking-wrapper .metadata-grid-card {
     display: flex;
     padding: 12px 16px;
 }
 
-.meta-item {
+.travelind-booking-wrapper .meta-item {
     flex: 1;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.meta-item.border-left {
+.travelind-booking-wrapper .meta-item.border-left {
     border-left: 1px dashed #e2e8f0;
     padding-left: 14px;
 }
 
-.meta-icon-frame {
+.travelind-booking-wrapper .meta-icon-frame {
     font-size: 16px;
     color: #02596b;
 }
 
-.meta-texts span {
+.travelind-booking-wrapper .meta-texts span {
     font-size: 10px;
     color: #8c96a3;
     font-weight: 500;
 }
 
-.meta-texts h5 {
+.travelind-booking-wrapper .meta-texts h5 {
     font-size: 13px;
     font-weight: 700;
     color: #2b2b2b;
-    margin-top: 1px;
+    margin: 1px 0 0 0;
 }
 
 /* ==========================================================================
    TICKET PROFILE & MANIFEST ADDRESS TIMELINE
    ========================================================================== */
-.card-section-title {
-    font-size: 13px;
+.travelind-booking-wrapper .card-section-title {
+    font-size: 12px;
     font-weight: 700;
     color: #013e4b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
+    text-align: left;
 }
 
-.armada-mini-profile {
+.travelind-booking-wrapper .armada-mini-profile {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -194,19 +170,25 @@
     border-radius: 10px;
 }
 
-.armada-avatar-img {
+.travelind-booking-wrapper .armada-avatar-img {
     width: 32px;
     height: 32px;
-    object-fit: contain;
+    object-fit: cover;
 }
 
-.armada-meta-info h5 {
+.travelind-booking-wrapper .armada-meta-info {
+    flex: 1;
+    text-align: left;
+}
+
+.travelind-booking-wrapper .armada-meta-info h5 {
     font-size: 13px;
     font-weight: 700;
     color: #2b2b2b;
+    margin: 0;
 }
 
-.rating-row {
+.travelind-booking-wrapper .rating-row {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -215,11 +197,11 @@
     margin-top: 1px;
 }
 
-.rating-row i {
+.travelind-booking-wrapper .rating-row i {
     color: #f2994a;
 }
 
-.ticket-horiz-info-grid {
+.travelind-booking-wrapper .ticket-horiz-info-grid {
     display: flex;
     justify-content: space-between;
     margin-top: 14px;
@@ -227,29 +209,30 @@
     border-bottom: 1px solid #f1f5f9;
 }
 
-.horiz-grid-item {
+.travelind-booking-wrapper .horiz-grid-item {
     display: flex;
     align-items: flex-start;
     gap: 6px;
     font-size: 11px;
+    text-align: left;
 }
 
-.horiz-grid-item i {
+.travelind-booking-wrapper .horiz-grid-item i {
     color: #02596b;
     margin-top: 2px;
 }
 
-.horiz-grid-item b {
+.travelind-booking-wrapper .horiz-grid-item b {
     color: #2b2b2b;
     font-size: 12px;
 }
 
-.horiz-grid-item span {
+.travelind-booking-wrapper .horiz-grid-item span {
     color: #8c96a3;
 }
 
 /* Vertical Manifesto Timeline */
-.manifest-address-timeline {
+.travelind-booking-wrapper .manifest-address-timeline {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -258,7 +241,7 @@
     padding-left: 6px;
 }
 
-.manifest-address-timeline::before {
+.travelind-booking-wrapper .manifest-address-timeline::before {
     content: '';
     position: absolute;
     top: 12px;
@@ -268,15 +251,16 @@
     border-left: 1px dashed #cbd5e0;
 }
 
-.timeline-row {
+.travelind-booking-wrapper .timeline-row {
     display: flex;
     align-items: flex-start;
     gap: 14px;
     position: relative;
     z-index: 5;
+    text-align: left;
 }
 
-.icon-marker-teal {
+.travelind-booking-wrapper .icon-marker-teal {
     width: 12px;
     font-size: 11px;
     color: #02596b;
@@ -285,13 +269,13 @@
     margin-top: 2px;
 }
 
-.timeline-text span {
+.travelind-booking-wrapper .timeline-text span {
     font-size: 10px;
     color: #8c96a3;
     font-weight: 600;
 }
 
-.timeline-text p {
+.travelind-booking-wrapper .timeline-text p {
     font-size: 12px;
     font-weight: 600;
     color: #2b2b2b;
@@ -299,13 +283,13 @@
     line-height: 1.3;
 }
 
-.btn-secondary-outline-action {
+.travelind-booking-wrapper .btn-secondary-outline-action {
     width: 100%;
     background-color: #ffffff;
     border: 1px solid #cbd5e0;
     color: #4a5568;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 11px;
+    border-radius: 12px;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -313,7 +297,7 @@
     transition: all 0.2s;
 }
 
-.btn-secondary-outline-action:hover {
+.travelind-booking-wrapper .btn-secondary-outline-action:hover {
     background-color: #f8fafc;
     color: #02596b;
     border-color: #02596b;
@@ -322,7 +306,7 @@
 /* ==========================================================================
    FINANCIAL THREE COLUMN BLOCKS
    ========================================================================== */
-.finance-grid-three-col {
+.travelind-booking-wrapper .finance-grid-three-col {
     display: flex;
     justify-content: space-between;
     background-color: #f8fafc;
@@ -330,29 +314,31 @@
     border-radius: 10px;
 }
 
-.fin-col {
+.travelind-booking-wrapper .fin-col {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    text-align: left;
 }
 
-.fin-col span {
+.travelind-booking-wrapper .fin-col span {
     font-size: 10px;
     color: #8c96a3;
     font-weight: 500;
 }
 
-.fin-col h5 {
+.travelind-booking-wrapper .fin-col h5 {
     font-size: 12px;
     font-weight: 700;
     color: #2b2b2b;
+    margin: 0;
 }
 
-.teal-amount-text {
+.travelind-booking-wrapper .teal-amount-text {
     color: #02596b !important;
 }
 
-.view-receipt-row-trigger {
+.travelind-booking-wrapper .view-receipt-row-trigger {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -365,7 +351,7 @@
     color: #02596b;
 }
 
-.arrow-muted {
+.travelind-booking-wrapper .arrow-muted {
     color: #cbd5e0;
     font-size: 11px;
 }
@@ -373,7 +359,7 @@
 /* ==========================================================================
    HELP CUSTOMER BANNER CARDS
    ========================================================================== */
-.help-cs-banner-card {
+.travelind-booking-wrapper .help-cs-banner-card {
     background-color: #ffffff;
     border: 1px solid #eef2f5;
     border-radius: 16px;
@@ -385,13 +371,13 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
 }
 
-.cs-left-side {
+.travelind-booking-wrapper .cs-left-side {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.cs-headset-circle {
+.travelind-booking-wrapper .cs-headset-circle {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -403,19 +389,24 @@
     font-size: 14px;
 }
 
-.cs-strings h6 {
+.travelind-booking-wrapper .cs-strings {
+    text-align: left;
+}
+
+.travelind-booking-wrapper .cs-strings h6 {
     font-size: 13px;
     font-weight: 700;
     color: #2b2b2b;
+    margin: 0;
 }
 
-.cs-strings p {
+.travelind-booking-wrapper .cs-strings p {
     font-size: 11px;
     color: #8c96a3;
     margin-top: 1px;
 }
 
-.btn-call-cs-action {
+.travelind-booking-wrapper .btn-call-cs-action {
     background-color: #02596b;
     color: #ffffff;
     border: none;
@@ -427,66 +418,55 @@
     white-space: nowrap;
 }
 
-.bottom-policy-notice-text {
+.travelind-booking-wrapper .bottom-policy-notice-text {
     text-align: center;
     font-size: 10.5px;
     color: #8c96a3;
     font-weight: 500;
     margin-top: 4px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 /* ==========================================================================
-   MODAL OVERLAY SHEET FOR POP-UP CONTROLS (IMAGE & MANIFEST LISTS)
+   🥞 CORE SYSTEM: MODERN PREMIUM BOTTOM SHEET ARTIFACT (MUNCUL DARI BAWAH)
    ========================================================================== */
-.modal-success-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
+.travelind-booking-wrapper .bottom-sheet-backdrop {
+    background-color: rgba(15, 23, 42, 0.4) !important;
+    backdrop-filter: blur(6px) !important;
+    display: flex !important;
+    align-items: flex-end !important; /* Memaksa popup menempel di dasar layar */
+    justify-content: center !important;
 }
 
-.modal-success-content {
-    background-color: #ffffff;
-    width: 100%;
-    max-width: 450px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    padding: 20px;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.travelind-booking-wrapper .bottom-sheet-card {
+    background-color: #ffffff !important;
+    width: 100% !important;
+    max-width: 450px !important;
+    border-radius: 0px !important;
+    border-top-left-radius: 24px !important;
+    border-top-right-radius: 24px !important;
+    padding: 12px 20px 30px 20px !important;
+    max-height: 75vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    animation: luxurySlideUpSheet 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
 }
 
-@keyframes slideUpModal {
+/* Garis notch minimalis penanda bahwa sheet bisa di-swipe kebawah */
+.travelind-booking-wrapper .modal-notch-line {
+    width: 42px;
+    height: 4px;
+    background-color: #cbd5e0;
+    border-radius: 2px;
+    margin: 0 auto 14px auto;
+}
+
+@keyframes luxurySlideUpSheet {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
 }
 
-/* Modifiers Layout Tengah Khusus Gambar */
-.modal-center-layout {
-    border-radius: 20px !important;
-    width: 90% !important;
-    align-self: center;
-    margin-bottom: auto;
-    margin-top: auto;
-    animation: fadeInCenter 0.25s ease-out forwards;
-}
-
-@keyframes fadeInCenter {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.modal-success-header {
+.travelind-booking-wrapper .modal-success-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -494,13 +474,14 @@
     border-bottom: 1px solid #edf2f7;
 }
 
-.modal-success-header h5 {
+.travelind-booking-wrapper .modal-success-header h5 {
     font-size: 14px;
     font-weight: 700;
     color: #2b2b2b;
+    margin: 0;
 }
 
-.modal-success-close-btn {
+.travelind-booking-wrapper .modal-success-close-btn {
     background: none;
     border: none;
     font-size: 18px;
@@ -508,12 +489,12 @@
     cursor: pointer;
 }
 
-.modal-success-body {
+.travelind-booking-wrapper .modal-success-body {
     overflow-y: auto;
-    padding: 14px 0 6px 0;
+    padding: 14px 0 4px 0;
 }
 
-.modal-success-body.image-housing {
+.travelind-booking-wrapper .modal-success-body.image-housing {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -523,49 +504,40 @@
     margin-top: 10px;
 }
 
-.img-fluid-preview {
+.travelind-booking-wrapper .img-fluid-preview {
     max-width: 100%;
-    max-height: 380px;
+    max-height: 340px;
     object-fit: contain;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
-.img-fluid-preview.hidden {
-    display: none;
-}
-
-.loader-box-text {
+.travelind-booking-wrapper .loader-box-text {
     font-size: 12px;
     color: #8c96a3;
     text-align: center;
     font-weight: 500;
 }
 
-.loader-box-text i {
-    color: #02596b;
-    margin-right: 4px;
-}
-
 /* Interior Menu Item untuk Laci Detail Tiket Manifes */
-.manifes-popup-row {
+.travelind-booking-wrapper .manifes-popup-row {
     display: flex;
     justify-content: space-between;
     font-size: 12.5px;
-    padding: 10px 0;
+    padding: 12px 4px;
     border-bottom: 1px solid #f8fafc;
     color: #4a5568;
 }
 
-.manifes-popup-row span {
+.travelind-booking-wrapper .manifes-popup-row span {
     color: #8c96a3;
 }
 
-.manifes-popup-row b {
+.travelind-booking-wrapper .manifes-popup-row b {
     color: #2b2b2b;
     font-weight: 600;
 }
 
-.manifest-alert-footer-badge {
+.travelind-booking-wrapper .manifest-alert-footer-badge {
     margin-top: 14px;
     background-color: #f0fdf4;
     border: 1px solid #dcfce7;
@@ -577,4 +549,28 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    text-align: left;
+}
+/* ==========================================================================
+   ⚙️ TAMBAHAN PENGUNCI AREA SCROLLER (SINKRONISASI AKHIR)
+   ========================================================================== */
+
+/* Menambahkan selector scroller khusus halaman sukses agar tidak melorot */
+.travelind-booking-wrapper .booking-content-scroller.success-scroller-locked {
+    padding: 16px 16px 20px 16px !important; /* Memangkas jarak kosong abu-abu di bawah */
+}
+
+/* Merapatkan teks pembatalan gratis langsung ke bawah box butuh bantuan */
+.travelind-booking-wrapper .bottom-policy-notice-text {
+    margin-top: -10px !important;   /* Memaksa naik merapat ke box bantuan */
+    margin-bottom: 12px !important; /* Jarak proporsional ke teks copyright */
+}
+
+/* Mengatur posisi teks copyright di paling bawah */
+.travelind-booking-wrapper .page-bottom-copyright-footer {
+    text-align: center;
+    color: #a0aec0;
+    font-size: 11px;
+    margin-top: 0 !important;
+    padding-bottom: 4px !important;
 }

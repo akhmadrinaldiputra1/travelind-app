@@ -84,6 +84,8 @@
     justify-content: space-between;
     align-items: center;
     color: #ffffff;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 .travelind-search-wrapper .header-left {
