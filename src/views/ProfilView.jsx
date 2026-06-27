@@ -1,198 +1,212 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../config/supabaseClient';
-import '../styles/profil.css'; 
+import useAuthStore from '../store/authStore';
+import LoginView from './LoginView'; 
+import '../styles/profil.css';
 
 const ProfilView = () => {
   const navigate = useNavigate();
+  const { user, logout, bahasaGlobal, setBahasaGlobal } = useAuthStore();
 
-  // State dasar untuk menyimpan data user dan riwayat
-  const [userMeta, setUserMeta] = useState({ nama: '', email: '' });
-  const [daftarRiwayat, setDaftarRiwayat] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  // State Controller Pop-up
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false); 
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
 
-  useEffect(() => {
-    // 1. Ambil data identitas user dari local storage browser
-    const emailSesi = localStorage.getItem("email_penumpang") || "";
-    const namaSesi = localStorage.getItem("nama_penumpang") || "Penumpang TRAVELIND";
-
-    if (!emailSesi) {
-      setIsLoading(false);
-      setUserMeta({ nama: 'Belum Masuk', email: 'Silakan isi identitas di form order' });
-      return; 
+  const textContent = {
+    ID: {
+      title: 'PROFIL',
+      masuk: 'Masuk',
+      daftar: 'Daftar',
+      menu1: 'Profil Saya',
+      menu2: 'Coin saya',
+      menu3: 'Riwayat Perjalanan',
+      menu4: 'Bahasa',
+      logoutBtn: 'Keluar Akun',
+      logoutPrompt: 'Kamu yakin mau keluar nih?',
+      iya: 'Iya',
+      tidak: 'Tidak',
+      alertMsg: 'Silakan login dulu untuk melihat Profil kamu.'
+    },
+    EN: {
+      title: 'PROFILE',
+      masuk: 'Sign In',
+      daftar: 'Sign Up',
+      menu1: 'My Profile',
+      menu2: 'My Coins',
+      menu3: 'Travel History',
+      menu4: 'Language',
+      logoutBtn: 'Log Out Account',
+      logoutPrompt: 'Are you sure you want to log out?',
+      iya: 'Yes',
+      tidak: 'No',
+      alertMsg: 'Please log in first to view your Profile.'
     }
+  };
 
-    setUserMeta({ nama: namaSesi, email: emailSesi });
+  const t = textContent[bahasaGlobal];
+  const namaAsliUser = user?.user_metadata?.full_name || user?.email?.split('@')[0].toUpperCase();
 
-    // 2. Tarik data transaksi yang benar-benar SUDAH DIKONFIRMASI oleh Admin
-    const muatRiwayatLunas = async () => {
-      setIsLoading(true);
-      setIsError(false);
+  const handleMenuClick = (targetPath) => {
+    if (!user) {
+      setIsAlertOpen(true);
+    } else {
+      navigate(targetPath);
+    }
+  };
 
-      try {
-        const emailTarget = emailSesi.trim();
+  const toggleLanguage = () => {
+    setBahasaGlobal(bahasaGlobal === 'ID' ? 'EN' : 'ID');
+  };
 
-        // Kueri Supabase: Ambil dari tabel 'transaksi', COCOKKAN email,
-        // dan FILTER hanya status yang sah dari admin (Terkonfirmasi / Sudah Dikonfirmasi / Selesai)
-        const { data: dataTransaksi, error: errorTrx } = await supabase
-          .from("transaksi")
-          .select("*")
-          .eq("email_penumpang", emailTarget)
-          .in("status_pesanan", ["Terkonfirmasi", "Sudah Dikonfirmasi", "Selesai"])
-          .order("created_at", { ascending: false });
+  const handleEksekusiLogout = async () => {
+    setIsLogoutConfirmOpen(false);
+    await logout();
+    window.location.reload();
+  };
 
-        if (errorTrx) throw errorTrx;
-
-        setDaftarRiwayat(dataTransaksi || []);
-
-      } catch (err) {
-        console.error("Gagal memuat riwayat lunas:", err);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    muatRiwayatLunas();
-  }, [navigate]);
-
-  // Fungsi pembantu format tanggal Indonesia
-  const formatTanggalIndo = (timestamp) => {
-    if (!timestamp) return "Baru Saja";
-    const opsi = { day: 'numeric', month: 'short', year: 'numeric' };
-    const d = new Date(timestamp);
-    return isNaN(d.getTime()) ? timestamp : d.toLocaleDateString('id-ID', opsi);
+  // 🌟 TRIGGER MODAL DENGAN MENGATUR MODE SECARA SPESIFIK
+  const pemicuPopupAuth = (modeDipilih) => {
+    setAuthMode(modeDipilih);
+    setIsLoginPopupOpen(true);
   };
 
   return (
     <div className="app-container app-profil-container">
-      
-      {/* HEADER ATAS */}
-      <header className="main-header profil-isolated-header">
-        <div className="header-left">
-          <div className="back-btn" onClick={() => navigate('/home')}>
-            <i className="fa-solid fa-arrow-left"></i>
-          </div>
-          <h2 className="page-title">Profil Akun</h2>
-        </div>
+      <div className="profil-curved-header-bg"></div>
+
+      <header className="profil-header-nav">
+        <button className="back-btn" onClick={() => navigate('/home')}>
+          <i className="fa-solid fa-arrow-left"></i>
+        </button>
+        <h2>{t.title}</h2>
       </header>
 
-      {/* KONTEN UTAMA */}
-      <main className="content-wrapper" style={{ overflowY: 'auto' }}>
-        
-        {/* KARTU PROFIL USER */}
-        <section className="premium-card profile-user-card">
-          <div className="user-avatar-housing">
-            <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="Avatar" />
-          </div>
-          <div className="user-meta-strings">
-            <h4>{userMeta.nama}</h4>
-            <p>{userMeta.email}</p>
-            <span className="badge-member-status"><i className="fa-solid fa-medal"></i> Penumpang Setia</span>
-          </div>
-        </section>
-
-        {/* JUDUL SEKSI RIWAYAT */}
-        <div className="section-divider-title">
-          <h5><i className="fa-solid fa-circle-check" style={{ color: '#27ae60' }}></i> Riwayat Perjalanan Sukses</h5>
+      <div className="profile-card-center-wrapper">
+        <div className="avatar-circle-frame">
+          {user?.user_metadata?.avatar_url ? (
+            <img src={user.user_metadata.avatar_url} alt="Avatar" />
+          ) : (
+            <i className="fa-solid fa-user avatar-placeholder-icon"></i>
+          )}
         </div>
 
-        {/* DAFTAR KARTU RIWAYAT */}
-        <div className="history-list-housing">
-          
-          {isLoading && (
-            <div className="loading-state-history">
-              <i className="fa-solid fa-circle-notch fa-spin"></i>
-              <p>Memeriksa data riwayat perjalanan...</p>
-            </div>
-          )}
+        {user ? (
+          <>
+            <h4 className="user-text-name">{namaAsliUser}</h4>
+            <p className="user-text-email">{user.email}</p>
+          </>
+        ) : (
+          /* 🌟 1. PERBAIKAN: Klik tombol langsung mengeset mode popup secara presisi */
+          <div className="auth-btn-row-trigger">
+            <button className="btn-outline-auth" onClick={() => pemicuPopupAuth('login')}>{t.masuk}</button>
+            <button className="btn-outline-auth" onClick={() => pemicuPopupAuth('register')}>{t.daftar}</button>
+          </div>
+        )}
+      </div>
 
-          {isError && !isLoading && (
-            <div className="empty-state-history" style={{ color: '#eb5757' }}>
-              <i className="fa-solid fa-triangle-exclamation"></i>
-              <p>Gagal mengambil data dari server.</p>
-            </div>
-          )}
-
-          {/* JIKA BELUM ADA YANG DIKONFIRMASI ADMIN (Skenario Utama Kamu) */}
-          {!isLoading && !isError && daftarRiwayat.length === 0 && (
-            <div className="empty-state-history">
-              <i className="fa-solid fa-receipt" style={{ fontSize: '28px', marginBottom: '8px', color: '#b0bac5' }}></i>
-              <p>Tidak ada riwayat perjalanan aktif.<br />
-                <span style={{ fontSize: '11px', color: '#8c96a3' }}>
-                  Pesanan yang belum dikonfirmasi oleh admin tidak akan muncul di sini. Silakan pantau status di menu <b>Cek Tiket</b>.
-                </span>
-              </p>
-            </div>
-          )}
-
-          {/* LOOPING DATA JIKA SUDAH DIKONFIRMASI ADMIN */}
-          {!isLoading && !isError && daftarRiwayat.map((transaksi) => {
-            // Mengambil murni 8 digit awal dari kolom "id" (Primary Key Tabel Transaksi)
-            const idMurni = String(transaksi.id || '');
-            const idBersih = idMurni.replace(/[^a-zA-Z0-9]/g, '');
-            const kodeTiketFix = `TRV-${idBersih.substring(0, 8).toUpperCase()}`;
-
-            return (
-              <div key={transaksi.id} className="history-item-card">
-                <div className="history-header-row">
-                  <span className="history-code">{kodeTiketFix}</span>
-                  <span className="history-date">{formatTanggalIndo(transaksi.created_at)}</span>
-                </div>
-                
-                <div className="history-body-row">
-                  <div className="history-icon-box" style={{ background: '#e6f4ea', color: '#137333' }}>
-                    <i className="fa-solid fa-van-shuttle"></i>
-                  </div>
-                  <div className="history-route-info">
-                    <div className="history-route-title">Perjalanan Antar Kota</div>
-                    <div className="history-travel-name">{transaksi.nama_travel || 'Armada TRAVELIND'}</div>
-                  </div>
-                </div>
-
-                {/* AREA DETAIL DATA PENUMPANG DAN ALAMAT ASLI DARI TABEL TRANSAKSI */}
-                <div className="history-detail-sub-specs" style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '8px', fontSize: '12px', color: '#4a5568', margin: '8px 0', border: '1px solid #edf2f7', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div><i className="fa-solid fa-users" style={{ width: '18px', color: '#02596b' }}></i> Jumlah Penumpang: <b>{transaksi.penumpang || '1'} Orang</b></div>
-                  <div><i className="fa-solid fa-location-dot" style={{ width: '18px', color: '#eb5757' }}></i> Titik Jemput: <span style={{ fontSize: '11px' }}>{transaksi.pickup_alamat || '-'}</span></div>
-                  <div><i className="fa-solid fa-route" style={{ width: '18px', color: '#27ae60' }}></i> Titik Antar: <span style={{ fontSize: '11px' }}>{transaksi.tujuan_alamat || '-'}</span></div>
-                </div>
-                
-                <div className="history-footer-row">
-                  <div className="history-price">
-                    Rp {(transaksi.total_bayar || 0).toLocaleString('id-ID')}
-                  </div>
-                  <span className="badge-history-status status-success">
-                    Terkonfirmasi
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-
-        </div>
-
-        {/* TOMBOL LOGOUT UNTUK BERSIHKAN SESI */}
-        <button type="button" className="btn-logout-danger" onClick={() => { localStorage.clear(); navigate('/home'); }}>
-          <i className="fa-solid fa-arrow-right-from-bracket"></i> Keluar dari Sesi Akun
+      <div className="menu-list-container-premium">
+        <button className="card-menu-item-premium" onClick={() => handleMenuClick('/edit-profil')}>
+          <div className="menu-item-premium-left">
+            <i className="fa-regular fa-user"></i>
+            <span>{t.menu1}</span>
+          </div>
+          <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
         </button>
 
-      </main>
+        <button className="card-menu-item-premium" onClick={() => handleMenuClick('/coin-saya')}>
+          <div className="menu-item-premium-left">
+            <i className="fa-solid fa-coins" style={{ color: '#d69e2e' }}></i>
+            <span>{t.menu2}</span>
+          </div>
+          <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+        </button>
 
-      {/* NAVIGASI BAWAH */}
-      <nav className="bottom-nav-bar">
-        <div className="nav-item" onClick={() => navigate('/home')}>
+        <button className="card-menu-item-premium" onClick={() => handleMenuClick('/riwayat-perjalanan')}>
+          <div className="menu-item-premium-left">
+            <i className="fa-solid fa-route" style={{ color: '#2b6cb0' }}></i>
+            <span>{t.menu3}</span>
+          </div>
+          <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+        </button>
+
+        <button className="card-menu-item-premium" onClick={toggleLanguage}>
+          <div className="menu-item-premium-left">
+            <i className="fa-solid fa-language" style={{ color: '#319795' }}></i>
+            <span>{t.menu4} ({bahasaGlobal})</span>
+          </div>
+          <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+        </button>
+
+        {user && (
+          <button 
+            type="button" 
+            className="card-menu-item-premium" 
+            onClick={() => setIsLogoutConfirmOpen(true)}
+            style={{ marginTop: '20px', background: '#ffeef0', border: '1px solid #fed7d7' }}
+          >
+            <div className="menu-item-premium-left" style={{ color: 'var(--danger-red)' }}>
+              <i className="fa-solid fa-arrow-right-from-bracket" style={{ color: 'var(--danger-red)' }}></i>
+              <span>{t.logoutBtn}</span>
+            </div>
+            <i className="fa-solid fa-chevron-right" style={{ color: '#feb2b2' }}></i>
+          </button>
+        )}
+      </div>
+
+      {/* 🚨 ALERT POPUP BELUM LOGIN */}
+      <div className={`premium-popup-overlay ${isAlertOpen ? 'active' : ''}`} onClick={() => setIsAlertOpen(false)}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+          <div className="popup-sheet-notch"></div>
+          <i className="fa-solid fa-circle-exclamation" style={{ fontSize: '46px', color: 'var(--accent-orange)', marginBottom: '16px' }}></i>
+          <h5 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 20px 0', color: '#2d3748' }}>{t.alertMsg}</h5>
+          <button className="btn-login-primary" onClick={() => setIsAlertOpen(false) || pemicuPopupAuth('login')}>
+            Masuk Sekarang
+          </button>
+        </div>
+      </div>
+
+      {/* 🌟 LOGOUT POPUP CONFIRM */}
+      <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+          <div className="popup-sheet-notch"></div>
+          <i className="fa-solid fa-circle-question" style={{ fontSize: '48px', color: 'var(--danger-red)', marginBottom: '16px' }}></i>
+          <h5 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 24px 0', color: '#2d3748' }}>{t.logoutPrompt}</h5>
+          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+            <button className="btn-login-primary" onClick={handleEksekusiLogout} style={{ margin: 0, background: 'var(--danger-red)' }}>
+              {t.iya}
+            </button>
+            <button className="btn-login-primary" onClick={() => setIsLogoutConfirmOpen(false)} style={{ margin: 0, background: '#e2e8f0', color: '#4a5568' }}>
+              {t.tidak}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 🌟 SLIDE-UP DOCK POPUP LOGIN (DENGAN RE-REJECT MODE) */}
+      <div className={`premium-popup-overlay ${isLoginPopupOpen ? 'active' : ''}`} onClick={() => setIsLoginPopupOpen(false)}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="popup-sheet-notch"></div>
+          {/* Key mode ditambahkan di sini agar komponen re-render sesuai klik Masuk/Daftar */}
+          <LoginView key={authMode} initialMode={authMode} closePopup={() => setIsLoginPopupOpen(false)} />
+        </div>
+      </div>
+
+      {/* FIXED NAV BAR */}
+      <nav className="fixed-bottom-nav-profil">
+        <button className="nav-link-item" onClick={() => navigate('/home')}>
           <i className="fa-solid fa-house"></i>
-          <span>Beranda</span>
-        </div>
-        <div className="nav-item" onClick={() => navigate('/cek-tiket')}>
+          <span>{bahasaGlobal === 'ID' ? 'Beranda' : 'Home'}</span>
+        </button>
+        <button className="nav-link-item" onClick={() => navigate('/cek-tiket')}>
           <i className="fa-solid fa-ticket"></i>
-          <span>Cek Tiket</span>
-        </div>
-        <div className="nav-item active">
+          <span>{bahasaGlobal === 'ID' ? 'Tiket Saya' : 'My Tickets'}</span>
+        </button>
+        <button className="nav-link-item active" onClick={() => navigate('/profil')}>
           <i className="fa-solid fa-user"></i>
-          <span>Akun</span>
-        </div>
+          <span>{bahasaGlobal === 'ID' ? 'Profil' : 'Profile'}</span>
+        </button>
       </nav>
 
     </div>

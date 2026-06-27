@@ -1,0 +1,163 @@
+/* ==========================================================================
+   💎 TRAVELIND PREMIUM ARCHITECTURE: ISOLATED LOGIN SYSTEM
+   ========================================================================== */
+
+.login-isolated-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f7f9;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login-card-premium {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    padding: 32px 24px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(2, 89, 107, 0.05);
+    border: 1px solid #edf2f7;
+    text-align: center;
+}
+
+.login-card-premium h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #02596b;
+    margin: 0 0 8px 0;
+}
+
+.login-card-premium p {
+    font-size: 13px;
+    color: #8c96a3;
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+}
+
+/* Error Badge Alert */
+.login-error-badge {
+    background-color: #ffe5e5;
+    color: #eb5757;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: left;
+    border: 1px solid #fca5a5;
+}
+
+/* Form Styling */
+.login-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.input-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #013e4b;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #cbd5e0;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+}
+
+.input-field input:focus {
+    outline: none;
+    border-color: #02596b;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(2, 89, 107, 0.1);
+}
+
+/* Buttons */
+.btn-login-primary {
+    width: 100%;
+    background-color: #02596b;
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 8px;
+}
+
+.btn-login-primary:hover {
+    background-color: #013e4b;
+}
+
+.btn-login-primary:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+}
+
+/* Divider */
+.login-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #cbd5e0;
+    font-size: 12px;
+    margin: 20px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.login-divider span {
+    padding: 0 10px;
+}
+
+/* Google OAuth Button */
+.btn-login-google {
+    width: 100%;
+    background-color: #ffffff;
+    color: #2b2b2b;
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s ease;
+}
+
+.btn-login-google:hover {
+    background-color: #f8fafc;
+}
+
+.btn-login-google img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}

@@ -46,6 +46,7 @@ const dataWilayahSumatera = [
   { nama: "Kab. Kerinci", prov: "Jambi" }, { nama: "Kab. Batanghari", prov: "Jambi" },
   { nama: "Kab. Tanjung Jabung Barat", prov: "Jambi" }, { nama: "Kab. Tanjung Jabung Timur", prov: "Jambi" },
   { nama: "Kab. Rejang Lebong", prov: "Bengkulu" }, { nama: "Kab. Muko-Muko", prov: "Bengkulu" },
+  { nama: "Kab. Bengkulu Tengah", prov: "Bengkulu"},
 
   // --- SUMATERA SELATAN, LAMPUNG & BANGKA BELITUNG ---
   { nama: "Kota Palembang", prov: "Sumatera Selatan" }, { nama: "Kota Lubuklinggau", prov: "Sumatera Selatan" },
