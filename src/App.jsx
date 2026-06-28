@@ -16,6 +16,7 @@ import PromoView from './views/PromoView';
 import ProfilView from './views/ProfilView';
 import LoginView from './views/LoginView';
 import RiwayatView from './views/RiwayatView';
+import EditProfilView from './views/EditProfilView';
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -48,6 +49,7 @@ function App() {
           <Route path="/cek-tiket" element={<CekTiketView />} />
           <Route path="/promo" element={<PromoView />} />
           <Route path="/profil" element={<ProfilView />} />
+          <Route path="/edit-profil" element={<EditProfilView />} />
         </Route>
       </Routes>
     </Router>

@@ -9,9 +9,6 @@ const HomeView = () => {
   const navigate = useNavigate();
   const { user, logout, bahasaGlobal } = useAuthStore();
 
-  // ----------------==========================================================
-  // ⚡️ SISIPKAN CODE BARU INI DI SINI (SEKITAR BARIS 15-25):
-  // ----------------------------------------------------------------==========
   const [isFeedLocked, setIsFeedLocked] = useState(false);
   const containerRef = useRef(null);
   const feedRef = useRef(null);
@@ -21,10 +18,7 @@ const HomeView = () => {
     if (!elemenUtama) return;
 
     const tanganiScrollParallax = () => {
-      // Menghitung sisa jarak form pengisian sebelum menyentuh header bar atas
       const posisiScroll = elemenUtama.scrollTop;
-      
-      // Ambil ambang batas gulir optimal bodi atas gawai (biasanya sekitar 440px - 470px)
       if (posisiScroll >= 460) {
         setIsFeedLocked(true);
       } else {
@@ -35,19 +29,13 @@ const HomeView = () => {
     elemenUtama.addEventListener('scroll', tanganiScrollParallax);
     return () => elemenUtama.removeEventListener('scroll', tanganiScrollParallax);
   }, []);
-  // ----------------==========================================================
 
-  // ... sisa kode state lama kamu (activeTabProduct, pickup, dll) tetap biarkan saja di bawahnya ...
-  // ----------------==========================================================
-  // ⚡️ LAYER STATE CONTROLLER: UI & TABS SYSTEM
-  // ----------------------------------------------------------------==========
+  // LAYER STATE CONTROLLER: UI & TABS SYSTEM
   const [activeTabProduct, setActiveTabProduct] = useState('travel'); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
-  // ----------------==========================================================
-  // ⚡️ STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
-  // ----------------------------------------------------------------==========
+  // STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
   const [pickup, setPickup] = useState('');
   const [tujuan, setTujuan] = useState('');
   const [tanggal, setTanggal] = useState('');
@@ -247,14 +235,36 @@ const HomeView = () => {
   return (
     <div className="travelind-luxury-home-container">
       
-      {/* 🚨 SOLUSI SARAN USER: HEADER ATAS DIPISAH DAN DIKUNCI MATI DI ATAS CONTAINER */}
-      <div className="hero-top-bar">
-        <div className="user-profile-zone">
-          <span className="greeting-text">{dapatkanWaktuGreeting()}</span>
-          <h3 className="user-name-title">{user ? namaProfile : 'Akhmad'}</h3>
+      {/* HEADER ATAS FIXED */}
+      <div className="hero-top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="user-profile-zone" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          
+          {/* 🌟 USER AVATAR INTERACTIVE HUB DI HOME (SINKRON SUPABASE) */}
+          <div 
+            className="home-avatar-click-node" 
+            onClick={() => navigate('/profil')}
+            style={{ 
+              width: '42px', height: '42px', borderRadius: '12px', 
+              background: 'rgba(255,255,255,0.15)', overflow: 'hidden', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', border: '1px solid rgba(255,255,255,0.2)'
+            }}
+          >
+            {user?.user_metadata?.avatar_url ? (
+              <img src={user.user_metadata.avatar_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <span style={{ fontSize: '15px', fontWeight: '800', color: 'var(--teal)' }}>{inisialProfile}</span>
+            )}
+          </div>
+
+          <div className="user-profile-text">
+            <span className="greeting-text" style={{ display: 'block' }}>{dapatkanWaktuGreeting()}</span>
+            <h3 className="user-name-title" style={{ margin: 0 }}>{user ? namaProfile : 'Akhmad'}</h3>
+          </div>
         </div>
+        
         <button type="button" className="sidebar-trigger-btn" onClick={() => setIsSidebarOpen(true)}>
-          <i className="fa-solid fa-bars-staggered"></i>
+          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
         </button>
       </div>
 
@@ -290,7 +300,6 @@ const HomeView = () => {
 
           {activeTabProduct !== 'travel' ? (
             <div className="locked-module-placeholder">
-              <i className="fa-solid fa-laptop-code"></i>
               <p>Fitur {activeTabProduct.toUpperCase()} akan segera hadir pada pembaruan tahap berikutnya.</p>
             </div>
           ) : (
@@ -307,12 +316,10 @@ const HomeView = () => {
                     autoComplete="off"
                     className="route-city-input"
                   />
-                  {/* DROPDOWN KOTA MODEREN */}
                   {showAsalDropdown && filteredAsal.length > 0 && (
                     <div className="luxury-autocomplete-dropdown">
                       {filteredAsal.map((item, idx) => (
                         <div key={idx} className="dropdown-row-item" onMouseDown={() => { setPickup(item.nama); setShowAsalDropdown(false); }}>
-                          <i className="fa-solid fa-location-dot"></i> 
                           <span>{item.nama}</span>
                           <small>{item.prov}</small>
                         </div>
@@ -338,12 +345,10 @@ const HomeView = () => {
                     autoComplete="off"
                     className={`route-city-input ${!tujuan ? 'placeholder' : ''}`}
                   />
-                  {/* DROPDOWN KOTA MODEREN */}
                   {showTujuanDropdown && filteredTujuan.length > 0 && (
                     <div className="luxury-autocomplete-dropdown">
                       {filteredTujuan.map((item, idx) => (
                         <div key={idx} className="dropdown-row-item" onMouseDown={() => { setTujuan(item.nama); setShowTujuanDropdown(false); }}>
-                          <i className="fa-solid fa-location-dot"></i> 
                           <span>{item.nama}</span>
                           <small>{item.prov}</small>
                         </div>
@@ -369,7 +374,7 @@ const HomeView = () => {
                 <div className="input-split-field">
                   <div className="field-label">{t.labelPassenger || t.labelPenumpang}</div>
                   <div className="field-input-wrapper">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" strokeLinecap="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <input type="number" value={penumpang} min="1" onChange={(e) => setPenumpang(Math.max(1, parseInt(e.target.value) || 1))} className="passenger-raw-picker" />
                   </div>
                 </div>
@@ -384,7 +389,7 @@ const HomeView = () => {
         </div>
       </div>
 
-      {/* AREA SCROLL CONTENT SHEET (KEMBALI MELENGKUNG DAN MERAYAP NAIK PARALLAX) */}
+      {/* AREA SCROLL CONTENT SHEET */}
       <div className="home-feed-scroll-content">
         <div className="stats-metric-section">
           <div className="metric-badge-card">
@@ -403,7 +408,7 @@ const HomeView = () => {
 
         <div className="feed-header-row-layout">
           <h3 className="feed-section-title">{t.secPromo}</h3>
-          <span className="see-all-trigger-btn" onClick={() => navigate('/promo')}>{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          <span className="see-all-trigger-btn" onClick={() => navigate('/promo')}>{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         </div>
         
         <div className="horizontal-carousel-promo">
@@ -431,7 +436,7 @@ const HomeView = () => {
 
         <div className="feed-header-row-layout" style={{ marginTop: '20px' }}>
           <h3 className="feed-section-title">{t.secRute}</h3>
-          <span className="see-all-trigger-btn">{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          <span className="see-all-trigger-btn">{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         </div>
 
         <div className="routes-shortcut-grid-layout">
@@ -446,7 +451,7 @@ const HomeView = () => {
             <div className="route-arrow-down-svg">
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
             </div>
-            <div className="route-to">Padang</div>
+            <div className="route-grid-item-card">Padang</div>
             <div className="route-starting-price">Rp120K</div>
           </div>
 
@@ -461,7 +466,7 @@ const HomeView = () => {
             <div className="route-arrow-down-svg">
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
             </div>
-            <div className="route-to">Lampung</div>
+            <div className="route-grid-item-card">Lampung</div>
             <div className="route-starting-price">Rp85K</div>
           </div>
         </div>
@@ -489,38 +494,54 @@ const HomeView = () => {
 
         <footer className="main-footer" style={{ padding: '24px 0 10px 0', textAlign: 'center' }}>
             <p className="footer-title" style={{ fontSize: '12px', fontWeight: '700', color: '#9AA3B2', marginBottom: '8px' }}>{t.ikutiKami}</p>
-            <div className="social-icons" style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-                <a href="#tiktok" style={{ color: '#9AA3B2' }}><i className="fa-brands fa-tiktok"></i></a>
-                <a href="#instagram" style={{ color: '#9AA3B2' }}><i className="fa-brands fa-instagram"></i></a>
-                <a href="#facebook" style={{ color: '#9AA3B2' }}><i className="fa-brands fa-facebook"></i></a>
-            </div>
         </footer>
       </div>
 
-      {/* 🚨 RE-DESIGN LACI SIDEBAR: POSISI DI KANAN LUAR UTUH SECARA GLOBAL FIXED */}
+      {/* LACI SIDEBAR */}
       <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <div className={`sidebar-container-block ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header-top">
-          <span className="sidebar-title-label"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
-          <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}><i className="fa-solid fa-xmark"></i></button>
+          <span className="sidebar-title-label">{t.navTitle}</span>
+          <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}>
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
         </div>
+        
         <div className="sidebar-user-profile-badge" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>
-          <div className="avatar-circle-box">{inisialProfile}</div>
+          
+          {/* 🌟 USER AVATAR SINKRONISASI DI LACI SIDEBAR */}
+          <div 
+            className="sidebar-avatar-circle-box"
+            style={{
+              width: '44px', height: '44px', borderRadius: '12px',
+              background: 'var(--teal-light)', overflow: 'hidden',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '1px solid var(--gray-200)', flexShrink: 0
+            }}
+          >
+            {user?.user_metadata?.avatar_url ? (
+              <img src={user.user_metadata.avatar_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <span style={{ fontSize: '16px', fontWeight: '800', color: 'var(--navy)' }}>{inisialProfile}</span>
+            )}
+          </div>
+
           <div className="profile-meta-text">
             <h6>{namaProfile}</h6>
             <p>{emailProfile}</p>
           </div>
         </div>
+
         <div className="sidebar-links-list">
-          <button type="button" className="sidebar-menu-btn active-node" onClick={() => setIsSidebarOpen(false)}><i className="fa-solid fa-house"></i> {t.menuHome}</button>
-          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}><i className="fa-solid fa-circle-user"></i> {t.menuAkun}</button>
-          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/cek-tiket')}><i className="fa-solid fa-ticket"></i> {t.menuTiket}</button>
+          <button type="button" className="sidebar-menu-btn active-node" onClick={() => setIsSidebarOpen(false)}>{t.menuHome}</button>
+          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>{t.menuAkun}</button>
+          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/cek-tiket')}>{t.menuTiket}</button>
           <div className="sidebar-line-separator"></div>
-          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/promo')}><i className="fa-solid fa-tags"></i> {t.menuPromo}</button>
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="sidebar-menu-btn"><i className="fa-solid fa-headset"></i> {t.menuBantuan}</a>
+          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/promo')}>{t.menuPromo}</button>
+          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="sidebar-menu-btn">{t.menuBantuan}</a>
           {user && (
             <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || setIsLogoutConfirmOpen(true)} style={{ color: '#eb5757' }}>
-              <i className="fa-solid fa-arrow-right-from-bracket"></i> {t.menuKeluar}
+              {t.menuKeluar}
             </button>
           )}
         </div>
@@ -530,7 +551,6 @@ const HomeView = () => {
       <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <i className="fa-solid fa-circle-question" style={{ fontSize: '44px', color: '#e11d48', marginBottom: '12px', display: 'block' }}></i>
           <h5 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '20px', color: '#0B1F3A' }}>{t.logoutPrompt}</h5>
           <div style={{ display: 'flex', gap: '12px' }}>
             <button className="btn-popup-action danger" onClick={handleEksekusiLogout}>{t.iya}</button>

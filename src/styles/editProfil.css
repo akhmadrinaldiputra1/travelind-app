@@ -1,0 +1,256 @@
+/* ==========================================================================
+   🌟 TRAVELIND LUXURY EDIT PROFILE V7 (PERFECT MATCH WITH IMAGE_6.PNG)
+   ========================================================================== */
+
+.travelind-luxury-edit-profile-container {
+    --navy: #0B1F3A;
+    --navy-mid: #122845;
+    --teal: #00D4B8;
+    --teal-light: #E0FAF7;
+    --coral: #FF6B4A;
+    --white: #FFFFFF;
+    --gray-100: #F7F8FA;
+    --gray-200: #EAECF0;
+    --gray-400: #9AA3B2;
+    --gray-700: #3D4A5C;
+
+    width: 100%; 
+    max-width: 450px; 
+    height: 100vh;
+    background-color: var(--gray-100);
+    display: flex; 
+    flex-direction: column; 
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden !important;
+    overflow-y: hidden;
+}
+
+.travelind-luxury-edit-profile-container * {
+    box-sizing: border-box !important;
+}
+
+/* TOP BAR HEADER NAVY */
+.travelind-luxury-edit-profile-container .edit-profile-top-bar {
+    background-color: var(--navy);
+    padding: 24px 24px 12px 24px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    color: var(--white);
+    flex-shrink: 0;
+}
+
+.travelind-luxury-edit-profile-container .edit-profile-page-title { 
+    font-size: 20px; 
+    font-weight: 700; 
+    letter-spacing: -0.4px; 
+}
+
+.travelind-luxury-edit-profile-container .back-action-btn {
+    width: 42px; height: 42px; background-color: rgba(255, 255, 255, 0.1); border-radius: 12px;
+    border: none; display: flex; align-items: center; justify-content: center; color: var(--white); cursor: pointer;
+}
+
+/* CAPSULE TOMBOL SIMPAN DI ATAS (SESUAI GAMBAR) */
+.travelind-luxury-edit-profile-container .btn-save-capsule-top {
+    background-color: var(--teal);
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 214, 184, 0.3);
+    transition: all 0.2s ease;
+}
+.travelind-luxury-edit-profile-container .btn-save-capsule-top:active {
+    transform: scale(0.95);
+    box-shadow: none;
+}
+.travelind-luxury-edit-profile-container .btn-save-capsule-top:disabled {
+    background-color: var(--gray-400);
+    color: var(--white);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* HERO BANNER SECTION (NAVY PENUH UNTUK AREA FOTO) */
+.travelind-luxury-edit-profile-section, 
+.travelind-luxury-edit-profile-container .edit-profile-hero-badge-section {
+    background-color: var(--navy);
+    padding: 20px 24px 34px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* AVATAR SQUIRCLE FORM (KOTAK MELENGKUNG INDAH DENGAN GLOWING EFFECT) */
+.travelind-luxury-edit-profile-container .avatar-squircle-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 14px;
+    cursor: pointer;
+}
+
+.travelind-luxury-edit-profile-container .avatar-squircle-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 28px; /* Sudut kotak melengkung modern mirip gambar */
+    background-color: rgba(0, 214, 184, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px solid rgba(0, 214, 184, 0.4);
+    box-shadow: 0 0 25px rgba(0, 214, 184, 0.25);
+}
+.travelind-luxury-edit-profile-container .avatar-squircle-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* FALLBACK HURUF BESAR INDAH */
+.travelind-luxury-edit-profile-container .avatar-initials-fallback {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1px;
+}
+
+/* FLOATING WHITE CAMERA ICON BADGE */
+.travelind-luxury-edit-profile-container .floating-camera-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -4px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--white);
+    border-radius: 50%;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* TEKS INFORMASI DI HEADER */
+.travelind-luxury-edit-profile-container .avatar-text-display-name {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--white);
+}
+.travelind-luxury-edit-profile-container .avatar-text-action-hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+/* MAIN SCROLLER KONTEN PUTIH */
+.travelind-luxury-edit-profile-container .edit-profile-main-content {
+    background-color: var(--gray-100);
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    padding: 24px 18px 60px 18px;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+    margin-top: -16px; /* Transisi lengkungan yang mulus */
+}
+.travelind-luxury-edit-profile-container .edit-profile-main-content::-webkit-scrollbar { display: none; }
+
+/* KARTU PUTIH PEMBUNGKUS DATA PRIBADI */
+.travelind-luxury-edit-profile-container .edit-profile-card-form {
+    background-color: var(--white);
+    border-radius: 24px;
+    padding: 22px 20px;
+    box-shadow: 0 4px 20px rgba(11, 31, 58, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+/* HEADER BAGIAN: DATA PRIBADI */
+.travelind-luxury-edit-profile-container .section-form-sub-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.travelind-luxury-edit-profile-container .sub-header-icon-box {
+    width: 36px; height: 36px;
+    background-color: var(--teal-light);
+    color: var(--teal);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+}
+.travelind-luxury-profile-container .sub-header-text-block h4,
+.travelind-luxury-edit-profile-container .sub-header-text-block h4 {
+    font-size: 14px; font-weight: 700; color: var(--navy); margin: 0;
+}
+.travelind-luxury-edit-profile-container .sub-header-text-block p {
+    font-size: 11px; color: var(--gray-400); margin: 2px 0 0 0; font-weight: 500;
+}
+.travelind-luxury-edit-profile-container .form-divider-line {
+    border: none; border-top: 1px solid var(--gray-200); margin: 2px 0;
+}
+
+/* INPUT COMPONENT UI STYLE */
+.travelind-luxury-edit-profile-container .edit-profile-form-group {
+    display: flex; flex-direction: column; gap: 6px; width: 100%;
+}
+.travelind-luxury-edit-profile-container .edit-profile-form-group label {
+    font-size: 10px; font-weight: 700; color: var(--gray-400); letter-spacing: 0.5px;
+}
+.travelind-luxury-edit-profile-container .input-with-icon-wrapper {
+    position: relative; width: 100%; display: flex; align-items: center;
+}
+.travelind-luxury-edit-profile-container .input-leading-icon {
+    position: absolute; left: 16px; color: var(--gray-400); pointer-events: none;
+}
+.travelind-luxury-edit-profile-container .input-with-icon-wrapper input {
+    width: 100% !important;
+    padding: 14px 40px 14px 44px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid var(--gray-200) !important;
+    font-size: 13px !important;
+    color: var(--navy) !important;
+    font-weight: 600 !important;
+    background-color: var(--white) !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+.travelind-luxury-edit-profile-container .input-with-icon-wrapper input:focus {
+    border-color: var(--teal) !important;
+    box-shadow: 0 0 0 4px rgba(0, 214, 184, 0.06) !important;
+}
+
+/* CHECKMARK BERHASIL DI KANAN INPUT */
+.travelind-luxury-edit-profile-container .input-trailing-success-icon {
+    position: absolute;
+    right: 16px;
+    pointer-events: none;
+}
+
+/* DISABLED MODE (EMAIL) */
+.travelind-luxury-edit-profile-container .disabled-node-style input {
+    background-color: #F8FAFC !important;
+    border-color: var(--gray-200) !important;
+    color: var(--gray-400) !important;
+    cursor: not-allowed !important;
+}
+
+/* NOTIFIKASI SINKRONISASI TOAST ALERTS */
+.travelind-luxury-edit-profile-container .status-message-alert {
+    background-color: var(--teal-light); color: #0d9488; border: 1px solid #99f6e4;
+    padding: 14px; border-radius: 14px; font-size: 12px; font-weight: 700; text-align: center; margin-bottom: 14px;
+}
+.travelind-luxury-edit-profile-container .status-message-alert.err-node {
+    background-color: #FFF1F2; color: var(--danger-red); border-color: #FFE4E6;
+}
