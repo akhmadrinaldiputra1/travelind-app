@@ -44,7 +44,7 @@ const EditProfilView = () => {
     }
   };
 
-  const handleFormSubmit = async (e) => {
+const handleFormSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setStatusMsg('');
@@ -52,28 +52,48 @@ const EditProfilView = () => {
     try {
       let finalAvatarUrl = previewFoto;
 
-      // 1. Jika user memilih file foto baru, unggah ke Supabase Storage
+      // 1. Jika user mendeteksi ada file baru yang dipilih
       if (fileFoto) {
         const fileExt = fileFoto.name.split('.').pop();
-        const fileName = `${user.id}-${Math.random()}.${fileExt}`;
-        const filePath = `avatars/${fileName}`;
+        const fileName = `${user.id}.${fileExt}`;
+        const filePath = `${fileName}`;
 
-        // Unggah file ke bucket bernama 'avatars'
+        // 🌟 KUNCI FIX SESSION: Ambil token sesi aktif saat ini secara real-time dari Supabase
+        const { data: sessionData } = await supabase.auth.getSession();
+        const tokenAman = sessionData?.session?.access_token;
+
+        if (!tokenAman) {
+          throw new Error("Sesi login kamu kedaluwarsa. Silakan keluar lalu masuk akun kembali.");
+        }
+
+        // Upload file ke bucket 'avatars' dengan menyisipkan Authorization header token aktif
         const { error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(filePath, fileFoto, { cacheControl: '3600', upsert: true });
+          .upload(filePath, fileFoto, { 
+            cacheControl: '0', 
+            upsert: true,
+            // Lampirkan token secara manual ke metadata request untuk menjamin otentikasi diterima
+            headers: {
+              Authorization: `Bearer ${tokenAman}`
+            }
+          });
 
         if (uploadError) throw uploadError;
 
-        // Dapatkan URL publik dari file yang baru diunggah
-        const { data: publicUrlData } = supabase.storage
+        // Ambil URL publik yang valid dari bucket Supabase
+        const { data } = supabase.storage
           .from('avatars')
           .getPublicUrl(filePath);
 
-        finalAvatarUrl = publicUrlData.publicUrl;
+        if (!data || !data.publicUrl) {
+          throw new Error("Gagal mendapatkan Public URL dari Storage.");
+        }
+
+        // Trick anti-cache agar browser langsung merender gambar baru
+        finalAvatarUrl = `${data.publicUrl}?t=${Date.now()}`;
       }
 
-      // 2. Perbarui user_metadata di tabel Auth Supabase
+      // 2. Update user_metadata akun di Supabase Auth
       const { error: updateError } = await supabase.auth.updateUser({
         data: {
           full_name: namaLengkap,
@@ -84,13 +104,18 @@ const EditProfilView = () => {
 
       if (updateError) throw updateError;
 
-      // 3. Sinkronkan ulang Zustand Store global agar foto di menu/navigasi langsung berubah
+      // 3. PANGGIL SYNC GLOBAL ke Zustand Store
       if (typeof checkUser === 'function') {
         await checkUser();
       }
 
       setStatusMsg(t.suksesTxt);
-      setTimeout(() => setStatusMsg(''), 4000);
+      
+      setTimeout(() => {
+        setStatusMsg('');
+        navigate('/profil');
+      }, 1500);
+
     } catch (error) {
       console.error('Error updating profile:', error);
       setStatusMsg(`❌ Error: ${error.message}`);
@@ -98,7 +123,6 @@ const EditProfilView = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="travelind-luxury-edit-profile-container">
       <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
