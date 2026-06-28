@@ -16,11 +16,11 @@ const ProfilView = () => {
 
   const textContent = {
     ID: {
-      title: 'PROFIL',
+      title: 'Profil',
       masuk: 'Masuk',
       daftar: 'Daftar',
       menu1: 'Profil Saya',
-      menu2: 'Coin saya',
+      menu2: 'Coin Saya',
       menu3: 'Riwayat Perjalanan',
       menu4: 'Bahasa',
       logoutBtn: 'Keluar Akun',
@@ -28,12 +28,10 @@ const ProfilView = () => {
       iya: 'Iya',
       tidak: 'Tidak',
       alertMsg: 'Silakan login dulu untuk melihat Profil kamu.',
-      navBtmHome: 'Beranda',
-      navBtmTiket: 'Tiket Saya',
-      navBtmProfil: 'Profil'
+      navBtmHome: 'Beranda'
     },
     EN: {
-      title: 'PROFILE',
+      title: 'Profile',
       masuk: 'Sign In',
       daftar: 'Sign Up',
       menu1: 'My Profile',
@@ -45,9 +43,7 @@ const ProfilView = () => {
       iya: 'Yes',
       tidak: 'No',
       alertMsg: 'Please log in first to view your Profile.',
-      navBtmHome: 'Home',
-      navBtmTiket: 'My Tickets',
-      navBtmProfil: 'Profile'
+      navBtmHome: 'Home'
     }
   };
 
@@ -78,172 +74,130 @@ const ProfilView = () => {
   };
 
   return (
-    <div className="app-container app-profil-container" style={{ overflow: 'hidden' }}>
+    <div className="travelind-luxury-profile-container">
       
-      {/* BACKGROUND LENGKUNG HEADER */}
-      <div className="profil-curved-header-bg" style={{ height: '110px' }}></div>
-
-      {/* HEADER NAVIGATION (SINKRON DENGAN CEK TIKET / PESANAN SAYA) */}
-      <header className="profil-header-nav" style={{ padding: '20px 16px', justifyContent: 'flex-start' }}>
-        <div 
-          className="back-btn" 
-          onClick={() => navigate('/home')} 
-          title={t.navBtmHome}
-          style={{
-            width: '36px',
-            height: '36px',
-            backgroundColor: 'rgba(255, 255, 255, 0.15)',
-            borderRadius: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            position: 'absolute',
-            left: '16px'
-          }}
-        >
-          <i className="fa-solid fa-arrow-left" style={{ fontSize: '16px', color: '#ffffff' }}></i>
-        </div>
-        <h2 style={{ width: '100%', textAlign: 'center', margin: 0, fontSize: '20px', fontWeight: 600 }}>{t.title}</h2>
+      {/* HEADER NAVIGATION NAVY SOLID */}
+      <header className="profile-top-bar">
+        <button type="button" className="back-action-btn" onClick={() => navigate('/home')} title={t.navBtmHome}>
+          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+        </button>
+        <h2 className="profile-page-title">{t.title}</h2>
+        <div style={{ width: '40px' }}></div>
       </header>
 
-      {/* 🌟 SCROLLER ENGINE WRAPPER: MENGAKTIFKAN GULIRAN SECARA AMAN DAN LUAS */}
-      <div className="profile-scroll-body-wrapper" style={{
-        flex: 1,
-        overflowY: 'auto',
-        paddingBottom: '90px', // Memberi ruang napas aman agar menu terbawah tidak tertabrak bottom nav
-        position: 'relative',
-        zIndex: 2,
-        boxSizing: 'border-box'
-      }}>
+      {/* SCROLLER ENGINE WRAPPER INTERNAL */}
+      <div className="profile-main-content">
 
-        {/* PROFILE CARD DISPLAY */}
-        <div className="profile-card-center-wrapper" style={{ marginTop: '10px' }}>
+        {/* PROFILE CARD DISPLAY BOX */}
+        <div className="profile-user-avatar-card">
           <div className="avatar-circle-frame">
             {user?.user_metadata?.avatar_url ? (
               <img src={user.user_metadata.avatar_url} alt="Avatar" />
             ) : (
-              <i className="fa-solid fa-user avatar-placeholder-icon"></i>
+              <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
             )}
           </div>
 
           {user ? (
-            <>
+            <div className="profile-meta-details">
               <h4 className="user-text-name">{namaAsliUser}</h4>
               <p className="user-text-email">{user.email}</p>
-            </>
+            </div>
           ) : (
             <div className="auth-btn-row-trigger">
-              <button type="button" className="btn-outline-auth" onClick={() => pemicuPopupAuth('login')}>{t.masuk}</button>
-              <button type="button" className="btn-outline-auth" onClick={() => pemicuPopupAuth('register')}>{t.daftar}</button>
+              <button type="button" className="btn-outline-auth-node accent-login" onClick={() => pemicuPopupAuth('login')}>{t.masuk}</button>
+              <button type="button" className="btn-outline-auth-node" onClick={() => pemicuPopupAuth('register')}>{t.daftar}</button>
             </div>
           )}
         </div>
 
-        {/* ACCORDION OPTIONS LIST */}
-        <div className="menu-list-container-premium" style={{ marginTop: '24px' }}>
+        {/* LUXURY ACCORDION OPTIONS LIST */}
+        <div className="menu-list-container-premium">
           <button type="button" className="card-menu-item-premium" onClick={() => handleMenuClick('/edit-profil')}>
             <div className="menu-item-premium-left">
-              <i className="fa-regular fa-user"></i>
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               <span>{t.menu1}</span>
             </div>
-            <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+            <svg className="chevron-right" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </button>
 
           <button type="button" className="card-menu-item-premium" onClick={() => handleMenuClick('/coin-saya')}>
-            <div className="menu-item-premium-left">
-              <i className="fa-solid fa-coins" style={{ color: '#d69e2e' }}></i>
+            <div className="menu-item-premium-left text-icon-gold">
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.214.165c2.193 1.69 5.378 1.69 7.572 0L17 15.182m-8.571-5.118L9 9.899c2.193-1.69 5.378-1.69 7.572 0l.214.165m-8.572 2.51h7.572"/></svg>
               <span>{t.menu2}</span>
             </div>
-            <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+            <svg className="chevron-right" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </button>
 
           <button type="button" className="card-menu-item-premium" onClick={() => handleMenuClick('/riwayat-perjalanan')}>
-            <div className="menu-item-premium-left">
-              <i className="fa-solid fa-route" style={{ color: '#2b6cb0' }}></i>
+            <div className="menu-item-premium-left text-icon-blue">
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25M2.25 17.25a3.375 3.375 0 116.75 0M2.25 17.25a3.375 3.375 0 106.75 0M3.75 6.75h16.5M3.75 12h16.5M12 17.25h8.25"/></svg>
               <span>{t.menu3}</span>
             </div>
-            <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+            <svg className="chevron-right" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </button>
 
           <button type="button" className="card-menu-item-premium" onClick={toggleLanguage}>
-            <div className="menu-item-premium-left">
-              <i className="fa-solid fa-language" style={{ color: '#319795' }}></i>
+            <div className="menu-item-premium-left text-icon-teal">
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"/></svg>
               <span>{t.menu4} ({bahasaGlobal})</span>
             </div>
-            <i className="fa-solid fa-chevron-right menu-item-premium-right"></i>
+            <svg className="chevron-right" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </button>
 
           {user && (
             <button 
               type="button" 
-              className="card-menu-item-premium" 
+              className="card-menu-item-premium action-logout-node" 
               onClick={() => setIsLogoutConfirmOpen(true)}
-              style={{ marginTop: '20px', background: '#ffeef0', border: '1px solid #fed7d7' }}
             >
-              <div className="menu-item-premium-left" style={{ color: 'var(--danger-red)' }}>
-                <i className="fa-solid fa-arrow-right-from-bracket" style={{ color: 'var(--danger-red)' }}></i>
+              <div className="menu-item-premium-left">
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
                 <span>{t.logoutBtn}</span>
               </div>
-              <i className="fa-solid fa-chevron-right" style={{ color: '#feb2b2' }}></i>
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
             </button>
           )}
         </div>
 
       </div>
 
-      {/* 🚨 ALERT POPUP BELUM LOGIN */}
+      {/* 🚨 POPUP ALERT BELUM LOGIN */}
       <div className={`premium-popup-overlay ${isAlertOpen ? 'active' : ''}`} onClick={() => setIsAlertOpen(false)}>
-        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <i className="fa-solid fa-circle-exclamation" style={{ fontSize: '46px', color: 'var(--accent-orange)', marginBottom: '16px' }}></i>
-          <h5 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 20px 0', color: '#2d3748' }}>{t.alertMsg}</h5>
-          <button type="button" className="btn-login-primary" onClick={() => setIsAlertOpen(false) || pemicuPopupAuth('login')}>
+          <svg style={{ color: '#FF6B4A', marginBottom: '14px' }} width="44" height="44" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+          <h5 className="popup-sheet-title">{t.alertMsg}</h5>
+          <button type="button" className="btn-popup-sheet-action-submit" onClick={() => setIsAlertOpen(false) || pemicuPopupAuth('login')}>
             {t.masuk}
           </button>
         </div>
       </div>
 
-      {/* 🌟 LOGOUT POPUP CONFIRM */}
+      {/* 🌟 POPUP CONFIRM LOGOUT */}
       <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
-        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <i className="fa-solid fa-circle-question" style={{ fontSize: '48px', color: 'var(--danger-red)', marginBottom: '16px' }}></i>
-          <h5 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 24px 0', color: '#2d3748' }}>{t.logoutPrompt}</h5>
-          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-            <button type="button" className="btn-login-primary" onClick={handleEksekusiLogout} style={{ margin: 0, background: 'var(--danger-red)' }}>
+          <svg style={{ color: '#FF6B4A', marginBottom: '14px' }} width="44" height="44" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+          <h5 className="popup-sheet-title">{t.logoutPrompt}</h5>
+          <div className="popup-sheet-buttons-flex">
+            <button type="button" className="btn-popup-sheet-action-submit node-danger" onClick={handleEksekusiLogout}>
               {t.iya}
             </button>
-            <button type="button" className="btn-login-primary" onClick={() => setIsLogoutConfirmOpen(false)} style={{ margin: 0, background: '#e2e8f0', color: '#4a5568' }}>
+            <button type="button" className="btn-popup-sheet-action-submit node-cancel" onClick={() => setIsLogoutConfirmOpen(false)}>
               {t.tidak}
             </button>
           </div>
         </div>
       </div>
 
-      {/* 🌟 SLIDE-UP DOCK POPUP LOGIN */}
+      {/* 🌟 SLIDE-UP POPUP LOGIN SHEET */}
       <div className={`premium-popup-overlay ${isLoginPopupOpen ? 'active' : ''}`} onClick={() => setIsLoginPopupOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
           <LoginView key={authMode} initialMode={authMode} closePopup={() => setIsLoginPopupOpen(false)} />
         </div>
       </div>
-
-      {/* 🌟 SINKRONISASI TOTAL FIXED NAV BAR BAWAH DENGAN HOMEVIEW */}
-      <nav className="fixed-bottom-nav-profil">
-        <button type="button" className="nav-link-item" onClick={() => navigate('/home')}>
-          <i className="fa-solid fa-house"></i>
-          <span>{t.navBtmHome}</span>
-        </button>
-        <button type="button" className="nav-link-item" onClick={() => navigate('/cek-tiket')}>
-          <i className="fa-solid fa-ticket"></i>
-          <span>{t.navBtmTiket}</span>
-        </button>
-        <button type="button" className="nav-link-item active" onClick={() => navigate('/profil')}>
-          <i className="fa-solid fa-user"></i>
-          <span>{t.navBtmProfil}</span>
-        </button>
-      </nav>
 
     </div>
   );

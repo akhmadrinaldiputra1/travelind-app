@@ -1,166 +1,355 @@
 /* ==========================================================================
-   RESET & SYSTEM VARIABLE COLOR PALETTES
+   🌟 TRAVELIND LUXURY MANIFEST & TRACKER ENGINE V6 (CLEAN MAIN LAYOUT SINK)
    ========================================================================== */
-* {
-    margin: 0; padding: 0; box-sizing: border-box;
+
+.travelind-luxury-ticket-container {
+    --navy: #0B1F3A;
+    --navy-mid: #122845;
+    --teal: #00D4B8;
+    --teal-light: #E0FAF7;
+    --coral: #FF6B4A;
+    --white: #FFFFFF;
+    --gray-100: #F7F8FA;
+    --gray-200: #EAECF0;
+    --gray-400: #9AA3B2;
+    --gray-700: #3D4A5C;
+
+    width: 100%; 
+    max-width: 450px; 
+    height: 100vh;
+    background-color: var(--gray-100);
+    display: flex; 
+    flex-direction: column; 
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden; 
+}
+
+.travelind-luxury-ticket-container * {
+    margin: 0; padding: 0; box-sizing: border-box !important;
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-:root {
-    --primary-teal: #02596b; 
-    --dark-teal: #013e4b;
-    --light-bg: #f4f7f9;
-    --card-bg: #ffffff;
-    --text-main: #2b2b2b;
-    --text-muted: #8c96a3;
-    --border-color: #f1f5f9;
-    --accent-orange: #f2994a;
+/* HEADER BAR MANDIRI (Warna Navy Solid) */
+.travelind-luxury-ticket-container .ticket-top-bar {
+    background-color: var(--navy);
+    padding: 24px 24px 18px 24px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    color: var(--white);
+    flex-shrink: 0;
 }
 
-body {
-    background-color: #e5e9ec; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+.travelind-luxury-ticket-container .ticket-page-title { 
+    font-size: 18px; 
+    font-weight: 700; 
+    letter-spacing: -0.3px; 
 }
 
-.app-container {
-    width: 100%; max-width: 450px; min-height: 100vh; background-color: var(--light-bg);
-    display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    position: relative;
+.travelind-luxury-ticket-container .back-action-btn {
+    width: 40px; 
+    height: 40px; 
+    background-color: rgba(255, 255, 255, 0.1); 
+    border-radius: 12px;
+    border: none;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: var(--white);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.travelind-luxury-ticket-container .back-action-btn:hover { background-color: rgba(255, 255, 255, 0.18); }
+
+/* SCROLL CONTAINER UTAMA */
+.travelind-luxury-ticket-container .ticket-main-content { 
+    padding: 20px 18px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+    flex: 1;
+    overflow-y: auto; 
+    -webkit-overflow-scrolling: touch; 
+    padding-bottom: 40px; 
+    scrollbar-width: none;
+}
+.travelind-luxury-ticket-container .ticket-main-content::-webkit-scrollbar { display: none; }
+
+/* KARTU LACAK TIKET */
+.travelind-luxury-ticket-container .secure-tracker-card {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 22px 20px;
+    box-shadow: 0 8px 24px rgba(11, 31, 58, 0.04);
+    border: 1px solid var(--gray-200);
 }
 
-/* Header Area Style */
-.main-header {
-    background-color: var(--primary-teal); padding: 24px 24px 20px 24px;
-    display: flex; justify-content: space-between; align-items: center; color: #ffffff;
-    border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
-}
-.header-left { display: flex; align-items: center; gap: 16px; }
-.page-title { font-size: 20px; font-weight: 600; }
-.back-btn {
-    width: 36px; height: 36px; background-color: rgba(255, 255, 255, 0.15); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-}
-.menu-btn { background: none; border: none; color: #ffffff; font-size: 22px; cursor: pointer; }
-
-/* Content Layout Box Wrapper */
-.content-wrapper { padding: 16px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
-.premium-card { background-color: var(--card-bg); border-radius: 16px; padding: 18px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03); border: 1px solid #eef2f5; }
-
-/* Search Area Custom Form elements */
-.search-header { text-align: center; margin-bottom: 16px; }
-.icon-teal-large { font-size: 32px; color: var(--primary-teal); margin-bottom: 8px; }
-.search-header h4 { font-size: 16px; font-weight: 700; color: var(--text-main); }
-.search-header p { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
-
-.input-field-wrapper { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.input-with-icon { position: relative; display: flex; align-items: center; }
-.input-with-icon i { position: absolute; left: 14px; color: var(--text-muted); font-size: 14px; }
-.form-input-styled {
-    width: 100%; padding: 14px 14px 14px 38px; border: 1px solid #cbd5e0; border-radius: 12px;
-    font-size: 13px; color: var(--text-main); outline: none; transition: all 0.2s;
-}
-.form-input-styled:focus { border-color: var(--primary-teal); box-shadow: 0 0 0 3px rgba(2, 89, 107, 0.08); }
-
-.btn-search-submit {
-    width: 100%; background-color: var(--primary-teal); color: #ffffff; border: none; padding: 14px;
-    border-radius: 30px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 89, 107, 0.15);
-}
-.btn-search-submit:hover { background-color: var(--dark-teal); }
-
-/* ==========================================================================
-   DYNAMIC OUTPUT TICKET CONTAINER BOXES (STATUS BADGES)
-   ========================================================================== */
-.result-container { display: flex; flex-direction: column; gap: 14px; }
-
-.empty-state-box { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-.empty-icon { font-size: 42px; color: #cbd5e0; margin-bottom: 10px; }
-.empty-state-box h6 { font-size: 14px; font-weight: 700; color: var(--text-main); }
-.empty-state-box p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-/* Status Badges Colors for Tickets output */
-.ticket-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.ticket-code-label { font-size: 13px; font-weight: 700; color: var(--text-main); }
-
-.badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
-.badge-warning { background-color: #fff1cc; color: #b78103; }
-.badge-success { background-color: #e6f7ef; color: #27ae60; }
-
-/* Ticket Details Interior Content List row layouts */
-.ticket-info-body { display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-bottom: 14px;}
-.info-line { display: flex; justify-content: space-between; font-size: 12px; color: #4a5568; }
-.info-line b { color: var(--text-main); font-weight: 600; }
-.info-line.grand-total-line { font-size: 14px; color: var(--primary-teal); font-weight: 700; margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--border-color); }
-
-/* Bottom Action Buttons inside generated dynamic card */
-.action-box-row { display: flex; gap: 10px; }
-.btn-card-action { flex: 1; padding: 10px; font-size: 12px; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; text-align: center; display: inline-block; text-decoration: none; }
-.btn-primary-action { background-color: var(--primary-teal); color: #ffffff; }
-.btn-secondary-action { background-color: #f1f5f9; color: #4a5568; border: 1px solid #cbd5e0; }
-
-.notif-success-alert-box {
-    background-color: #e6f7ef; border-radius: 10px; padding: 10px 12px; font-size: 11px;
-    color: #1e7e43; display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 12px;
+.travelind-luxury-ticket-container .tracker-card-header {
+    text-align: center;
+    margin-bottom: 18px;
 }
 
-/* ==========================================================================
-   📌 STYLES BAR NAVIGASI BAGIAN BAWAH HALAMAN CEK TIKET (ISOLASI AMAN)
-   ========================================================================== */
-.bottom-nav-cek-tiket {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 450px;
-    height: 64px;
-    background-color: #ffffff;
-    border-top: 1px solid #e2e8f0;
+.travelind-luxury-ticket-container .shield-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    background-color: var(--teal-light);
+    border-radius: 50%;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
-    padding: 0;
-}
-
-.nav-link-cek-tiket {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    color: #8c96a3;
-    font-size: 11px;
+    margin: 0 auto 10px auto;
+    color: var(--teal);
+}
+
+.travelind-luxury-ticket-container .tracker-card-header h4 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy);
+}
+
+.travelind-luxury-ticket-container .tracker-card-header p {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 4px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* GROUP FIELDS */
+.travelind-luxury-ticket-container .secure-fields-layout-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.travelind-luxury-ticket-container .styled-input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.travelind-luxury-ticket-container .styled-input-icon-wrapper svg {
+    position: absolute;
+    left: 14px;
+    color: var(--gray-400);
+}
+
+.travelind-luxury-ticket-container .styled-form-input-node {
+    width: 100%;
+    padding: 13px 14px 13px 40px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 14px;
+    font-size: 13px;
+    color: var(--navy);
     font-weight: 600;
-    text-decoration: none;
-    flex: 1;
-    height: 100%;
-    
-    /* Pembersih khusus button cek tiket */
-    background: none !important;
-    border: none !important;
-    outline: none !important;
+    outline: none;
+    background-color: var(--gray-100);
+    transition: all 0.2s;
+}
+.travelind-luxury-ticket-container .styled-form-input-node:focus {
+    border-color: var(--teal);
+    background-color: var(--white);
+    box-shadow: 0 0 0 4px rgba(0, 214, 184, 0.08);
+}
+
+.travelind-luxury-ticket-container .btn-tracker-search-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--teal) 0%, #00B89C 100%);
+    color: var(--navy);
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 800;
     cursor: pointer;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    transition: color 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 18px rgba(0, 214, 184, 0.25);
+    margin-top: 4px;
 }
 
-.nav-link-cek-tiket:active {
-    transform: scale(0.95);
+/* BADGE LOGIN SYNC */
+.travelind-luxury-ticket-container .logged-in-secure-sync-badge {
+    background-color: var(--teal-light);
+    border: 1.5px dashed var(--teal);
+    padding: 14px;
+    border-radius: 14px;
+    text-align: left;
 }
 
-.nav-link-cek-tiket.active {
-    color: var(--primary-teal);
-    background: none !important;
+.travelind-luxury-ticket-container .sync-tag-status {
+    font-size: 10px;
+    font-weight: 800;
+    color: #0d9488;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.nav-link-cek-tiket i {
-    font-size: 18px;
-    display: block;
+.travelind-luxury-ticket-container .pulse-dot-green {
+    width: 6px; height: 6px; background-color: #0d9488; border-radius: 50%; display: inline-block;
 }
-/* Sembunyikan tombol aksi interaktif saat proses konversi mesin html2pdf berjalan */
-.html2pdf__page-break + .action-box-row,
-.ignore-pdf-print {
-    background-color: transparent !important;
+
+.travelind-luxury-ticket-container .sync-email-label {
+    font-size: 13px; font-weight: 700; color: var(--navy); margin-top: 5px; display: flex; align-items: center; gap: 8px;
+}
+
+/* 🌟 TABS FILTER SYSTEM */
+.travelind-luxury-ticket-container .ticket-filter-tabs-row {
+    display: flex;
+    background-color: var(--white);
+    padding: 4px;
+    border-radius: 14px;
+    border: 1px solid var(--gray-200);
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.travelind-luxury-ticket-container .filter-tab-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 0;
+    border: none;
+    background: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--gray-400);
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.travelind-luxury-ticket-container .filter-tab-node.active-node {
+    background-color: var(--navy);
+    color: var(--white);
+}
+
+/* 🌟 MANIFEST CARD */
+.travelind-luxury-ticket-container .luxury-manifest-ticket-card {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.02);
+    border-top: 4px solid var(--navy);
+}
+
+.travelind-luxury-ticket-container .manifest-card-top-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+}
+
+.travelind-luxury-ticket-container .manifest-code-badge {
+    font-size: 11px; font-weight: 800; color: var(--gray-700); background: var(--gray-100); padding: 4px 10px; border-radius: 6px; display: flex; align-items: center;
+}
+
+.travelind-luxury-ticket-container .status-pill-badge {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+}
+
+.travelind-luxury-ticket-container .badge-style-success { background-color: var(--teal-light); color: #00B89C; }
+.travelind-luxury-ticket-container .badge-style-warning { background-color: #FFF9E6; color: #D97706; }
+.travelind-luxury-ticket-container .badge-style-expired { background-color: var(--gray-100); color: var(--gray-400); }
+
+.travelind-luxury-ticket-container .card-state-expired {
+    border-top: 4px solid var(--gray-400) !important; opacity: 0.8;
+}
+
+.travelind-luxury-ticket-container .manifest-success-alert-banner {
+    background-color: var(--teal-light); border-radius: 10px; padding: 10px 12px; font-size: 11px; color: var(--navy); display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 14px; line-height: 1.4;
+}
+
+/* RUTE VISUAL */
+.travelind-luxury-ticket-container .manifest-route-visual-block {
+    display: flex; align-items: center; justify-content: space-between; background-color: var(--gray-100); border-radius: 14px; padding: 12px 16px; margin: 12px 0;
+}
+
+.travelind-luxury-ticket-container .route-terminal-node { display: flex; flex-direction: column; text-align: left; }
+.travelind-luxury-ticket-container .route-terminal-node.align-node-right { text-align: right; }
+
+.travelind-luxury-ticket-container .terminal-dot {
+    width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-bottom: 4px;
+}
+.travelind-luxury-ticket-container .dot-origin { background-color: var(--teal); }
+.travelind-luxury-ticket-container .dot-destination { background-color: var(--coral); }
+
+.travelind-luxury-ticket-container .terminal-city-text { font-size: 14px; font-weight: 800; color: var(--navy); }
+
+.travelind-luxury-ticket-container .route-line-vector-connector {
+    flex: 1; border-top: 2px dashed var(--gray-400); position: relative; margin: 0 14px; display: flex; justify-content: center;
+}
+.travelind-luxury-ticket-container .route-line-vector-connector svg {
+    position: absolute; top: -8px; color: var(--gray-400); background: var(--gray-100); padding: 0 4px;
+}
+
+/* INFO BODY */
+.travelind-luxury-ticket-container .manifest-info-grid-body {
+    display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--gray-200); padding-top: 14px; margin-bottom: 16px;
+}
+
+.travelind-luxury-ticket-container .manifest-data-line {
+    display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-400); font-weight: 500;
+}
+.travelind-luxury-ticket-container .manifest-data-line b { color: var(--navy); font-weight: 700; }
+
+.travelind-luxury-ticket-container .grand-total-highlight-line {
+    font-size: 13px; font-weight: 700; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--gray-200); align-items: center;
+}
+.travelind-luxury-ticket-container .grand-total-highlight-line span { color: var(--navy); font-weight: 800; }
+.travelind-luxury-ticket-container .grand-price-amount { font-size: 16px; color: var(--teal) !important; font-weight: 800; }
+
+/* ACTION BUTTONS */
+.travelind-luxury-ticket-container .manifest-action-buttons-row { display: flex; gap: 8px; }
+
+.travelind-luxury-ticket-container .card-action-trigger {
+    flex: 1; padding: 13px; font-size: 12px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
+}
+
+.travelind-luxury-ticket-container .action-download-pdf {
+    background-color: var(--white); color: var(--gray-700); border: 1.5px solid var(--gray-200);
+}
+
+.travelind-luxury-ticket-container .action-contact-driver {
+    background-color: var(--navy); color: var(--white);
+}
+
+/* ANIMATION LOADING SPIN */
+.animate-spin {
+    animation: spin 1s linear infinite;
+    color: var(--teal);
+    margin-bottom: 8px;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* EMPTY STATES */
+.travelind-luxury-ticket-container .ticket-loading-state-box { text-align: center; padding: 50px 0; color: var(--gray-400); }
+.travelind-luxury-ticket-container .ticket-empty-state-card { text-align: center; padding: 45px 20px; background-color: var(--white); border-radius: 20px; border: 1px solid var(--gray-200); }
+.travelind-luxury-ticket-container .ticket-empty-state-card svg { margin: 0 auto 10px auto; color: var(--gray-200); display: block; }
+.travelind-luxury-ticket-container .ticket-empty-state-card h6 { font-size: 14px; font-weight: 800; color: var(--navy); }
+.travelind-luxury-ticket-container .ticket-empty-state-card p { font-size: 12px; color: var(--gray-400); margin-top: 4px; line-height: 1.5; font-weight: 500; }
+
+/* FOOTER */
+.travelind-luxury-ticket-container .ticket-view-footer-block { text-align: center; padding: 16px 0 10px 0; margin-top: auto; flex-shrink: 0; }
+.travelind-luxury-ticket-container .ticket-view-footer-block p { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+.travelind-luxury-ticket-container .footer-social-icons-row { display: flex; justify-content: center; gap: 16px; margin-top: 8px; }
+.travelind-luxury-ticket-container .footer-social-icons-row a { color: var(--gray-400); }
+
+/* ANIMATION ENTRANCE */
+.secure-tracker-card, .ticket-filter-tabs-row, .luxury-manifest-ticket-card {
+    animation: luxurySlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes luxurySlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
 }

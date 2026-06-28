@@ -1,0 +1,73 @@
+/* ==========================================================================
+   📌 SHARED STRUCTURE & BOTTOM NAV BAR (TERISOLASI 100% AMAN)
+   ========================================================================== */
+.travelind-shared-shell-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0 auto;
+    background-color: #F7F8FA;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(11, 31, 58, 0.15);
+}
+
+.travelind-shared-shell-container * {
+    box-sizing: border-box !important;
+}
+
+/* Wadah dinamis tengah tempat rendering komponen <Outlet /> */
+.shared-body-viewport {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* STICKY BOTTOM NAVIGATION BAR 4 MENU */
+.luxury-sticky-bottom-navigation-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    width: 100%;
+    height: 64px;
+    background-color: #ffffff;
+    border-top: 1px solid #EAECF0;
+    padding: 10px 0 20px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 9999;
+    box-shadow: 0 -4px 14px rgba(11, 31, 58, 0.04);
+}
+
+.luxury-sticky-bottom-navigation-bar .nav-item-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #9AA3B2;
+    font-size: 10px;
+    font-weight: 600;
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    flex: 1;
+    height: 100%;
+    transition: color 0.15s ease;
+}
+
+.luxury-sticky-bottom-navigation-bar .nav-item-btn i {
+    font-size: 18px;
+    display: block;
+}
+
+.luxury-sticky-bottom-navigation-bar .nav-item-btn.active {
+    color: #00D4B8 !important; /* Warna aksen teal dari TiketGo */
+}

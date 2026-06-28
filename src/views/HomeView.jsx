@@ -3,23 +3,51 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import dataWilayahSumatera from '../utils/datawilayah';
 import useAuthStore from '../store/authStore'; 
-import '../styles/home.css';
+import '../styles/home.css'; 
 
 const HomeView = () => {
   const navigate = useNavigate();
-
-  // 🌟 Ambil data sesi global, fungsi logout, dan bahasa global dari Zustand Store
   const { user, logout, bahasaGlobal } = useAuthStore();
 
   // ----------------==========================================================
-  // ⚡️ LAYER STATE CONTROLLER: UI LAYERS (SIDEBAR OPEN/CLOSE)
-  // ----------------==========================================================
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false); // 🌟 State untuk mengontrol popup konfirmasi keluar
+  // ⚡️ SISIPKAN CODE BARU INI DI SINI (SEKITAR BARIS 15-25):
+  // ----------------------------------------------------------------==========
+  const [isFeedLocked, setIsFeedLocked] = useState(false);
+  const containerRef = useRef(null);
+  const feedRef = useRef(null);
 
-  // --------------------------------------------------------------------------
-  // ⚡️ STATE CONTROLLER: REACTIVE SEARCH FORM ENGINE
-  // --------------------------------------------------------------------------
+  useEffect(() => {
+    const elemenUtama = containerRef.current;
+    if (!elemenUtama) return;
+
+    const tanganiScrollParallax = () => {
+      // Menghitung sisa jarak form pengisian sebelum menyentuh header bar atas
+      const posisiScroll = elemenUtama.scrollTop;
+      
+      // Ambil ambang batas gulir optimal bodi atas gawai (biasanya sekitar 440px - 470px)
+      if (posisiScroll >= 460) {
+        setIsFeedLocked(true);
+      } else {
+        setIsFeedLocked(false);
+      }
+    };
+
+    elemenUtama.addEventListener('scroll', tanganiScrollParallax);
+    return () => elemenUtama.removeEventListener('scroll', tanganiScrollParallax);
+  }, []);
+  // ----------------==========================================================
+
+  // ... sisa kode state lama kamu (activeTabProduct, pickup, dll) tetap biarkan saja di bawahnya ...
+  // ----------------==========================================================
+  // ⚡️ LAYER STATE CONTROLLER: UI & TABS SYSTEM
+  // ----------------------------------------------------------------==========
+  const [activeTabProduct, setActiveTabProduct] = useState('travel'); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+
+  // ----------------==========================================================
+  // ⚡️ STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
+  // ----------------------------------------------------------------==========
   const [pickup, setPickup] = useState('');
   const [tujuan, setTujuan] = useState('');
   const [tanggal, setTanggal] = useState('');
@@ -32,94 +60,106 @@ const HomeView = () => {
   const [showAsalDropdown, setShowAsalDropdown] = useState(false);
   const [showTujuanDropdown, setShowTujuanDropdown] = useState(false);
 
-  // Click-Outside Focus DOM Reference Tracker
+  // Supabase Live Data Promo States
+  const [listPromo, setListPromo] = useState([]);
+  const [loadingPromo, setLoadingPromo] = useState(true);
+
   const asalRef = useRef(null);
   const tujuanRef = useRef(null);
 
-  // Dictionary Kamus Kamar Terjemahan Bahasa Dinamis
+  // Dictionary Kamus Terjemahan Bahasa Dinamis Lengkap
   const t = {
     ID: {
+      pagi: 'Selamat pagi', siang: 'Selamat siang', sore: 'Selamat sore', malam: 'Selamat malam',
       brandSub: 'Mitra Perjalanan Antar Kota',
+      headline: 'Pergi ke mana\nhari ini? ✦',
+      subHeadline: '320+ rute aktif · Sumatera & Jawa',
+      tabTravel: 'Travel', tabBus: 'Bus', tabPaket: 'Paket',
+      labelDari: 'Asal', labelKe: 'Tujuan', labelTanggal: 'Tanggal Pergi', labelPenumpang: 'Penumpang',
       placeholderAsal: 'Ketik Kota / Kabupaten Asal',
       placeholderTujuan: 'Mau Ke Kota / Kabupaten Mana?',
-      hariIni: 'Hari Ini',
-      besok: 'Besok',
-      btnCari: 'Cari travel',
+      hariIni: 'Hari Ini', besok: 'Besok',
+      btnCari: 'Cari Tiket Sekarang',
       noteCari: 'Pesan travel antar kota dengan mudah dan cepat',
       ikutiKami: 'Ikuti kami',
       navTitle: 'Menu Navigasi',
-      menuHome: 'Beranda Utama',
-      menuAkun: 'Akun Saya',
-      menuTiket: 'Pesanan Saya',
-      menuPromo: 'Promo Spesial',
-      menuBantuan: 'Pusat Bantuan',
-      menuKeluar: 'Keluar Akun',
-      logoutPrompt: 'Kamu yakin mau keluar nih?',
-      iya: 'Iya',
-      tidak: 'Tidak',
+      menuHome: 'Beranda Utama', menuAkun: 'Akun Saya', menuTiket: 'Pesanan Saya',
+      menuPromo: 'Promo Spesial', menuBantuan: 'Pusat Bantuan', menuKeluar: 'Keluar Akun',
+      logoutPrompt: 'Kamu yakin mau keluar nih?', iya: 'Iya', tidak: 'Tidak',
       alertLengkapi: 'Silakan lengkapi semua data pencarian terlebih dahulu!',
-      navBtmHome: 'Beranda',
-      navBtmTiket: 'Tiket Saya',
-      navBtmProfil: 'Profil',
-      anonim: 'MASUK / DAFTAR',
-      subAnonim: 'Akses riwayat perjalanan kamu'
+      anonim: 'MASUK / DAFTAR', subAnonim: 'Akses riwayat perjalanan kamu',
+      secPromo: 'Promo Spesial', secLihat: 'Lihat semua', secRute: 'Rute Populer',
+      secOperator: 'Operator Terpercaya', kursiText: '/ kursi', ulasanText: 'ulasan',
+      loadPromo: 'Memuat promo terbaik...', noPromoTitle: 'Belum Ada Promo', noPromoDesc: 'Nantikan promo kejutan menarik dari TRAVELIND selanjutnya!'
     },
     EN: {
+      pagi: 'Good morning', siang: 'Good afternoon', sore: 'Good evening', malam: 'Good night',
       brandSub: 'Intercity Travel Partner',
+      headline: 'Where are you\ngoing today? ✦',
+      subHeadline: '320+ active routes · Sumatra & Java',
+      tabTravel: 'Travel', tabBus: 'Bus', tabPaket: 'Parcel',
+      labelDari: 'Origin', labelKe: 'Destination', labelTanggal: 'Departure Date', labelPenumpang: 'Passengers',
       placeholderAsal: 'Type Origin City / Regency',
       placeholderTujuan: 'Where City / Regency Are You Going?',
-      hariIni: 'Today',
-      besok: 'Tomorrow',
-      btnCari: 'Search Travel',
+      hariIni: 'Today', besok: 'Tomorrow',
+      btnCari: 'Search Tickets Now',
       noteCari: 'Book intercity travel easily and quickly',
       ikutiKami: 'Follow us',
       navTitle: 'Navigation Menu',
-      menuHome: 'Main Home',
-      menuAkun: 'My Account',
-      menuTiket: 'My Bookings',
-      menuPromo: 'Special Promo',
-      menuBantuan: 'Help Center',
-      menuKeluar: 'Log Out Account',
-      logoutPrompt: 'Are you sure you want to log out?',
-      iya: 'Yes',
-      tidak: 'No',
+      menuHome: 'Main Home', menuAkun: 'My Account', menuTiket: 'My Bookings',
+      menuPromo: 'Special Promo', menuBantuan: 'Help Center', menuKeluar: 'Log Out Account',
+      logoutPrompt: 'Are you sure you want to log out?', iya: 'Yes', tidak: 'No',
       alertLengkapi: 'Please complete all search data first!',
-      navBtmHome: 'Home',
-      navBtmTiket: 'My Tickets',
-      navBtmProfil: 'Profile',
-      anonim: 'SIGN IN / SIGN UP',
-      subAnonim: 'Access your travel history'
+      anonim: 'SIGN IN / SIGN UP', subAnonim: 'Access your travel history',
+      secPromo: 'Special Promotions', secLihat: 'See all', secRute: 'Popular Routes',
+      secOperator: 'Trusted Operators', kursiText: '/ seat', ulasanText: 'reviews',
+      loadPromo: 'Loading best deals...', noPromoTitle: 'No Promotion Available', noPromoDesc: 'Stay tuned for exciting promotional surprises from TRAVELIND!'
     }
   }[bahasaGlobal || 'ID'];
 
-  // 🌟 PERBAIKAN: Menarik Nama Asli Lengkap dari metadata registrasi
   const namaProfile = user ? (user.user_metadata?.full_name || user.email.split("@")[0].toUpperCase()) : t.anonim;
   const emailProfile = user?.email ? user.email : t.subAnonim;
   const inisialProfile = user ? namaProfile.charAt(0).toUpperCase() : '?';
 
-  // ----------------=========================================================
-  // 🔄 CORE APPLICATION LIFE-CYCLE
-  // ----------------=========================================================
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (asalRef.current && !asalRef.current.contains(e.target)) setShowAsalDropdown(false);
       if (tujuanRef.current && !tujuanRef.current.contains(e.target)) setShowTujuanDropdown(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    ambilDataPromoDariAdmin();
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ----------------==========================================================
-  // 🛫 STREAM MEMORY CACHE FILTER: AUTOCOMPLETE
-  // ----------------------------------------------------------------==========
+  const ambilDataPromoDariAdmin = async () => {
+    try {
+      setLoadingPromo(true);
+      const { data, error } = await supabase.from('promo').select('*');
+      if (error) throw error;
+      if (data) {
+        const promoAktif = data.filter(p => p.is_aktif === true || p.is_aktif === 'true' || p.is_aktif === 1);
+        setListPromo(promoAktif);
+      }
+    } catch (err) {
+      console.error("Gagal sinkronisasi data tabel promo:", err);
+    } finally {
+      setLoadingPromo(false);
+    }
+  };
+
+  const dapatkanWaktuGreeting = () => {
+    const jam = new Date().getHours();
+    if (jam < 11) return t.pagi;
+    if (jam < 15) return t.siang;
+    if (jam < 19) return t.sore;
+    return t.malam;
+  };
+
   const handleMencariAsalManual = (inputTarget) => {
     setPickup(inputTarget);
-    const textKetik = inputTarget ? inputTarget.toLowerCase() : '';
+    const textKetik = inputTarget.toLowerCase();
     const hasilFilter = dataWilayahSumatera.filter(item => 
-      (item?.nama && item.nama.toLowerCase().includes(textKetik)) || 
-      (item?.prov && item.prov.toLowerCase().includes(textKetik))
+      item?.nama?.toLowerCase().includes(textKetik) || item?.prov?.toLowerCase().includes(textKetik)
     );
     setFilteredAsal(hasilFilter);
     setShowAsalDropdown(true);
@@ -127,18 +167,33 @@ const HomeView = () => {
 
   const handleMencariTujuanManual = (inputTarget) => {
     setTujuan(inputTarget);
-    const textKetik = inputTarget ? inputTarget.toLowerCase() : '';
+    const textKetik = inputTarget.toLowerCase();
     const hasilFilter = dataWilayahSumatera.filter(item => 
-      (item?.nama && item.nama.toLowerCase().includes(textKetik)) || 
-      (item?.prov && item.prov.toLowerCase().includes(textKetik))
+      item?.nama?.toLowerCase().includes(textKetik) || item?.prov?.toLowerCase().includes(textKetik)
     );
     setFilteredTujuan(hasilFilter);
     setShowTujuanDropdown(true);
   };
 
-  // ----------------==========================================================
-  // 💾 TRANSACTION DATA MECHANISM: INITIAL PUSH BACKEND SYSTEM
-  // ----------------------------------------------------------------==========
+  const handleTukarRuteKota = () => {
+    if (!pickup && !tujuan) return;
+    const tampung = pickup;
+    setPickup(tujuan);
+    setTujuan(tampung);
+  };
+
+  const handleSetQuickDate = (type) => {
+    const targetDate = new Date();
+    if (type === 'besok') targetDate.setDate(targetDate.getDate() + 1);
+    
+    const yyyy = targetDate.getFullYear();
+    const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(targetDate.getDate()).padStart(2, '0');
+    
+    setTanggal(`${yyyy}-${mm}-${dd}`);
+    setIsDateActive(type === 'hariIni' ? 0 : 1);
+  };
+
   const handleCariTravel = async () => {
     if (!pickup || !tujuan || !tanggal) {
       alert(t.alertLengkapi);
@@ -161,7 +216,6 @@ const HomeView = () => {
     };
 
     try {
-      console.log("🚀 Mengirim Manifest Rute Awal ke Cloud Supabase:", dataPayload);
       const { data, error } = await supabase
         .from("booking_temp")
         .insert([dataPayload])
@@ -179,29 +233,11 @@ const HomeView = () => {
 
       navigate('/hasil-pencarian');
     } catch (err) {
-      console.error("❌ Detail Error Kirim Supabase:", err);
+      console.error(err);
       navigate('/hasil-pencarian');
     }
   };
 
-  const handleSetQuickDate = (type) => {
-    const targetDate = new Date();
-    if (type === 'besok') targetDate.setDate(targetDate.getDate() + 1);
-    
-    const yyyy = targetDate.getFullYear();
-    const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(targetDate.getDate()).padStart(2, '0');
-    
-    setTanggal(`${yyyy}-${mm}-${dd}`);
-    setIsDateActive(type === 'hariIni' ? 0 : 1);
-  };
-
-  const handleNavigasiAkun = () => {
-    setIsSidebarOpen(false);
-    navigate('/profil'); 
-  };
-
-  // 🌟 PERBAIKAN: Fungsi logout final pasca klik popup iya
   const handleEksekusiLogout = async () => {
     setIsLogoutConfirmOpen(false);
     await logout();
@@ -209,234 +245,299 @@ const HomeView = () => {
   };
 
   return (
-    <div className="travelind-home-wrapper">
+    <div className="travelind-luxury-home-container">
       
-      {/* SCOPED APP HEADER */}
-      <header className="main-header">
-        <div className="brand-wrapper">
-          <h1 className="brand-title">TRAVELIND</h1>
-          <p className="brand-subtitle">{t.brandSub}</p>
+      {/* 🚨 SOLUSI SARAN USER: HEADER ATAS DIPISAH DAN DIKUNCI MATI DI ATAS CONTAINER */}
+      <div className="hero-top-bar">
+        <div className="user-profile-zone">
+          <span className="greeting-text">{dapatkanWaktuGreeting()}</span>
+          <h3 className="user-name-title">{user ? namaProfile : 'Akhmad'}</h3>
         </div>
-        <button type="button" className="menu-btn" onClick={() => setIsSidebarOpen(true)} aria-label="Buka Menu Drawer">
+        <button type="button" className="sidebar-trigger-btn" onClick={() => setIsSidebarOpen(true)}>
           <i className="fa-solid fa-bars-staggered"></i>
         </button>
-      </header>
-
-      {/* WEBVIEW MOMENTUM SCROLLER CONTAINER */}
-      <div className="content-scroller">
-        <main className="content-wrapper" style={{ padding: '0 16px', marginTop: '-50px', width: '100%' }}>
-          <div className="search-card" style={{ width: '100%', boxSizing: 'border-box', padding: '20px 16px', gap: '14px' }}>
-            
-            {/* COMPONENT AUTOCOMPLETE: KOTA PENJEMPUTAN ASAL */}
-            <div className="input-group location-box" ref={asalRef} style={{ width: '100%', position: 'relative' }}>
-              <div className="input-with-icon" style={{ position: 'relative', width: '100%', display: 'block' }}>
-                <i className="fa-solid fa-location-dot input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
-                <input 
-                  type="text" 
-                  placeholder={t.placeholderAsal}
-                  value={pickup}
-                  onFocus={() => {
-                    setShowAsalDropdown(true);
-                    setFilteredAsal(dataWilayahSumatera);
-                  }}
-                  onChange={(e) => handleMencariAsalManual(e.target.value)}
-                  autoComplete="off"
-                  style={{ width: '100%', height: '52px', boxSizing: 'border-box', padding: '12px 40px 12px 48px', fontSize: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'block' }}
-                />
-                <i className="fa-solid fa-chevron-down arrow-icon" style={{ position: 'absolute', right: '16px', left: 'auto', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#a0aec0' }}></i>
-              </div>
-              {showAsalDropdown && filteredAsal.length > 0 && (
-                <div className="dropdown-content">
-                  {filteredAsal.map((item, index) => (
-                    <div 
-                      key={index} 
-                      className="dropdown-item" 
-                      onMouseDown={() => { setPickup(item.nama); setShowAsalDropdown(false); }}
-                    >
-                      {item.nama} <span className="dropdown-province-tag">{item.prov}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* COMPONENT AUTOCOMPLETE: KOTA TUJUAN DESTINASI */}
-            <div className="input-group destination-box" ref={tujuanRef} style={{ width: '100%', position: 'relative' }}>
-              <div className="input-with-icon" style={{ position: 'relative', width: '100%', display: 'block' }}>
-                <i className="fa-solid fa-car input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
-                <input 
-                  type="text" 
-                  placeholder={t.placeholderTujuan}
-                  value={tujuan}
-                  onFocus={() => {
-                    setShowTujuanDropdown(true);
-                    setFilteredTujuan(dataWilayahSumatera);
-                  }}
-                  onChange={(e) => handleMencariTujuanManual(e.target.value)}
-                  autoComplete="off"
-                  style={{ width: '100%', height: '52px', boxSizing: 'border-box', padding: '12px 40px 12px 48px', fontSize: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'block' }}
-                />
-                <i className="fa-solid fa-chevron-down arrow-icon" style={{ position: 'absolute', right: '16px', left: 'auto', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#a0aec0' }}></i>
-              </div>
-              {showTujuanDropdown && filteredTujuan.length > 0 && (
-                <div className="dropdown-content">
-                  {filteredTujuan.map((item, index) => (
-                    <div 
-                      key={index} 
-                      className="dropdown-item" 
-                      onMouseDown={() => { setTujuan(item.nama); setShowTujuanDropdown(false); }}
-                    >
-                      {item.nama} <span className="dropdown-province-tag">{item.prov}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* COMPONENT INTERAKTIF: NATIVE CALENDAR PICKER & BUTTON SHORTCUT */}
-            <div className="input-group date-box" style={{ width: '100%' }}>
-              <div className="date-input-container" style={{ position: 'relative', width: '100%', display: 'block' }}>
-                <div className="input-with-icon" style={{ position: 'relative', width: '100%', display: 'block' }}>
-                  <i className="fa-solid fa-calendar input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
-                  <input 
-                    type="date" 
-                    value={tanggal}
-                    onChange={(e) => {
-                      setTanggal(e.target.value);
-                      setIsDateActive(null);
-                    }}
-                    style={{ width: '100%', height: '52px', boxSizing: 'border-box', padding: '12px 145px 12px 48px', fontSize: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'block' }}
-                  />
-                </div>
-                <div className="quick-date">
-                  <button type="button" className={isDateActive === 0 ? 'active' : ''} onClick={() => handleSetQuickDate('hariIni')}>{t.hariIni}</button>
-                  <button type="button" className={isDateActive === 1 ? 'active' : ''} onClick={() => handleSetQuickDate('besok')}>{t.besok}</button>
-                </div>
-              </div>
-            </div>
-
-            {/* COMPONENT FORM: JUMLAH KURSI MANIFES */}
-            <div className="input-group passenger-box" style={{ width: '100%' }}>
-              <div className="input-with-icon" style={{ position: 'relative', width: '100%', display: 'block' }}>
-                <i className="fa-solid fa-user input-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, color: '#02596b' }}></i>
-                <input 
-                  type="number" 
-                  value={penumpang} 
-                  min="1" 
-                  onChange={(e) => setPenumpang(Math.max(1, parseInt(e.target.value) || 1))}
-                  style={{ width: '100%', height: '52px', boxSizing: 'border-box', padding: '12px 16px 12px 48px', fontSize: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'block' }}
-                />
-              </div>
-            </div>
-
-            <button type="button" className="btn-primary" onClick={handleCariTravel}>{t.btnCari}</button>
-            <p className="search-note">{t.noteCari}</p>
-          </div>
-
-          <footer className="main-footer">
-              <p className="footer-title">{t.ikutiKami}</p>
-              <div className="social-icons">
-                  <a href="#" aria-label="TikTok"><i className="fa-brands fa-tiktok"></i></a>
-                  <a href="#" aria-label="Instagram"><i className="fa-brands fa-instagram"></i></a>
-                  <a href="#" aria-label="Facebook"><i className="fa-brands fa-facebook"></i></a>
-              </div>
-          </footer>
-        </main>
       </div>
 
-      {/* ====================================================================
-         ⚡️ NAVIGATION DRAWER SIDEBAR LACI SIDE
-         ==================================================================== */}
-      <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
-      <nav className={`sidebar-menu ${isSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header">
-          <span className="sidebar-title"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
-          <button type="button" className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)} aria-label="Tutup Menu">
-            <i className="fa-solid fa-xmark"></i>
-          </button>
+      {/* BLOCK SLOGAN & FORM PENGISIAN */}
+      <div className="hero-gradient-block">
+        <h1 className="hero-headline-text">
+          {t.headline.split('\n')[0]}<br />{t.headline.split('\n')[1]}
+        </h1>
+        
+        <div className="live-route-indicator">
+          <span className="pulse-live-dot"></span>
+          <span>{t.subHeadline}</span>
+        </div>
+      </div>
+
+      {/* FLOATING CARD PEMESANAN */}
+      <div className="floating-search-card-outer">
+        <div className="floating-search-card">
+          <div className="product-tab-row">
+            <div className={`product-tab-item ${activeTabProduct === 'travel' ? 'active' : ''}`} onClick={() => setActiveTabProduct('travel')}>
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+              <span>{t.tabTravel}</span>
+            </div>
+            <div className={`product-tab-item ${activeTabProduct === 'bus' ? 'active' : ''}`} onClick={() => setActiveTabProduct('bus')}>
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              <span>{t.tabBus}</span>
+            </div>
+            <div className={`product-tab-item ${activeTabProduct === 'paket' ? 'active' : ''}`} onClick={() => setActiveTabProduct('paket')}>
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+              <span>{t.tabPaket}</span>
+            </div>
+          </div>
+
+          {activeTabProduct !== 'travel' ? (
+            <div className="locked-module-placeholder">
+              <i className="fa-solid fa-laptop-code"></i>
+              <p>Fitur {activeTabProduct.toUpperCase()} akan segera hadir pada pembaruan tahap berikutnya.</p>
+            </div>
+          ) : (
+            <div className="search-form-core-group">
+              <div className="route-selection-row">
+                <div className="route-field-box" ref={asalRef}>
+                  <div className="route-label-sm">{t.labelDari}</div>
+                  <input 
+                    type="text" 
+                    placeholder={t.placeholderAsal}
+                    value={pickup}
+                    onFocus={() => { setShowAsalDropdown(true); setFilteredAsal(dataWilayahSumatera); }}
+                    onChange={(e) => handleMencariAsalManual(e.target.value)}
+                    autoComplete="off"
+                    className="route-city-input"
+                  />
+                  {/* DROPDOWN KOTA MODEREN */}
+                  {showAsalDropdown && filteredAsal.length > 0 && (
+                    <div className="luxury-autocomplete-dropdown">
+                      {filteredAsal.map((item, idx) => (
+                        <div key={idx} className="dropdown-row-item" onMouseDown={() => { setPickup(item.nama); setShowAsalDropdown(false); }}>
+                          <i className="fa-solid fa-location-dot"></i> 
+                          <span>{item.nama}</span>
+                          <small>{item.prov}</small>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="circle-swap-action-btn" onClick={handleTukarRuteKota} title="Tukar Rute">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>
+                  </svg>
+                </div>
+
+                <div className="route-field-box" ref={tujuanRef}>
+                  <div className="route-label-sm">{t.labelKe}</div>
+                  <input 
+                    type="text" 
+                    placeholder={t.placeholderTujuan}
+                    value={tujuan}
+                    onFocus={() => { setShowTujuanDropdown(true); setFilteredTujuan(dataWilayahSumatera); }}
+                    onChange={(e) => handleMencariTujuanManual(e.target.value)}
+                    autoComplete="off"
+                    className={`route-city-input ${!tujuan ? 'placeholder' : ''}`}
+                  />
+                  {/* DROPDOWN KOTA MODEREN */}
+                  {showTujuanDropdown && filteredTujuan.length > 0 && (
+                    <div className="luxury-autocomplete-dropdown">
+                      {filteredTujuan.map((item, idx) => (
+                        <div key={idx} className="dropdown-row-item" onMouseDown={() => { setTujuan(item.nama); setShowTujuanDropdown(false); }}>
+                          <i className="fa-solid fa-location-dot"></i> 
+                          <span>{item.nama}</span>
+                          <small>{item.prov}</small>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="parameter-pencarian-row">
+                <div className="input-split-field">
+                  <div className="field-label">{t.labelTanggal}</div>
+                  <div className="field-input-wrapper">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    <input type="date" value={tanggal} onChange={(e) => { setTanggal(e.target.value); setIsDateActive(null); }} className="date-raw-picker" />
+                  </div>
+                  <div className="mini-quick-date-container">
+                    <button type="button" className={`mini-date-btn ${isDateActive === 0 ? 'active' : ''}`} onClick={() => handleSetQuickDate('hariIni')}>{t.hariIni}</button>
+                    <button type="button" className={`mini-date-btn ${isDateActive === 1 ? 'active' : ''}`} onClick={() => handleSetQuickDate('besok')}>{t.besok}</button>
+                  </div>
+                </div>
+                
+                <div className="input-split-field">
+                  <div className="field-label">{t.labelPassenger || t.labelPenumpang}</div>
+                  <div className="field-input-wrapper">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" strokeLinecap="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <input type="number" value={penumpang} min="1" onChange={(e) => setPenumpang(Math.max(1, parseInt(e.target.value) || 1))} className="passenger-raw-picker" />
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" className="btn-search-travel-submit" onClick={handleCariTravel}>
+                <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                {t.btnCari}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* AREA SCROLL CONTENT SHEET (KEMBALI MELENGKUNG DAN MERAYAP NAIK PARALLAX) */}
+      <div className="home-feed-scroll-content">
+        <div className="stats-metric-section">
+          <div className="metric-badge-card">
+            <div className="stat-number">32<span>+</span></div>
+            <div className="stat-desc">{t.secOperator}</div>
+          </div>
+          <div className="metric-badge-card">
+            <div className="stat-number">320<span>+</span></div>
+            <div className="stat-desc">Rute Tersedia</div>
+          </div>
+          <div className="metric-badge-card">
+            <div className="stat-number">4.<span>8</span></div>
+            <div className="stat-desc">Rating Rata-rata</div>
+          </div>
+        </div>
+
+        <div className="feed-header-row-layout">
+          <h3 className="feed-section-title">{t.secPromo}</h3>
+          <span className="see-all-trigger-btn" onClick={() => navigate('/promo')}>{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         </div>
         
-        <div className="sidebar-profile-card" onClick={handleNavigasiAkun}>
-          <div className="avatar-circle">{inisialProfile}</div>
-          <div className="profile-card-text">
+        <div className="horizontal-carousel-promo">
+          {loadingPromo ? (
+            <p style={{ fontSize: '12px', color: '#9AA3B2', padding: '10px' }}>{t.loadPromo}</p>
+          ) : listPromo.length === 0 ? (
+            <div className="promo-banner-card style-navy" style={{ width: '100%' }}>
+              <h5 className="promo-title">{t.noPromoTitle}</h5>
+              <p className="promo-sub">{t.noPromoDesc}</p>
+            </div>
+          ) : (
+            listPromo.map((promo) => (
+              <div key={promo.id} className={`promo-banner-card ${promo.tema_warna === 'coral' ? 'style-coral' : 'style-navy'}`}>
+                <div className="promo-tag">
+                  <svg width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  {promo.kode_kupon || 'PROMO'}
+                </div>
+                <h5 className="promo-title">{promo.judul_promo}</h5>
+                <p className="promo-sub">{promo.deskripsi_singkat}</p>
+                <span className="promo-btn" onClick={() => navigate(`/promo`)}>Pakai Promo</span>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="feed-header-row-layout" style={{ marginTop: '20px' }}>
+          <h3 className="feed-section-title">{t.secRute}</h3>
+          <span className="see-all-trigger-btn">{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+
+        <div className="routes-shortcut-grid-layout">
+          <div className="route-grid-item-card" onClick={() => { setPickup('Medan'); setTujuan('Padang'); }}>
+            <div className="route-card-top-header">
+              <div className="vehicle-mini-icon">
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
+              <span className="hot-tag-badge">Populer</span>
+            </div>
+            <div className="route-from">Medan</div>
+            <div className="route-arrow-down-svg">
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </div>
+            <div className="route-to">Padang</div>
+            <div className="route-starting-price">Rp120K</div>
+          </div>
+
+          <div className="route-grid-item-card" onClick={() => { setPickup('Palembang'); setTujuan('Lampung'); }}>
+            <div className="route-card-top-header">
+              <div className="vehicle-mini-icon">
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+              </div>
+              <span className="hot-tag-badge blue-badge">Travel</span>
+            </div>
+            <div className="route-from">Palembang</div>
+            <div className="route-arrow-down-svg">
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </div>
+            <div className="route-to">Lampung</div>
+            <div className="route-starting-price">Rp85K</div>
+          </div>
+        </div>
+
+        <div className="feed-header-row-layout" style={{ marginTop: '20px' }}>
+          <h3 className="feed-section-title">{t.secOperator}</h3>
+        </div>
+
+        <div className="horizontal-carousel-operators">
+          <div className="operator-chip-item">
+            <div className="operator-avatar-logo">ALS</div>
+            <div className="operator-meta-info">
+              <h6>Antar Lintas Sumatera</h6>
+              <span className="rating"><svg width="10" height="10" fill="#F5A623" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.8 · 1.2rb {t.ulasanText}</span>
+            </div>
+          </div>
+          <div className="operator-chip-item">
+            <div className="operator-avatar-logo">NPM</div>
+            <div className="operator-meta-info">
+              <h6>PO NPM</h6>
+              <span className="rating"><svg width="10" height="10" fill="#F5A623" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.6 · 2.1rb {t.ulasanText}</span>
+            </div>
+          </div>
+        </div>
+
+        <footer className="main-footer" style={{ padding: '24px 0 10px 0', textAlign: 'center' }}>
+            <p className="footer-title" style={{ fontSize: '12px', fontWeight: '700', color: '#9AA3B2', marginBottom: '8px' }}>{t.ikutiKami}</p>
+            <div className="social-icons" style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+                <a href="#tiktok" style={{ color: '#9AA3B2' }}><i className="fa-brands fa-tiktok"></i></a>
+                <a href="#instagram" style={{ color: '#9AA3B2' }}><i className="fa-brands fa-instagram"></i></a>
+                <a href="#facebook" style={{ color: '#9AA3B2' }}><i className="fa-brands fa-facebook"></i></a>
+            </div>
+        </footer>
+      </div>
+
+      {/* 🚨 RE-DESIGN LACI SIDEBAR: POSISI DI KANAN LUAR UTUH SECARA GLOBAL FIXED */}
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+      <div className={`sidebar-container-block ${isSidebarOpen ? 'active' : ''}`}>
+        <div className="sidebar-header-top">
+          <span className="sidebar-title-label"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
+          <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}><i className="fa-solid fa-xmark"></i></button>
+        </div>
+        <div className="sidebar-user-profile-badge" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>
+          <div className="avatar-circle-box">{inisialProfile}</div>
+          <div className="profile-meta-text">
             <h6>{namaProfile}</h6>
             <p>{emailProfile}</p>
           </div>
         </div>
-        
-        <div className="sidebar-content">
-          <button type="button" className="menu-item menu-item-active" onClick={() => setIsSidebarOpen(false)}>
-            <i className="fa-solid fa-house"></i> {t.menuHome}
-          </button>
-          
-          <button type="button" className="menu-item" onClick={handleNavigasiAkun}>
-            <i className="fa-solid fa-circle-user"></i> {t.menuAkun}
-          </button>
-
-          <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); navigate('/cek-tiket'); }}>
-            <i className="fa-solid fa-ticket"></i> {t.menuTiket}
-          </button>
-
-          <div className="menu-divider"></div>
-
-          <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); navigate('/promo'); }}>
-            <i className="fa-solid fa-tags"></i> {t.menuPromo}
-          </button>
-
-          <a href="https://wa.me/6281234567890?text=Halo%20CS%20TRAVELIND,%20saya%20butuh%20bantuan%20terkait%20pemesanan%20travel." 
-             target="_blank" rel="noreferrer" className="menu-item">
-            <i className="fa-solid fa-headset"></i> {t.menuBantuan}
-          </a>
-          
+        <div className="sidebar-links-list">
+          <button type="button" className="sidebar-menu-btn active-node" onClick={() => setIsSidebarOpen(false)}><i className="fa-solid fa-house"></i> {t.menuHome}</button>
+          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}><i className="fa-solid fa-circle-user"></i> {t.menuAkun}</button>
+          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/cek-tiket')}><i className="fa-solid fa-ticket"></i> {t.menuTiket}</button>
+          <div className="sidebar-line-separator"></div>
+          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/promo')}><i className="fa-solid fa-tags"></i> {t.menuPromo}</button>
+          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="sidebar-menu-btn"><i className="fa-solid fa-headset"></i> {t.menuBantuan}</a>
           {user && (
-            /* 🌟 PERBAIKAN: Mengganti window.confirm lama dengan menembak modal sheet konfirmasi */
-            <button type="button" className="menu-item" onClick={() => setIsSidebarOpen(false) || setIsLogoutConfirmOpen(true)} style={{ color: '#eb5757', width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}>
-              <i className="fa-solid fa-arrow-right-from-bracket" style={{ color: '#eb5757' }}></i> {t.menuKeluar}
+            <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || setIsLogoutConfirmOpen(true)} style={{ color: '#eb5757' }}>
+              <i className="fa-solid fa-arrow-right-from-bracket"></i> {t.menuKeluar}
             </button>
           )}
         </div>
+      </div>
 
-        <div className="sidebar-footer">
-          <p>©️ 2026 TRAVELIND Startup. v2.0.0</p>
-        </div>
-      </nav>
-
-      {/* ====================================================================
-         🌟 POPUP BOTTOM SHEET CONFIRM LOGOUT (MEMINJAM GAYA PROFIL.CSS)
-         ==================================================================== */}
+      {/* MODAL BOTTOM SHEET LOGOUT CONFIRM */}
       <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
-        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <i className="fa-solid fa-circle-question" style={{ fontSize: '48px', color: 'var(--danger-red)', marginBottom: '16px' }}></i>
-          <h5 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 24px 0', color: '#2d3748' }}>{t.logoutPrompt}</h5>
-          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-            <button className="btn-login-primary" onClick={handleEksekusiLogout} style={{ margin: 0, background: 'var(--danger-red)' }}>
-              {t.iya}
-            </button>
-            <button className="btn-login-primary" onClick={() => setIsLogoutConfirmOpen(false)} style={{ margin: 0, background: '#e2e8f0', color: '#4a5568' }}>
-              {t.tidak}
-            </button>
+          <i className="fa-solid fa-circle-question" style={{ fontSize: '44px', color: '#e11d48', marginBottom: '12px', display: 'block' }}></i>
+          <h5 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '20px', color: '#0B1F3A' }}>{t.logoutPrompt}</h5>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button className="btn-popup-action danger" onClick={handleEksekusiLogout}>{t.iya}</button>
+            <button className="btn-popup-action cancel" onClick={() => setIsLogoutConfirmOpen(false)}>{t.tidak}</button>
           </div>
         </div>
       </div>
-
-      {/* ====================================================================
-         📌 COMPONENT STICKY: MOBILE FIXED BOTTOM NAVIGATION
-         ==================================================================== */}
-      <nav className="bottom-nav">
-        <button type="button" className="nav-link active" onClick={() => navigate('/home')}>
-          <i className="fa-solid fa-house"></i>
-          <span>{t.navBtmHome}</span>
-        </button>
-        <button type="button" className="nav-link" onClick={() => navigate('/cek-tiket')}>
-          <i className="fa-solid fa-ticket"></i>
-          <span>{t.navBtmTiket}</span>
-        </button>
-        <button type="button" className="nav-link" onClick={handleNavigasiAkun}>
-          <i className="fa-solid fa-user"></i>
-          <span>{t.navBtmProfil}</span>
-        </button>
-      </nav>
 
     </div>
   );

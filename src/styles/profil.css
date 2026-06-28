@@ -1,392 +1,130 @@
 /* ==========================================================================
-   💎 TRAVELIND PREMIUM ARC: PROFILE & FIXED BOTTOM NAV RECOVERY
+   🌟 TRAVELIND LUXURY PROFILE ENGINE V6 (MAIN LAYOUT SINK)
    ========================================================================== */
 
-:root {
-    --primary-teal: #02596b; 
-    --dark-teal: #013e4b;
-    --light-bg: #f7fafc;
-    --card-bg: #ffffff;
-    --text-main: #2d3748;
-    --text-muted: #718096;
-    --accent-orange: #f6ad55;
-    --danger-red: #e53e3e;
-}
+.travelind-luxury-profile-container {
+    --navy: #0B1F3A;
+    --navy-mid: #122845;
+    --teal: #00D4B8;
+    --teal-light: #E0FAF7;
+    --coral: #FF6B4A;
+    --white: #FFFFFF;
+    --gray-100: #F7F8FA;
+    --gray-200: #EAECF0;
+    --gray-400: #9AA3B2;
+    --gray-700: #3D4A5C;
+    --danger-red: #E11D48;
 
-.app-profil-container {
-    height: 100vh !important;
-    width: 100%;
-    max-width: 450px;
-    margin: 0 auto;
-    background-color: var(--light-bg);
-    position: relative;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-}
-
-.profil-curved-header-bg {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-60%);
-    width: 160%; /* Dibuat lebih lebar dari container untuk efek lengkungan elips */
-    height: 200px; /* Sesuaikan tinggi background toska di sini */
-    background: linear-gradient(135deg, #02596b, #013e4b); /* Kombinasi gradient toska premium agar lebih hidup */
-    border-bottom-left-radius: 50% 40px; /* Membuat sudut kiri melengkung halus */
-    border-bottom-right-radius: 40% 40px; /* Membuat sudut kanan melengkung halus */
-    z-index: 1;
-}
-
-.profil-header-nav {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 16px;
-    color: #ffffff;
-}
-
-.profil-header-nav .back-btn {
-    position: absolute;
-    left: 16px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.profil-header-nav h2 {
-    font-size: 20px;
-    font-weight: 700;
-    margin: 0;
-    letter-spacing: 1px;
-}
-
-/* 🟢 USER AVATAR MECHANISM */
-.profile-card-center-wrapper {
-    position: relative;
-    z-index: 2;
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0 24px;
-}
-
-.avatar-circle-frame {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: #e2e8f0;
-    border: 4px solid #ffffff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-}
-
-.avatar-circle-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.avatar-placeholder-icon {
-    font-size: 50px;
-    color: #a0aec0;
-}
-
-.user-text-name { font-size: 22px; font-weight: 700; color: var(--text-main); margin: 0; }
-.user-text-email { font-size: 14px; color: var(--text-muted); margin: 4px 0 0 0; }
-
-.auth-btn-row-trigger {
-    display: flex;
-    gap: 16px;
-    margin-top: 12px;
-}
-
-.btn-outline-auth {
-    background: #ffffff;
-    border: 1px solid var(--primary-teal);
-    color: var(--primary-teal);
-    padding: 8px 24px;
-    font-size: 14px;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: transform 0.1s ease, background 0.2s, color 0.2s;
-}
-
-.btn-outline-auth:active {
-    transform: scale(0.94);
-}
-
-.btn-outline-auth:hover {
-    background: var(--primary-teal);
-    color: white;
-}
-
-/* 🟢 LIST ACCORDION MENU CARD */
-.menu-list-container-premium {
-    position: relative;
-    z-index: 2;
-    margin-top: 30px;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-
-.card-menu-item-premium {
-    background: #ffffff;
-    border: none;
-    border-radius: 14px;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.card-menu-item-premium:active {
-    transform: scale(0.96);
-    background-color: #f8fafc;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.01);
-}
-
-.menu-item-premium-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #2d3748;
-}
-
-.menu-item-premium-left i {
-    font-size: 20px;
-    color: var(--primary-teal);
-    width: 24px;
-    text-align: center;
-}
-
-.menu-item-premium-right {
-    color: #cbd5e0;
-    font-size: 14px;
-}
-
-/* 🟢 PERBAIKAN: FIXED BOTTOM NAVIGATION (SINKRON DENGAN HOME) */
-.fixed-bottom-nav-profil {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 450px;
-    height: 64px;
-    background-color: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
-}
-
-.fixed-bottom-nav-profil .nav-link-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    background: none;
-    border: none;
-    color: #a0aec0;
-    cursor: pointer;
-    flex: 1;
-    height: 100%;
-    font-size: 18px;
-    text-decoration: none;
-}
-
-.fixed-bottom-nav-profil .nav-link-item span {
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.fixed-bottom-nav-profil .nav-link-item.active {
-    color: var(--primary-teal);
-}
-
-/* 🟢 POPUP BOTTOM SHEET CONTAINER */
-.premium-popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 450px;
+    width: 100%; 
+    max-width: 450px; 
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 2000;
-    display: flex;
-    align-items: flex-end;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    background-color: var(--gray-100);
+    display: flex; 
+    flex-direction: column; 
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
 }
 
-.premium-popup-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
+/* HEADER NAVY SOLID */
+.travelind-luxury-profile-container .profile-top-bar {
+    background-color: var(--navy);
+    padding: 24px 24px 18px 24px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    color: var(--white);
+    flex-shrink: 0;
 }
 
-.premium-popup-sheet {
-    background: #ffffff;
-    width: 100%;
-    border-top-left-radius: 28px;
-    border-top-right-radius: 28px;
-    padding: 24px 20px 34px 20px;
-    box-sizing: border-box;
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    max-height: 85vh;
-    overflow-y: auto;
+.travelind-luxury-profile-container .profile-page-title { 
+    font-size: 18px; 
+    font-weight: 700; 
+    letter-spacing: -0.3px; 
 }
 
-.premium-popup-overlay.active .premium-popup-sheet {
-    transform: translateY(0);
+.travelind-luxury-profile-container .back-action-btn {
+    width: 40px; height: 40px; background-color: rgba(255, 255, 255, 0.1); border-radius: 12px;
+    border: none; display: flex; align-items: center; justify-content: center; color: var(--white); cursor: pointer;
 }
 
-.popup-sheet-notch {
-    width: 45px;
-    height: 5px;
-    background: #e2e8f0;
-    border-radius: 3px;
-    margin: 0 auto 24px auto;
-}
-
-/* 🟢 FULL RECOVERY FOR LOGIN FORM INSIDE POPUP (`image_9.png`) */
-.login-content-pure-injector {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.login-form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.input-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    text-align: left;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.input-field label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--dark-teal);
-}
-
-.input-field input {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid #cbd5e0;
-    font-size: 14px;
-    box-sizing: border-box;
-    background-color: #f8fafc;
-    transition: all 0.2s;
-}
-
-.input-field input:focus {
-    outline: none;
-    border-color: var(--primary-teal);
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(2, 89, 107, 0.1);
-}
-
-.btn-login-primary {
-    width: 100%;
-    background-color: var(--primary-teal);
-    color: #ffffff;
-    border: none;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    box-sizing: border-box;
-    margin-top: 8px;
-    transition: background 0.2s;
-}
-
-.btn-login-primary:hover { background-color: var(--dark-teal); }
-
-.login-divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #cbd5e0;
-    font-size: 12px;
-    margin: 20px 0;
-}
-.login-divider::before, .login-divider::after {
-    content: '';
+/* SCROLL CONTAINER */
+.travelind-luxury-profile-container .profile-main-content { 
+    padding: 0 18px 40px 18px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
     flex: 1;
-    border-bottom: 1px solid #e2e8f0;
+    overflow-y: auto; 
+    scrollbar-width: none;
 }
-.login-divider span { padding: 0 10px; }
 
-.btn-login-google {
-    width: 100%;
-    background-color: #ffffff;
-    color: #2b2b2b;
-    border: 1px solid #e2e8f0;
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+/* AVATAR CARD */
+.travelind-luxury-profile-container .profile-user-avatar-card {
+    background-color: var(--navy);
+    padding: 30px 20px;
+    border-radius: 0 0 32px 32px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-sizing: border-box;
+    color: var(--white);
+    margin: 0 -18px;
+    margin-bottom: 10px;
 }
 
-.btn-login-google img { width: 18px; height: 18px; }
-
-.login-error-badge {
-    background-color: #ffe5e5;
-    color: #e53e3e;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 14px;
-    border: 1px solid #feb2b2;
-    text-align: left;
+.travelind-luxury-profile-container .avatar-circle-frame {
+    width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 12px; overflow: hidden;
 }
+
+.travelind-luxury-profile-container .profile-meta-details { text-align: center; }
+.travelind-luxury-profile-container .user-text-name { font-size: 18px; font-weight: 800; }
+.travelind-luxury-profile-container .user-text-email { font-size: 12px; color: rgba(255,255,255,0.6); }
+
+/* AUTH BUTTONS */
+.travelind-luxury-profile-container .auth-btn-row-trigger { display: flex; gap: 12px; margin-top: 10px; }
+.travelind-luxury-profile-container .btn-outline-auth-node {
+    padding: 10px 24px; border-radius: 12px; border: 1.5px solid var(--white); background: transparent;
+    color: var(--white); font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.travelind-luxury-profile-container .btn-outline-auth-node.accent-login { background: var(--white); color: var(--navy); }
+
+/* MENU LIST */
+.travelind-luxury-profile-container .menu-list-container-premium { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+
+.travelind-luxury-profile-container .card-menu-item-premium {
+    background: var(--white); border: none; border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.03); cursor: pointer;
+}
+
+.travelind-luxury-profile-container .menu-item-premium-left {
+    display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 700; color: var(--navy);
+}
+.travelind-luxury-profile-container .menu-item-premium-left svg { color: var(--teal); }
+
+.travelind-luxury-profile-container .action-logout-node { border: 1.5px solid #FFF1F2 !important; background: #FFF1F2 !important; color: var(--danger-red) !important; }
+.travelind-luxury-profile-container .action-logout-node svg { color: var(--danger-red) !important; }
+
+/* POPUP SHEET */
+.travelind-luxury-profile-container .premium-popup-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(11, 31, 58, 0.4); backdrop-filter: blur(4px); z-index: 9999;
+    display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.travelind-luxury-profile-container .premium-popup-overlay.active { opacity: 1; pointer-events: auto; }
+.travelind-luxury-profile-container .premium-popup-sheet {
+    background: var(--white); width: 100%; border-radius: 28px 28px 0 0; padding: 24px;
+    transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.travelind-luxury-profile-container .premium-popup-overlay.active .premium-popup-sheet { transform: translateY(0); }
+.travelind-luxury-profile-container .popup-sheet-notch { width: 45px; height: 5px; background: var(--gray-200); border-radius: 3px; margin: 0 auto 20px auto; }
+.travelind-luxury-profile-container .popup-sheet-title { font-size: 14px; font-weight: 700; text-align: center; color: var(--navy); margin-bottom: 20px; }
+
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit {
+    width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--navy);
+    color: var(--white); font-weight: 700; cursor: pointer;
+}
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-danger { background: var(--danger-red); }
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-cancel { background: var(--gray-200); color: var(--navy); margin-top: 8px; }
+.travelind-luxury-profile-container .popup-sheet-buttons-flex { display: flex; flex-direction: column; gap: 10px; }
