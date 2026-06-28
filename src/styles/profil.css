@@ -1,5 +1,5 @@
 /* ==========================================================================
-   🌟 TRAVELIND LUXURY PROFILE ENGINE V6 (MAIN LAYOUT SINK)
+   🌟 TRAVELIND LUXURY PROFILE ENGINE V6 (DYNAMIC OVERLAY & ANTI-LATERAL DRAG)
    ========================================================================== */
 
 .travelind-luxury-profile-container {
@@ -23,7 +23,14 @@
     flex-direction: column; 
     margin: 0 auto;
     position: relative;
-    overflow: hidden;
+    
+    /* 🔒 KUNCI UTAMA: Blokir total pergeseran kanan-kiri yang tidak karuan di HP */
+    overflow-x: hidden !important;
+    overflow-y: hidden;
+}
+
+.travelind-luxury-profile-container * {
+    box-sizing: border-box !important;
 }
 
 /* HEADER NAVY SOLID */
@@ -48,7 +55,7 @@
     border: none; display: flex; align-items: center; justify-content: center; color: var(--white); cursor: pointer;
 }
 
-/* SCROLL CONTAINER */
+/* SCROLL CONTAINER INTERNAL */
 .travelind-luxury-profile-container .profile-main-content { 
     padding: 0 18px 40px 18px; 
     display: flex; 
@@ -56,8 +63,10 @@
     gap: 16px; 
     flex: 1;
     overflow-y: auto; 
+    overflow-x: hidden; /* Lindungi bodi scroll dari kebocoran horizontal */
     scrollbar-width: none;
 }
+.travelind-luxury-profile-container .profile-main-content::-webkit-scrollbar { display: none; }
 
 /* AVATAR CARD */
 .travelind-luxury-profile-container .profile-user-avatar-card {
@@ -75,18 +84,21 @@
 .travelind-luxury-profile-container .avatar-circle-frame {
     width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.1);
     display: flex; align-items: center; justify-content: center; margin-bottom: 12px; overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.2);
 }
+.travelind-luxury-profile-container .avatar-circle-frame img { width: 100%; height: 100%; object-fit: cover; }
 
 .travelind-luxury-profile-container .profile-meta-details { text-align: center; }
 .travelind-luxury-profile-container .user-text-name { font-size: 18px; font-weight: 800; }
-.travelind-luxury-profile-container .user-text-email { font-size: 12px; color: rgba(255,255,255,0.6); }
+.travelind-luxury-profile-container .user-text-email { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
 
 /* AUTH BUTTONS */
 .travelind-luxury-profile-container .auth-btn-row-trigger { display: flex; gap: 12px; margin-top: 10px; }
 .travelind-luxury-profile-container .btn-outline-auth-node {
     padding: 10px 24px; border-radius: 12px; border: 1.5px solid var(--white); background: transparent;
-    color: var(--white); font-size: 12px; font-weight: 700; cursor: pointer;
+    color: var(--white); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;
 }
+.travelind-luxury-profile-container .btn-outline-auth-node:active { transform: scale(0.95); }
 .travelind-luxury-profile-container .btn-outline-auth-node.accent-login { background: var(--white); color: var(--navy); }
 
 /* MENU LIST */
@@ -95,36 +107,376 @@
 .travelind-luxury-profile-container .card-menu-item-premium {
     background: var(--white); border: none; border-radius: 16px; padding: 16px 20px;
     display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.03); cursor: pointer;
+    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.03); cursor: pointer; width: 100%; transition: all 0.15s;
 }
+.travelind-luxury-profile-container .card-menu-item-premium:active { transform: scale(0.98); background-color: var(--gray-100); }
 
 .travelind-luxury-profile-container .menu-item-premium-left {
     display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 700; color: var(--navy);
 }
 .travelind-luxury-profile-container .menu-item-premium-left svg { color: var(--teal); }
+.travelind-luxury-profile-container .chevron-right { color: var(--gray-400); }
+
+/* KUSTOMISASI SUB-WARNA IKON */
+.travelind-luxury-profile-container .text-icon-gold svg { color: #D4AF37 !important; }
+.travelind-luxury-profile-container .text-icon-blue svg { color: #3B82F6 !important; }
+.travelind-luxury-profile-container .text-icon-teal svg { color: var(--teal) !important; }
 
 .travelind-luxury-profile-container .action-logout-node { border: 1.5px solid #FFF1F2 !important; background: #FFF1F2 !important; color: var(--danger-red) !important; }
 .travelind-luxury-profile-container .action-logout-node svg { color: var(--danger-red) !important; }
 
-/* POPUP SHEET */
-.travelind-luxury-profile-container .premium-popup-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(11, 31, 58, 0.4); backdrop-filter: blur(4px); z-index: 9999;
-    display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+/* 🌟 DROPDOWN BAHASA MINIMALIS ENGINE */
+.travelind-luxury-profile-container .luxury-language-wrapper-node {
+    position: relative;
+    width: 100%;
 }
-.travelind-luxury-profile-container .premium-popup-overlay.active { opacity: 1; pointer-events: auto; }
-.travelind-luxury-profile-container .premium-popup-sheet {
-    background: var(--white); width: 100%; border-radius: 28px 28px 0 0; padding: 24px;
-    transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+.travelind-luxury-profile-container .card-menu-item-premium.dropdown-active {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    box-shadow: none;
+    border: 1px solid var(--gray-200);
+    border-bottom: none;
 }
-.travelind-luxury-profile-container .premium-popup-overlay.active .premium-popup-sheet { transform: translateY(0); }
-.travelind-luxury-profile-container .popup-sheet-notch { width: 45px; height: 5px; background: var(--gray-200); border-radius: 3px; margin: 0 auto 20px auto; }
-.travelind-luxury-profile-container .popup-sheet-title { font-size: 14px; font-weight: 700; text-align: center; color: var(--navy); margin-bottom: 20px; }
+.travelind-luxury-profile-container .language-badge-current-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.travelind-luxury-profile-container .current-flag-indicator { font-size: 14px; }
+.travelind-luxury-profile-container .current-lang-text { font-size: 12px; font-weight: 700; color: var(--gray-700); }
+.travelind-luxury-profile-container .chevron-dropdown-icon { color: var(--gray-400); transition: transform 0.2s ease; }
+.travelind-luxury-profile-container .chevron-dropdown-icon.rotate { transform: rotate(180deg); }
 
-.travelind-luxury-profile-container .btn-popup-sheet-action-submit {
-    width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--navy);
-    color: var(--white); font-weight: 700; cursor: pointer;
+.travelind-luxury-profile-container .minimalist-lang-dropdown-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    box-shadow: 0 10px 25px rgba(11, 31, 58, 0.08);
+    z-index: 80;
+    border: 1px solid var(--gray-200);
+    border-top: none;
+    padding: 4px 8px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
+.travelind-luxury-profile-container .lang-dropdown-option-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.travelind-luxury-profile-container .lang-dropdown-option-row:hover { background-color: var(--gray-100); }
+.travelind-luxury-profile-container .lang-dropdown-option-row.selected { background-color: var(--teal-light); }
+.travelind-luxury-profile-container .dropdown-flag-icon { font-size: 15px; }
+.travelind-luxury-profile-container .dropdown-lang-label { font-size: 13px; font-weight: 700; color: var(--navy); }
+
+/* ==========================================================================
+   🚨 LAYER OVERLAY POPUP: ANTI-POTONG (Z-INDEX SUPER MAX & FIXED LAYOUT)
+   ========================================================================== */
+.travelind-luxury-profile-container .premium-popup-overlay {
+    position: fixed !important; /* Fixed melompat keluar melompati layout pembungkus */
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
+    background: rgba(11, 31, 58, 0.45); 
+    backdrop-filter: blur(5px) !important; 
+    
+    /* 🌟 KUNCI UTAMA: Z-index tertinggi agar berada mutlak di atas MainLayout & Menu bawah manapun */
+    z-index: 999999 !important; 
+    
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: center;
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.travelind-luxury-profile-container .premium-popup-overlay.active { 
+    opacity: 1; 
+    pointer-events: auto; 
+}
+
+/* DESAIN MODEREN POPUP LEBIH MINIMALIS & MEWAH */
+.travelind-luxury-profile-container .premium-popup-sheet {
+    background-color: var(--white); 
+    width: 100%; 
+    max-width: 450px; 
+    border-top-left-radius: 28px; 
+    border-top-right-radius: 28px; 
+    padding: 24px 24px 34px 24px;
+    box-shadow: 0 -15px 35px rgba(11, 31, 58, 0.18);
+    transform: translateY(100%); 
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.travelind-luxury-profile-container .premium-popup-overlay.active .premium-popup-sheet { 
+    transform: translateY(0); 
+}
+
+.travelind-luxury-profile-container .premium-popup-sheet.intense-padding {
+    padding: 24px 20px 20px 20px; /* Toleransi untuk form injector internal */
+}
+
+.travelind-luxury-profile-container .popup-sheet-notch { 
+    width: 42px; height: 4px; background: var(--gray-200); border-radius: 10px; margin: 0 auto 20px auto; 
+}
+.travelind-luxury-profile-container .popup-sheet-center-icon { display: block; margin: 0 auto 14px auto; }
+.travelind-luxury-profile-container .popup-sheet-center-icon.colored-warning { color: var(--coral); }
+.travelind-luxury-profile-container .popup-sheet-center-icon.colored-danger { color: var(--danger-red); }
+
+.travelind-luxury-profile-container .popup-sheet-title { 
+    font-size: 15px; font-weight: 700; text-align: center; color: var(--navy); margin-bottom: 24px; line-height: 1.4; 
+}
+
+/* INTERFACE UTILITY ACTION BUTTON POPUP SHEET */
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit {
+    width: 100%; background: var(--navy); color: var(--white); font-size: 14px; font-weight: 700; 
+    padding: 14px; border-radius: 14px; border: none; cursor: pointer; transition: background 0.15s;
+}
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit:hover { background: var(--navy-mid); }
+
+.travelind-luxury-profile-container .popup-sheet-buttons-flex { display: flex; gap: 10px; width: 100%; }
 .travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-danger { background: var(--danger-red); }
-.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-cancel { background: var(--gray-200); color: var(--navy); margin-top: 8px; }
-.travelind-luxury-profile-container .popup-sheet-buttons-flex { display: flex; flex-direction: column; gap: 10px; }
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-cancel { background: var(--gray-200); color: var(--gray-700); }
+
+/* ==========================================================================
+   ⚙️ INJECTOR STYLE FOR LOGINVIEW SHEET (SERASI DENGAN HOME)
+   ========================================================================== */
+
+/* Induk Container Form di dalam Sheet */
+.travelind-luxury-profile-container .premium-popup-sheet h2,
+.travelind-luxury-profile-container .premium-popup-sheet .login-title,
+.travelind-luxury-profile-container .premium-popup-sheet h3 {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: var(--navy) !important;
+    text-align: center !important;
+    margin-bottom: 6px !important;
+    letter-spacing: -0.5px !important;
+}
+
+.travelind-luxury-profile-container .premium-popup-sheet p,
+.travelind-luxury-profile-container .premium-popup-sheet .login-subtitle {
+    font-size: 12px !important;
+    color: var(--gray-400) !important;
+    text-align: center !important;
+    margin-bottom: 24px !important;
+    font-weight: 500 !important;
+}
+
+/* Tata Letak Form Group & Label */
+.travelind-luxury-profile-container .premium-popup-sheet .login-form-group,
+.travelind-luxury-profile-container .premium-popup-sheet .input-field {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+}
+
+.travelind-luxury-profile-container .premium-popup-sheet label {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--navy) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Transformasi Input Box Jadi Super Modern & Melengkung */
+.travelind-luxury-profile-container .premium-popup-sheet input {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid var(--gray-200) !important;
+    font-size: 13px !important;
+    color: var(--navy) !important;
+    font-weight: 600 !important;
+    background-color: var(--gray-100) !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.travelind-luxury-profile-container .premium-popup-sheet input:focus {
+    border-color: var(--teal) !important;
+    background-color: var(--white) !important;
+    box-shadow: 0 0 0 4px rgba(0, 214, 184, 0.08) !important;
+}
+
+/* Tombol Submit Utama (Masuk Sekarang) */
+.travelind-luxury-profile-container .premium-popup-sheet .btn-login-primary,
+.travelind-luxury-profile-container .premium-popup-sheet button[type="submit"] {
+    width: 100% !important;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%) !important;
+    color: var(--white) !important;
+    border: none !important;
+    padding: 14px !important;
+    border-radius: 14px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    margin-top: 10px !important;
+    box-shadow: 0 4px 12px rgba(11, 31, 58, 0.15) !important;
+}
+
+.travelind-luxury-profile-container .premium-popup-sheet .btn-login-primary:active,
+.travelind-luxury-profile-container .premium-popup-sheet button[type="submit"]:active {
+    transform: scale(0.97) !important;
+}
+
+/* Pembatas Divider */
+.travelind-luxury-profile-container .premium-popup-sheet .login-divider {
+    display: flex !important;
+    align-items: center !important;
+    text-align: center !important;
+    color: var(--gray-400) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    margin: 20px 0 !important;
+}
+.travelind-luxury-profile-container .premium-popup-sheet .login-divider::before,
+.travelind-luxury-profile-container .premium-popup-sheet .login-divider::after {
+    content: '' !important;
+    flex: 1 !important;
+    border-bottom: 1px solid var(--gray-200) !important;
+}
+.travelind-luxury-profile-container .premium-popup-sheet .login-divider span { 
+    padding: 0 10px !important; 
+}
+
+/* Tombol Login Google */
+.travelind-luxury-profile-container .premium-popup-sheet .btn-login-google {
+    width: 100% !important;
+    background-color: var(--white) !important;
+    color: var(--navy) !important;
+    border: 1.5px solid var(--gray-200) !important;
+    padding: 12px !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    transition: all 0.2s !important;
+}
+.travelind-luxury-profile-container .premium-popup-sheet .btn-login-google:hover {
+    background-color: var(--gray-100) !important;
+}
+
+/* Teks Link Pindah Halaman */
+.travelind-luxury-profile-container .premium-popup-sheet .auth-switch-text,
+.travelind-luxury-profile-container .premium-popup-sheet div[style*="text-align: center"] {
+    font-size: 12px !important;
+    color: var(--gray-400) !important;
+    margin-top: 16px !important;
+    font-weight: 500 !important;
+}
+
+.travelind-luxury-profile-container .premium-popup-sheet a,
+.travelind-luxury-profile-container .premium-popup-sheet span[style*="pointer"] {
+    color: var(--teal) !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    margin-left: 4px !important;
+    cursor: pointer !important;
+}
+.travelind-luxury-profile-container .premium-popup-sheet a:hover {
+    text-decoration: underline !important;
+}
+
+/* Badge Error */
+.travelind-luxury-profile-container .premium-popup-sheet .login-error-badge {
+    background-color: #FFF1F2 !important;
+    color: var(--danger-red) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    margin-bottom: 14px !important;
+    border: 1px solid #FFE4E6 !important;
+}
+
+/* ==========================================================================
+   🚨 EXCLUSIVE OVERHAUL: MODAL POPUP LOGOUT SUPER MINIMALIS
+   ========================================================================== */
+
+/* Batasi tinggi sheet khusus untuk konfirmasi pendek */
+.travelind-luxury-profile-container .premium-popup-overlay .premium-popup-sheet {
+    max-width: 410px;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 24px 28px 24px;
+}
+
+/* Perkecil indikator notch atas */
+.travelind-luxury-profile-container .popup-sheet-notch {
+    width: 36px;
+    height: 4px;
+    margin-bottom: 16px;
+}
+
+/* Perkecil ukuran ikon peringatan logout */
+.travelind-luxury-profile-container .popup-sheet-center-icon.colored-danger {
+    width: 38px !important;
+    height: 38px !important;
+    margin-bottom: 10px !important;
+    color: var(--danger-red) !important;
+}
+
+/* Sesuaikan ukuran teks pertanyaan */
+.travelind-luxury-profile-container .popup-sheet-title {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: var(--navy) !important;
+    margin-bottom: 20px !important;
+    letter-spacing: -0.2px;
+}
+
+/* KUNCI UTAMA: Ubah susunan tombol dari vertikal menjadi horizontal */
+.travelind-luxury-profile-container .popup-sheet-buttons-flex {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    width: 100% !important;
+}
+
+/* Pengaturan tombol di dalam flex-row */
+.travelind-luxury-profile-container .popup-sheet-buttons-flex .btn-popup-sheet-action-submit {
+    flex: 1 !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    margin-top: 0 !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease;
+}
+
+/* Tombol "Iya" (Keluar) - Merah Lembut */
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-danger {
+    background: #FFE4E6 !important;
+    color: var(--danger-red) !important;
+    border: 1px solid #FECDD3 !important;
+}
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-danger:active {
+    background: #FECDD3 !important;
+    transform: scale(0.97);
+}
+
+/* Tombol "Tidak" (Batal) - Gray Muted */
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-cancel {
+    background: var(--gray-100) !important;
+    color: var(--gray-700) !important;
+    border: 1px solid var(--gray-200) !important;
+}
+.travelind-luxury-profile-container .btn-popup-sheet-action-submit.node-cancel:active {
+    background: var(--gray-200) !important;
+    transform: scale(0.97);
+}

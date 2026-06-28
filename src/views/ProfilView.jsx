@@ -8,11 +8,12 @@ const ProfilView = () => {
   const navigate = useNavigate();
   const { user, logout, bahasaGlobal, setBahasaGlobal } = useAuthStore();
 
-  // State Controller Pop-up
+  // State Controller Pop-up & Dropdown
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false); 
-  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false); 
+  const [authMode, setAuthMode] = useState('login'); 
 
   const textContent = {
     ID: {
@@ -56,10 +57,6 @@ const ProfilView = () => {
     } else {
       navigate(targetPath);
     }
-  };
-
-  const toggleLanguage = () => {
-    setBahasaGlobal(bahasaGlobal === 'ID' ? 'EN' : 'ID');
   };
 
   const handleEksekusiLogout = async () => {
@@ -137,13 +134,39 @@ const ProfilView = () => {
             <svg className="chevron-right" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </button>
 
-          <button type="button" className="card-menu-item-premium" onClick={toggleLanguage}>
-            <div className="menu-item-premium-left text-icon-teal">
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"/></svg>
-              <span>{t.menu4} ({bahasaGlobal})</span>
-            </div>
-            <svg className="chevron-right" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-          </button>
+          {/* DYNAMIC LANGUAGE SWAPPER COMPONENT WITH IMAGE FLAGS */}
+          <div className="luxury-language-wrapper-node">
+            <button type="button" className={`card-menu-item-premium ${isLangDropdownOpen ? 'dropdown-active' : ''}`} onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}>
+              <div className="menu-item-premium-left text-icon-teal">
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"/></svg>
+                <span>{t.menu4}</span>
+              </div>
+              <div className="language-badge-current-wrapper" style={{ display: 'flex', alignItems: 'center' }}>
+                <img 
+                  src={bahasaGlobal === 'ID' ? 'https://flagcdn.com/w20/id.png' : 'https://flagcdn.com/w20/gb.png'} 
+                  alt="flag" 
+                  style={{ width: '18px', height: 'auto', marginRight: '6px', borderRadius: '2px', objectFit: 'cover' }}
+                />
+                <span className="current-lang-text" style={{ marginRight: '6px' }}>
+                  {bahasaGlobal === 'ID' ? 'Indonesia' : 'English'}
+                </span>
+                <svg className={`chevron-dropdown-icon ${isLangDropdownOpen ? 'rotate' : ''}`} width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+              </div>
+            </button>
+
+            {isLangDropdownOpen && (
+              <div className="minimalist-lang-dropdown-panel">
+                <div className={`lang-dropdown-option-row ${bahasaGlobal === 'ID' ? 'selected' : ''}`} onClick={() => { setBahasaGlobal('ID'); setIsLangDropdownOpen(false); }}>
+                  <img src="https://flagcdn.com/w20/id.png" alt="ID" style={{ width: '18px', borderRadius: '2px' }} />
+                  <span className="dropdown-lang-label">Bahasa Indonesia</span>
+                </div>
+                <div className={`lang-dropdown-option-row ${bahasaGlobal === 'EN' ? 'selected' : ''}`} onClick={() => { setBahasaGlobal('EN'); setIsLangDropdownOpen(false); }}>
+                  <img src="https://flagcdn.com/w20/gb.png" alt="EN" style={{ width: '18px', borderRadius: '2px' }} />
+                  <span className="dropdown-lang-label">Bahasa English</span>
+                </div>
+              </div>
+            )}
+          </div>
 
           {user && (
             <button 
@@ -166,9 +189,9 @@ const ProfilView = () => {
       <div className={`premium-popup-overlay ${isAlertOpen ? 'active' : ''}`} onClick={() => setIsAlertOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <svg style={{ color: '#FF6B4A', marginBottom: '14px' }} width="44" height="44" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+          <svg className="popup-sheet-center-icon colored-warning" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
           <h5 className="popup-sheet-title">{t.alertMsg}</h5>
-          <button type="button" className="btn-popup-sheet-action-submit" onClick={() => setIsAlertOpen(false) || pemicuPopupAuth('login')}>
+          <button type="button" className="btn-popup-sheet-action-submit" onClick={() => { setIsAlertOpen(false); pemicuPopupAuth('login'); }}>
             {t.masuk}
           </button>
         </div>
@@ -178,7 +201,7 @@ const ProfilView = () => {
       <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <svg style={{ color: '#FF6B4A', marginBottom: '14px' }} width="44" height="44" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+          <svg className="popup-sheet-center-icon colored-danger" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
           <h5 className="popup-sheet-title">{t.logoutPrompt}</h5>
           <div className="popup-sheet-buttons-flex">
             <button type="button" className="btn-popup-sheet-action-submit node-danger" onClick={handleEksekusiLogout}>
@@ -193,7 +216,7 @@ const ProfilView = () => {
 
       {/* 🌟 SLIDE-UP POPUP LOGIN SHEET */}
       <div className={`premium-popup-overlay ${isLoginPopupOpen ? 'active' : ''}`} onClick={() => setIsLoginPopupOpen(false)}>
-        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="premium-popup-sheet intense-padding" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
           <LoginView key={authMode} initialMode={authMode} closePopup={() => setIsLoginPopupOpen(false)} />
         </div>
