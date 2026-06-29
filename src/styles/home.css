@@ -212,36 +212,53 @@
     color: var(--teal);
 }
 
-.travelind-luxury-home-container .luxury-autocomplete-dropdown {
+/* ==========================================================================
+   ⚙️ MODERN LOOK DROPDOWN AUTOCOMPLETE AREA WILAYAH
+   ========================================================================== */
+.travelind-luxury-home-container .luxury-autocomplete-dropdown-container {
     position: absolute;
-    top: calc(100% + 6px); 
+    top: calc(100% + 8px); 
     left: 0; 
     right: 0;
     background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 12px 35px rgba(11, 31, 58, 0.16);
+    border-radius: 18px;
+    box-shadow: 0 16px 40px rgba(11, 31, 58, 0.18);
     z-index: 999;
-    max-height: 220px;
-    overflow-y: auto;
-    padding: 6px;
+    padding: 8px 6px;
     border: 1px solid var(--gray-200);
+}
+
+.travelind-luxury-home-container .luxury-autocomplete-scroll-area {
+    max-height: 200px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
 }
-.travelind-luxury-home-container .luxury-autocomplete-dropdown::-webkit-scrollbar { display: none; }
+.travelind-luxury-home-container .luxury-autocomplete-scroll-area::-webkit-scrollbar { display: none; }
 
 .travelind-luxury-home-container .dropdown-row-item {
-    padding: 10px 12px; 
+    padding: 11px 14px; 
     cursor: pointer; 
     font-size: 13px; 
-    font-weight: 600;
+    font-weight: 700;
     color: var(--navy); 
     display: flex; 
     align-items: center; 
     gap: 10px; 
-    border-radius: 10px;
+    border-radius: 12px;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
-.travelind-luxury-home-container .dropdown-row-item small { color: var(--gray-400); font-weight: 400; margin-left: auto; }
+.travelind-luxury-home-container .dropdown-row-item:hover {
+    background-color: var(--gray-100);
+    color: var(--teal);
+}
+.travelind-luxury-home-container .dropdown-row-item small { 
+    color: var(--gray-400); 
+    font-weight: 500; 
+    margin-left: auto; 
+    font-size: 11px;
+}
 
 .travelind-luxury-home-container .parameter-pencarian-row { display: flex; gap: 8px; margin-bottom: 16px; }
 .travelind-luxury-home-container .input-split-field { flex: 1; background: var(--gray-100); border-radius: 14px; padding: 10px 14px; position: relative; }
@@ -320,7 +337,9 @@
 .travelind-luxury-home-container .operator-meta-info h6 { font-size: 12px; font-weight: 700; color: var(--navy); margin: 0; }
 .travelind-luxury-home-container .operator-meta-info .rating { font-size: 11px; color: var(--gray-400); display: flex; align-items: center; gap: 3px; margin-top: 1px; }
 
-/* SIDEBAR & OVERLAY MODAL */
+/* ==========================================================================
+   📂 NAVIGATION SIDEBAR DIALOG MENU WITH HARMONIOUS STYLE
+   ========================================================================== */
 .travelind-luxury-home-container .sidebar-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(11, 31, 58, 0.4); backdrop-filter: blur(4px); z-index: 999998 !important; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
 .travelind-luxury-home-container .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
 .travelind-luxury-home-container .sidebar-container-block { position: fixed !important; top: 0; right: -290px; width: 290px; height: 100vh; background-color: #ffffff; z-index: 999999 !important; box-shadow: -8px 0 35px rgba(11, 31, 58, 0.15); display: flex; flex-direction: column; transition: right 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -328,16 +347,45 @@
 .travelind-luxury-home-container .sidebar-header-top { padding: 24px 20px; background: var(--navy); color: #ffffff; display: flex; justify-content: space-between; align-items: center; }
 .travelind-luxury-home-container .sidebar-title-label { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif; }
 .travelind-luxury-home-container .close-sidebar-trigger { background: none; border: none; color: #ffffff; font-size: 18px; cursor: pointer; }
-.travelind-luxury-home-container .sidebar-user-profile-badge { padding: 16px 20px; background-color: var(--gray-100); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-200); }
+.travelind-luxury-home-container .sidebar-user-profile-badge { padding: 16px 20px; background-color: var(--gray-100); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-200); cursor: pointer; }
 .travelind-luxury-home-container .avatar-circle-box { width: 40px; height: 40px; background-color: var(--navy); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
 .travelind-luxury-home-container .profile-meta-text h6 { font-size: 13px; color: var(--navy); margin: 0; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; }
 .travelind-luxury-home-container .profile-meta-text p { font-size: 11px; color: var(--gray-400); margin: 0; word-break: break-all; }
-.travelind-luxury-home-container .sidebar-links-list { padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
-.travelind-luxury-home-container .sidebar-menu-btn { display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: var(--gray-700); font-size: 13.5px; font-weight: 600; text-decoration: none; cursor: pointer; background: none; border: none; text-align: left; width: 100%; border-radius: 10px; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; }
-.travelind-luxury-home-container .sidebar-menu-btn i { font-size: 14px; color: var(--navy); width: 20px; text-align: center; }
-.travelind-luxury-home-container .sidebar-menu-btn:hover, .travelind-luxury-home-container .sidebar-menu-btn.active-node { background-color: var(--teal-light); color: var(--navy); }
-.travelind-luxury-home-container .sidebar-menu-btn.active-node i { color: var(--teal); }
-.travelind-luxury-home-container .sidebar-line-separator { height: 1px; background-color: var(--gray-200); margin: 8px 14px; }
+.travelind-luxury-home-container .sidebar-links-list { padding: 14px 10px; display: flex; flex-direction: column; gap: 4px; }
+
+.travelind-luxury-home-container .sidebar-menu-btn { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    padding: 12px 16px; 
+    color: var(--gray-700); 
+    font-size: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    cursor: pointer; 
+    background: none; 
+    border: none; 
+    text-align: left; 
+    width: 100%; 
+    border-radius: 12px; 
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+}
+.travelind-luxury-home-container .sidebar-menu-btn svg { 
+    color: var(--navy); 
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+.travelind-luxury-home-container .sidebar-menu-btn:hover, 
+.travelind-luxury-home-container .sidebar-menu-btn.active-node { 
+    background-color: var(--teal-light); 
+    color: var(--navy); 
+}
+.travelind-luxury-home-container .sidebar-menu-btn:hover svg,
+.travelind-luxury-home-container .sidebar-menu-btn.active-node svg { 
+    color: var(--teal); 
+}
+.travelind-luxury-home-container .sidebar-line-separator { height: 1px; background-color: var(--gray-200); margin: 8px 16px; }
 
 .premium-popup-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(11, 31, 58, 0.4); backdrop-filter: blur(4px); z-index: 999999; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
 .premium-popup-overlay.active { opacity: 1; pointer-events: auto; }
@@ -399,4 +447,226 @@
 @keyframes homeCoinPulse {
     0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(245, 166, 35, 0)); }
     50% { transform: scale(1.1); filter: drop-shadow(0 0 3px rgba(245, 166, 35, 0.5)); }
+}
+/* ==========================================================================
+   🌟 PREMIUM INTENSE-PADDING FOR INLINE LOGIN SHEET HUB (FIXED FORM STYLING)
+   ========================================================================== */
+.premium-popup-sheet.intense-padding {
+    padding: 32px 24px 40px 24px !important;
+    display: block !important; /* Diubah ke block agar alur komponen mengalir ke bawah alami */
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Memperbaiki form utama dan pembungkus eksternal agar wajib mengambil lebar penuh */
+.premium-popup-sheet.intense-padding form,
+.premium-popup-sheet.intense-padding .login-view-container,
+.premium-popup-sheet.intense-padding .auth-form-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+}
+
+/* 🌟 KUNCI UTAMA: Memaksa setiap grup baris input & label konsisten melebar penuh */
+.premium-popup-sheet.intense-padding .input-group,
+.premium-popup-sheet.intense-padding .form-group-item,
+.premium-popup-sheet.intense-padding .form-control-layout {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important; /* Memaksa anak elemen (input) melebar penuh secara konsisten */
+    text-align: left !important;
+    margin-bottom: 16px !important; /* Memberikan jarak antar kotak pengisian */
+    box-sizing: border-box !important;
+}
+
+/* ==========================================================================
+   ⚙️ REFINEMENT: LABEL TEKS DI ATAS INPUT (SUPER PROFESIONAL & NYAMAN DI LIHAT)
+   ========================================================================== */
+.premium-popup-sheet.intense-padding .input-group label,
+.premium-popup-sheet.intense-padding .form-group-item label,
+.premium-popup-sheet.intense-padding .form-control-layout label {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 11.5px !important;            /* Ukuran teks dikecilkan agar elegan */
+    font-weight: 700 !important;              /* Ketebalan semi-bold/bold agar tetap terbaca jelas */
+    color: var(--gray-700) !important;         /* Menggunakan warna abu-abu gelap luxury bawaan Anda */
+    text-transform: uppercase !important;     /* Mengubah huruf menjadi kapital (gaya khas form modern) */
+    letter-spacing: 0.05em !important;        /* Memberi rongga antar huruf agar tidak rapat dan kaku */
+    margin-bottom: 8px !important;            /* Menambah jarak vertikal yang pas ke kotak input di bawahnya */
+    text-align: left !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* Memastikan kontainer group memiliki jarak antar baris form yang lega */
+.premium-popup-sheet.intense-padding .input-group,
+.premium-popup-sheet.intense-padding .form-group-item,
+.premium-popup-sheet.intense-padding .form-control-layout {
+    margin-bottom: 20px !important;           /* Jarak antar baris form (Email vs Sandi) dibuat lebih lega */
+}
+
+/* Pembungkus input jika di dalamnya ada ikon mata/password reveal */
+.premium-popup-sheet.intense-padding .input-password-wrapper,
+.premium-popup-sheet.intense-padding .input-field-container {
+    position: relative !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 🌟 MEMBUAT UKURAN KOTAK EMAIL & SANDI KONSISTEN SAMA BESAR */
+.premium-popup-sheet.intense-padding input[type="text"],
+.premium-popup-sheet.intense-padding input[type="email"],
+.premium-popup-sheet.intense-padding input[type="password"] {
+    width: 100% !important; /* Wajib memenuhi lebar kontainer grup */
+    height: 48px !important; /* Dikunci tingginya agar konsisten */
+    padding: 0 16px !important; /* Proporsi padding horizontal */
+    border-radius: 12px !important;
+    border: 1.5px solid var(--gray-200) !important;
+    font-size: 14px !important;
+    outline: none !important;
+    box-sizing: border-box !important; /* Mencegah padding merusak ukuran lebar */
+    background-color: var(--gray-100) !important;
+    color: var(--navy) !important;
+    text-align: left !important; /* Memaksa ketikan teks mulai dari kiri */
+    transition: all 0.2s ease !important;
+}
+
+/* Efek fokus ketika kotak input di-klik user */
+.premium-popup-sheet.intense-padding input:focus {
+    border-color: var(--teal) !important;
+    background-color: var(--white) !important;
+    box-shadow: 0 0 0 3px rgba(0, 212, 184, 0.1) !important;
+}
+
+/* Menyetel tombol utama 'Masuk Sekarang' agar anggun, kokoh, dan penuh */
+.premium-popup-sheet.intense-padding button[type="submit"],
+.premium-popup-sheet.intense-padding .btn-auth-submit-primary {
+    width: 100% !important;
+    height: 48px !important;
+    background: linear-gradient(135deg, var(--teal) 0%, #00B89C 100%) !important;
+    color: var(--navy) !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    border: none !important;
+    cursor: pointer !important;
+    margin: 24px 0 0 0 !important; /* Jarak aman di atas tombol */
+    box-shadow: 0 6px 20px rgba(0, 212, 184, 0.25) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    transition: transform 0.1s ease !important;
+}
+
+.premium-popup-sheet.intense-padding button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+/* 🌟 MEMPERBAIKI AREA DAFTAR SEKARANG DI BAGIAN BAWAH */
+.premium-popup-sheet.intense-padding .auth-switch-text-link,
+.premium-popup-sheet.intense-padding p.bottom-switch-prompt,
+.premium-popup-sheet.intense-padding .register-prompt-text {
+    font-size: 13px !important;
+    color: var(--gray-400) !important;
+    margin: 20px 0 0 0 !important; /* Jarak proporsional dari tombol atasnya */
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.premium-popup-sheet.intense-padding .auth-switch-text-link span,
+.premium-popup-sheet.intense-padding p.bottom-switch-prompt a,
+.premium-popup-sheet.intense-padding .register-prompt-text a {
+    color: var(--teal) !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    margin-left: 4px !important;
+}
+/* ==========================================================================
+   🌟 MODERN COMPACT STEPPER CONTROL & EXPIRED DATE LOCK ENGINE
+   ========================================================================== */
+
+/* Menghilangkan panah spinner nomor bawaan Chrome, Safari, Edge, & Opera di HP */
+.travelind-luxury-home-container input::-webkit-outer-spin-button,
+.travelind-luxury-home-container input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+/* Menghilangkan panah spinner nomor bawaan Chrome, Safari, Edge, & Opera di HP */
+.travelind-luxury-home-container input::-webkit-outer-spin-button,
+.travelind-luxury-home-container input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    appearance: none !important; /* 🌟 TAMBAHKAN BARIS INI UNTUK MENGHILANGKAN WARNING */
+    margin: 0 !important;
+}
+
+/* Wadah Kontainer Stepper Penumpang Modern */
+.travelind-luxury-home-container .premium-stepper-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    background: transparent !important;
+    margin-top: 4px !important;
+}
+
+/* Desain Kotak Input Angka Penumpang Tengah */
+.travelind-luxury-home-container .passenger-premium-input {
+    flex: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--navy) !important;
+    text-align: center !important;
+    padding: 0 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Tombol Aksi Bulat Minus (－) dan Plus (＋) Minimalis */
+.travelind-luxury-home-container .stepper-action-node {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background-color: #ffffff !important;
+    border: 1px solid var(--gray-200) !important;
+    color: var(--navy) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+    padding: 0 !important;
+}
+
+/* Efek Klik Ringan pada Tombol Stepper */
+.travelind-luxury-home-container .stepper-action-node:active {
+    transform: scale(0.9) !important;
+    background-color: var(--gray-100) !important;
+}
+
+/* 🌟 LOCK TANGGAL YANG SUDAH LEWAT (DISABLED DATE INTERACTION) */
+.travelind-luxury-home-container .date-raw-picker::-webkit-calendar-picker-indicator {
+    cursor: pointer !important;
+}
+
+/* Memastikan visual kalender bawaan mengikuti standar ter-lock abu-abu profesional */
+.travelind-luxury-home-container .date-raw-picker:disabled,
+.travelind-luxury-home-container .date-raw-picker[min] {
+    color-scheme: light !important; 
 }

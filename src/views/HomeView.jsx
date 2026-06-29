@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import dataWilayahSumatera from '../utils/datawilayah';
 import useAuthStore from '../store/authStore'; 
+import LoginView from './LoginView';
 import '../styles/home.css'; 
 
 const HomeView = () => {
@@ -16,10 +17,48 @@ const HomeView = () => {
   // ⚡️ LAYER STATE CONTROLLER: REAL-TIME USER COINS DATABASE
   const [userCoins, setUserCoins] = useState(0);
   const [loadingCoins, setLoadingCoins] = useState(true);
+  const [isCoinAuthPopupOpen, setIsCoinAuthPopupOpen] = useState(false);
+  
+  // 🌟 LAYER STATE CONTROLLER: AUTH OVERLAY DI BERANDA
+  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+
+  // ⚡️ STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
+  const [pickup, setPickup] = useState('');
+  const [tujuan, setTujuan] = useState('');
+  const [tanggal, setTanggal] = useState('');
+  const [penumpang, setPenumpang] = useState(1);
+  const [isDateActive, setIsDateActive] = useState(null);
+  const [tanggalMinimalHariIni, setTanggalMinimalHariIni] = useState('');
+
+  // Autocomplete Stream Cache States
+  const [filteredAsal, setFilteredAsal] = useState([]);
+  const [filteredTujuan, setFilteredTujuan] = useState([]);
+  const [showAsalDropdown, setShowAsalDropdown] = useState(false);
+  const [showTujuanDropdown, setShowTujuanDropdown] = useState(false);
+
+  // Supabase Live Data Promo States
+  const [listPromo, setListPromo] = useState([]);
+  const [loadingPromo, setLoadingPromo] = useState(true);
+
+  const asalRef = useRef(null);
+  const tujuanRef = useRef(null);
+
+  // Efek menghitung batasan tanggal minimal biar tanggal yang sudah lewat terkunci abu-abu
+  useEffect(() => {
+    const hariIni = new Date();
+    const yyyy = hariIni.getFullYear();
+    const mm = String(hariIni.getMonth() + 1).padStart(2, '0');
+    const dd = String(hariIni.getDate()).padStart(2, '0');
+    setTanggalMinimalHariIni(`${yyyy}-${mm}-${dd}`);
+  }, []);
 
   // Fungsi mengambil saldo koin terbaru secara real-time dari tabel profiles Supabase
   const fetchBerandaUserCoins = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoadingCoins(false);
+      return;
+    }
     try {
       setLoadingCoins(true);
       const { data, error } = await supabase
@@ -34,7 +73,6 @@ const HomeView = () => {
       }
     } catch (err) {
       console.error("Gagal sinkronisasi data koin di beranda:", err.message);
-      // Fallback aman ke metadata lokal jika profile belum merespons
       setUserCoins(user.user_metadata?.coins || 0);
     } finally {
       setLoadingCoins(false);
@@ -67,26 +105,6 @@ const HomeView = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
-  // ⚡️ STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
-  const [pickup, setPickup] = useState('');
-  const [tujuan, setTujuan] = useState('');
-  const [tanggal, setTanggal] = useState('');
-  const [penumpang, setPenumpang] = useState(1);
-  const [isDateActive, setIsDateActive] = useState(null);
-
-  // Autocomplete Stream Cache States
-  const [filteredAsal, setFilteredAsal] = useState([]);
-  const [filteredTujuan, setFilteredTujuan] = useState([]);
-  const [showAsalDropdown, setShowAsalDropdown] = useState(false);
-  const [showTujuanDropdown, setShowTujuanDropdown] = useState(false);
-
-  // Supabase Live Data Promo States
-  const [listPromo, setListPromo] = useState([]);
-  const [loadingPromo, setLoadingPromo] = useState(true);
-
-  const asalRef = useRef(null);
-  const tujuanRef = useRef(null);
-
   // Dictionary Kamus Terjemahan Bahasa Dinamis Lengkap
   const t = {
     ID: {
@@ -110,7 +128,11 @@ const HomeView = () => {
       anonim: 'MASUK / DAFTAR', subAnonim: 'Akses riwayat perjalanan kamu',
       secPromo: 'Promo Spesial', secLihat: 'Lihat semua', secRute: 'Rute Populer',
       secOperator: 'Operator Terpercaya', kursiText: '/ kursi', ulasanText: 'ulasan',
-      loadPromo: 'Memuat promo terbaik...', noPromoTitle: 'Belum Ada Promo', noPromoDesc: 'Nantikan promo kejutan menarik dari TRAVELIND selanjutnya!'
+      loadPromo: 'Memuat promo terbaik...', noPromoTitle: 'Belum Ada Promo', noPromoDesc: 'Nantikan promo kejutan menarik dari TRAVELIND selanjutnya!',
+      coinPopupTitle: 'Yuk, Gabung Member Travelind! 🌟',
+      coinPopupDesc: 'Silakan masuk atau daftar akun terlebih dahulu untuk mulai mengumpulkan dan melihat jumlah Travelind Coins spesial milikmu.',
+      coinPopupBtnAction: 'Masuk / Daftar Sekarang',
+      coinPopupBtnCancel: 'Nanti Saja'
     },
     EN: {
       pagi: 'Good morning', siang: 'Good afternoon', sore: 'Good evening', malam: 'Good night',
@@ -133,7 +155,11 @@ const HomeView = () => {
       anonim: 'SIGN IN / SIGN UP', subAnonim: 'Access your travel history',
       secPromo: 'Special Promotions', secLihat: 'See all', secRute: 'Popular Routes',
       secOperator: 'Trusted Operators', kursiText: '/ seat', ulasanText: 'reviews',
-      loadPromo: 'Loading best deals...', noPromoTitle: 'No Promotion Available', noPromoDesc: 'Stay tuned for exciting promotional surprises from TRAVELIND!'
+      loadPromo: 'Loading best deals...', noPromoTitle: 'No Promotion Available', noPromoDesc: 'Stay tuned for exciting promotional surprises from TRAVELIND!',
+      coinPopupTitle: 'Join Travelind Member! 🌟',
+      coinPopupDesc: 'Please sign in or create an account first to start collecting and viewing your special Travelind Coins.',
+      coinPopupBtnAction: 'Sign In / Sign Up Now',
+      coinPopupBtnCancel: 'Later'
     }
   }[bahasaGlobal || 'ID'];
 
@@ -214,12 +240,31 @@ const HomeView = () => {
     setIsDateActive(type === 'hariIni' ? 0 : 1);
   };
 
+  // 🌟 LOGIKA PENGASAHAN PENGISIAN PENUMPANG SECARA MANUAL DI HP
+  const handleUbahPenumpangManual = (value) => {
+    if (value === '') {
+      setPenumpang(''); // Ijinkan user menghapus angka di HP tanpa langsung mental balik
+      return;
+    }
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed)) return;
+    setPenumpang(parsed);
+  };
+
+  // Validasi saat kursor meninggalkan kotak input penumpang (On Blur)
+  const handleValidasiPelepasanPenumpang = () => {
+    if (penumpang === '' || penumpang <= 0) {
+      setPenumpang(1); // Balikkan otomatis ke 1 jika bernilai 0 atau kosong
+    }
+  };
+
   const handleCariTravel = async () => {
     if (!pickup || !tujuan || !tanggal) {
       alert(t.alertLengkapi);
       return;
     }
 
+    const nilaiPenumpangFinal = penumpang === '' || penumpang <= 0 ? 1 : penumpang;
     const emailTerbaca = user?.email || localStorage.getItem("email_penumpang") || null;
     const namaTerbaca = user?.user_metadata?.full_name || "Pengguna Anonim";
 
@@ -227,7 +272,7 @@ const HomeView = () => {
       pickup_kota: pickup,
       tujuan_kota: tujuan,
       tanggal: tanggal,
-      penumpang: parseInt(penumpang) || 1,
+      penumpang: parseInt(nilaiPenumpangFinal, 10),
       nama_penumpang: namaTerbaca,
       email_penumpang: emailTerbaca, 
       pickup_alamat: "Menunggu penentuan lokasi",
@@ -248,7 +293,7 @@ const HomeView = () => {
       localStorage.setItem("pickup", pickup);
       localStorage.setItem("tujuan", tujuan);
       localStorage.setItem("tanggal", tanggal);
-      localStorage.setItem("penumpang", penumpang);
+      localStorage.setItem("penumpang", nilaiPenumpangFinal);
       localStorage.setItem("fresh_search_trigger", "true"); 
 
       navigate('/hasil-pencarian');
@@ -264,17 +309,32 @@ const HomeView = () => {
     window.location.reload();
   };
 
+  const handleCoinBadgeClick = () => {
+    if (user) {
+      navigate('/coin-saya');
+    } else {
+      setIsCoinAuthPopupOpen(true);
+    }
+  };
+
+  const pemicuPopupAuthBeranda = (modeDipilih) => {
+    setAuthMode(modeDipilih);
+    setIsLoginPopupOpen(true);
+  };
+
   return (
     <div ref={containerRef} className="travelind-luxury-home-container" style={{ overflowY: 'auto' }}>
       
-      {/* 📌 HEADER ATAS FIXED PANEL DENGAN GRUP SEJAJAR AKSI KOIN & MENU */}
+      {/* 📌 HEADER ATAS FIXED PANEL */}
       <div className="hero-top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="user-profile-zone" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           
-          {/* USER AVATAR INTERACTIVE HUB */}
           <div 
             className="home-avatar-click-node" 
-            onClick={() => navigate('/profil')}
+            onClick={() => {
+              if (user) navigate('/profil');
+              else pemicuPopupAuthBeranda('login');
+            }}
             style={{ 
               width: '42px', height: '42px', borderRadius: '12px', 
               background: 'rgba(255,255,255,0.15)', overflow: 'hidden', 
@@ -291,33 +351,23 @@ const HomeView = () => {
 
           <div className="user-profile-text">
             <span className="greeting-text" style={{ display: 'block' }}>{dapatkanWaktuGreeting()}</span>
-            <h3 className="user-name-title" style={{ margin: 0 }}>{user ? namaProfile : 'Akhmad'}</h3>
+            <h3 className="user-name-title" style={{ margin: 0 }}>{user ? (user.user_metadata?.full_name || 'User') : 'Tamu'}</h3>
           </div>
         </div>
         
-        {/* 🌟 GRUP AKSI KANAN: BADGE KOIN PREMIUM KAPSUL + BUTTON MENU BURGER (PERSIS IMAGE_11.PNG) */}
         <div className="header-right-action-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          
-         {/* BADGE T-COIN KAPSUL EMAS INTERAKTIF */}
-{user && (
-  <div 
-    className="premium-home-coin-badge"
-    onClick={() => navigate('/coin-saya')}
-    title="Lihat Koin Saya"
-  >
-    {/* 🪙 DIGANTI DENGAN SVG VECTOR AGAR MUNCUL DI SEMUA PERANGKAT */}
-    <div className="home-coin-badge-icon">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="10" fill="#F5A623" stroke="#D4AF37" strokeWidth="1.5"/>
-        <circle cx="12" cy="12" r="7" stroke="#FFFFFF" strokeWidth="1.5" strokeDasharray="3 2"/>
-        <path d="M12 7V17M9 10H14M9 14H14" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </div>
-    <span className="home-coin-badge-value">
-      {loadingCoins ? '...' : userCoins.toLocaleString('id-ID')}
-    </span>
-  </div>
-)}
+          <div className="premium-home-coin-badge" onClick={handleCoinBadgeClick}>
+            <div className="home-coin-badge-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#F5A623" stroke="#D4AF37" strokeWidth="1.5"/>
+                <circle cx="12" cy="12" r="7" stroke="#FFFFFF" strokeWidth="1.5" strokeDasharray="3 2"/>
+                <path d="M12 7V17M9 10H14M9 14H14" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span className="home-coin-badge-value">
+              {!user ? '-' : loadingCoins ? '...' : userCoins.toLocaleString('id-ID')}
+            </span>
+          </div>
 
           <button type="button" className="sidebar-trigger-btn" onClick={() => setIsSidebarOpen(true)}>
             <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -332,7 +382,6 @@ const HomeView = () => {
         <h1 className="hero-headline-text">
           {t.headline.split('\n')[0]}<br />{t.headline.split('\n')[1]}
         </h1>
-        
         <div className="live-route-indicator">
           <span className="pulse-live-dot"></span>
           <span>{t.subHeadline}</span>
@@ -376,18 +425,20 @@ const HomeView = () => {
                     className="route-city-input"
                   />
                   {showAsalDropdown && filteredAsal.length > 0 && (
-                    <div className="luxury-autocomplete-dropdown">
-                      {filteredAsal.map((item, idx) => (
-                        <div key={idx} className="dropdown-row-item" onMouseDown={() => { setPickup(item.nama); setShowAsalDropdown(false); }}>
-                          <span>{item.nama}</span>
-                          <small>{item.prov}</small>
-                        </div>
-                      ))}
+                    <div className="luxury-autocomplete-dropdown-container">
+                      <div className="luxury-autocomplete-scroll-area">
+                        {filteredAsal.map((item, idx) => (
+                          <div key={idx} className="dropdown-row-item" onMouseDown={() => { setPickup(item.nama); setShowAsalDropdown(false); }}>
+                            <span>{item.nama}</span>
+                            <small>{item.prov}</small>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
 
-                <div className="circle-swap-action-btn" onClick={handleTukarRuteKota} title="Tukar Rute">
+                <div className="circle-swap-action-btn" onClick={handleTukarRuteKota}>
                   <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                     <path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>
                   </svg>
@@ -402,27 +453,36 @@ const HomeView = () => {
                     onFocus={() => { setShowTujuanDropdown(true); setFilteredTujuan(dataWilayahSumatera); }}
                     onChange={(e) => handleMencariTujuanManual(e.target.value)}
                     autoComplete="off"
-                    className={`route-city-input ${!tujuan ? 'placeholder' : ''}`}
+                    className="route-city-input"
                   />
                   {showTujuanDropdown && filteredTujuan.length > 0 && (
-                    <div className="luxury-autocomplete-dropdown">
-                      {filteredTujuan.map((item, idx) => (
-                        <div key={idx} className="dropdown-row-item" onMouseDown={() => { setTujuan(item.nama); setShowTujuanDropdown(false); }}>
-                          <span>{item.nama}</span>
-                          <small>{item.prov}</small>
-                        </div>
-                      ))}
+                    <div className="luxury-autocomplete-dropdown-container">
+                      <div className="luxury-autocomplete-scroll-area">
+                        {filteredTujuan.map((item, idx) => (
+                          <div key={idx} className="dropdown-row-item" onMouseDown={() => { setTujuan(item.nama); setShowTujuanDropdown(false); }}>
+                            <span>{item.nama}</span>
+                            <small>{item.prov}</small>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="parameter-pencarian-row">
+                {/* 🌟 FORM PICKER TANGGAL DENGAN MIN BATAS HARI INI */}
                 <div className="input-split-field">
                   <div className="field-label">{t.labelTanggal}</div>
                   <div className="field-input-wrapper">
                     <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                    <input type="date" value={tanggal} onChange={(e) => { setTanggal(e.target.value); setIsDateActive(null); }} className="date-raw-picker" />
+                    <input 
+                      type="date" 
+                      value={tanggal} 
+                      min={tanggalMinimalHariIni} 
+                      onChange={(e) => { setTanggal(e.target.value); setIsDateActive(null); }} 
+                      className="date-raw-picker" 
+                    />
                   </div>
                   <div className="mini-quick-date-container">
                     <button type="button" className={`mini-date-btn ${isDateActive === 0 ? 'active' : ''}`} onClick={() => handleSetQuickDate('hariIni')}>{t.hariIni}</button>
@@ -430,13 +490,39 @@ const HomeView = () => {
                   </div>
                 </div>
                 
-                <div className="input-split-field">
-                  <div className="field-label">{t.labelPassenger || t.labelPenumpang}</div>
-                  <div className="field-input-wrapper">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <input type="number" value={penumpang} min="1" onChange={(e) => setPenumpang(Math.max(1, parseInt(e.target.value) || 1))} className="passenger-raw-picker" />
-                  </div>
-                </div>
+                {/* 🌟 MODERN INTERACTIVE STEPPER COMPONENT FOR PASSENGERS */}
+<div className="input-split-field">
+  <div className="field-label">{t.labelPenumpang}</div>
+  <div className="premium-stepper-container">
+    
+    <button 
+      type="button" 
+      className="stepper-action-node minus"
+      onClick={() => setPenumpang(prev => Math.max(1, (parseInt(prev, 10) || 1) - 1))}
+    >
+      －
+    </button>
+    
+    <input 
+      type="number" 
+      pattern="[0-9]*"
+      inputMode="numeric"
+      value={penumpang} 
+      onChange={(e) => handleUbahPenumpangManual(e.target.value)}
+      onBlur={handleValidasiPelepasanPenumpang}
+      className="passenger-premium-input" 
+    />
+    
+    <button 
+      type="button" 
+      className="stepper-action-node plus"
+      onClick={() => setPenumpang(prev => (parseInt(prev, 10) || 0) + 1)}
+    >
+      ＋
+    </button>
+
+  </div>
+</div>
               </div>
 
               <button type="button" className="btn-search-travel-submit" onClick={handleCariTravel}>
@@ -565,10 +651,15 @@ const HomeView = () => {
       <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <div className={`sidebar-container-block ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header-top">
-          <span className="sidebar-title-label"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
+          <span className="sidebar-title-label">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ marginRight: '4px' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+            </svg>
+            {t.navTitle}
+          </span>
           <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}>✕</button>
         </div>
-        <div className="sidebar-user-profile-badge" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>
+        <div className="sidebar-user-profile-badge" onClick={() => { setIsSidebarOpen(false); if (user) navigate('/profil'); else pemicuPopupAuthBeranda('login'); }}>
           <div 
             className="sidebar-avatar-circle-box"
             style={{
@@ -590,21 +681,79 @@ const HomeView = () => {
           </div>
         </div>
         <div className="sidebar-links-list">
-          <button type="button" className="sidebar-menu-btn active-node" onClick={() => setIsSidebarOpen(false)}>{t.menuHome}</button>
-          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>{t.menuAkun}</button>
-          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/cek-tiket')}>{t.menuTiket}</button>
+          <button type="button" className="sidebar-menu-btn active-node" onClick={() => setIsSidebarOpen(false)}>
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+            {t.menuHome}
+          </button>
+          
+          <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); if (user) navigate('/profil'); else pemicuPopupAuthBeranda('login'); }}>
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+            {t.menuAkun}
+          </button>
+          
+          <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); navigate('/cek-tiket'); }}>
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-3-12h.008v.008H13.5V6Zm0 6h.008v.008H13.5V12Zm0 6h.008v.008H13.5V18s-6 2.472-6-3.414c0-5.886 6-3.414 6-3.414ZM2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Z" /></svg>
+            {t.menuTiket}
+          </button>
+          
           <div className="sidebar-line-separator"></div>
-          <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/promo')}>{t.menuPromo}</button>
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="sidebar-menu-btn">{t.menuBantuan}</a>
+          
+          <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); navigate('/promo'); }}>
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6Z" /></svg>
+            {t.menuPromo}
+          </button>
+          
+          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="sidebar-menu-btn" style={{ textDecoration: 'none' }}>
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-2.833A7.96 7.96 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
+            {t.menuBantuan}
+          </a>
+          
           {user && (
-            <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || setIsLogoutConfirmOpen(true)} style={{ color: '#eb5757' }}>
+            <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); setIsLogoutConfirmOpen(true); }} style={{ color: '#eb5757' }}>
+              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
               {t.menuKeluar}
             </button>
           )}
         </div>
       </div>
 
-      {/* MODAL BOTTOM SHEET LOGOUT CONFIRM */}
+      {/* MODAL BOTTOM SHEET: AJAKAN DAFTAR COIN */}
+      <div className={`premium-popup-overlay ${isCoinAuthPopupOpen ? 'active' : ''}`} onClick={() => setIsCoinAuthPopupOpen(false)}>
+        <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="popup-sheet-notch"></div>
+          <h4 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '10px', color: '#0B1F3A' }}>
+            {t.coinPopupTitle}
+          </h4>
+          <p style={{ fontSize: '13px', color: '#657786', lineHeight: '1.5', marginBottom: '24px', padding: '0 8px' }}>
+            {t.coinPopupDesc}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button 
+              className="btn-popup-action danger" 
+              style={{ background: 'linear-gradient(135deg, var(--teal) 0%, #00B89C 100%)', color: 'var(--navy)' }}
+              onClick={() => { 
+                setIsCoinAuthPopupOpen(false); 
+                pemicuPopupAuthBeranda('login');
+              }}
+            >
+              {t.coinPopupBtnAction}
+            </button>
+            <button className="btn-popup-action cancel" onClick={() => setIsCoinAuthPopupOpen(false)}>
+              {t.coinPopupBtnCancel}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* SLIDE-UP POPUP LOGIN SHEET ASLI */}
+      <div className={`premium-popup-overlay ${isLoginPopupOpen ? 'active' : ''}`} onClick={() => setIsLoginPopupOpen(false)}>
+        <div className="premium-popup-sheet intense-padding" onClick={(e) => e.stopPropagation()}>
+          <div className="popup-sheet-notch"></div>
+          <LoginView key={authMode} initialMode={authMode} closePopup={() => setIsLoginPopupOpen(false)} />
+        </div>
+      </div>
+
+      {/* MODAL BOTTOM SHEET: LOGOUT CONFIRM */}
       <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
