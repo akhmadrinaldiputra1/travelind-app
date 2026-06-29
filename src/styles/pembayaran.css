@@ -255,7 +255,7 @@
 .page-bottom-copyright-footer { text-align: center; padding: 14px 0 6px 0; color: #a0aec0; font-size: 11px; }
 
 /* ==========================================================================
-   🚨 POIN 2 & 3: FIXED SUBMIT ACTION PANEL PROFESIONAL (MENYAMAKAN PRESTISIUS)
+   🚨 FIXED SUBMIT ACTION PANEL PROFESIONAL (MENYAMAKAN PRESTISIUS)
    ========================================================================== */
 .bottom-sticky-action-bar-wrapper {
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -285,7 +285,7 @@
 }
 
 /* ==========================================================================
-   🚨 LUXURY RAMPING WARNING PANEL SYSTEM (100% SINKRON REVISI EMAS INDAH)
+   🚨 LUXURY RAMPING WARNING PANEL SYSTEM
    ========================================================================== */
 .popup-container-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -325,3 +325,276 @@
 @keyframes luxurySoftBounce { 0% { transform: scale(0.9) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
 @keyframes luxuryRadarPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 @keyframes luxuryIconWobble { 0%, 100% { transform: rotate(0deg); } 15% { transform: rotate(-8deg); } 30% { transform: rotate(6deg); } 45% { transform: rotate(-4deg); } 60% { transform: rotate(2deg); } }
+
+/* ==========================================================================
+   🌟 TRAVELIND LUXURY DROPDOWN TIKETCOIN (100% MATCH DENGAN IMAGE_5.PNG)
+   ========================================================================== */
+
+/* Container Utama Kotak Koin */
+.travelind-booking-wrapper .luxury-coin-input-box-card {
+    background-color: var(--card-bg);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid #eef2f5;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    width: 100%;
+}
+
+.travelind-booking-wrapper .coin-box-header-title-row {
+    margin-bottom: 12px;
+}
+
+.travelind-booking-wrapper .coin-box-label-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Panel Frame Abu-Abu Bagian Dalam */
+.travelind-booking-wrapper .coin-card-inside-border-panel {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    background-color: #fafafa;
+}
+
+/* Baris Flex Utama Atas (Info Saldo vs iOS Switch) */
+.travelind-booking-wrapper .coin-inside-flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.travelind-booking-wrapper .coin-badge-display-left-side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Kotak Ikon Koin Berwarna Emas Murni */
+.travelind-booking-wrapper .coin-gold-icon-circle {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent-orange) 0%, #d4af37 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(242, 153, 74, 0.2);
+}
+
+.travelind-booking-wrapper .coin-text-numerical-info h6 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.travelind-booking-wrapper .coin-text-numerical-info p {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 2px 0 0 0;
+    font-weight: 500;
+}
+
+.travelind-booking-wrapper .highlight-orange-coin {
+    color: var(--accent-orange);
+    font-weight: 700;
+}
+
+/* 📱 SAKELAR INTEGRASI iOS SWITCH TOGGLE */
+.travelind-booking-wrapper .coin-toggle-switch-right-side {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.travelind-booking-wrapper .toggle-label-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.travelind-booking-wrapper .switch-toggle-node {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.travelind-booking-wrapper .switch-toggle-node input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Background Slider Node */
+.travelind-booking-wrapper .slider-toggle-round {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e0;
+    transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+}
+
+/* Lingkaran Tombol Putih Geser */
+.travelind-booking-wrapper .slider-toggle-round:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.travelind-booking-wrapper input:checked + .slider-toggle-round {
+    background-color: var(--primary-teal);
+}
+
+.travelind-booking-wrapper input:checked + .slider-toggle-round:before {
+    transform: translateX(22px);
+}
+
+/* 🔓 PANEL DROPDOWN EXPANDER COUNTER */
+.travelind-booking-wrapper .coin-dropdown-expander-panel {
+    margin-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 10px;
+}
+
+.travelind-booking-wrapper .coin-dropdown-trigger-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--primary-teal);
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.travelind-booking-wrapper .dropdown-arrow-icon-indicator {
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+/* Slide Wrapper Dropdown */
+.travelind-booking-wrapper .coin-counter-slide-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.travelind-booking-wrapper .coin-counter-slide-wrapper.is-closed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+}
+
+.travelind-booking-wrapper .coin-counter-slide-wrapper.is-open {
+    max-height: 220px;
+    opacity: 1;
+    margin-top: 12px;
+}
+
+/* Baris Input Counter Matematika */
+.travelind-booking-wrapper .coin-counter-row-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.travelind-booking-wrapper .counter-label-txt {
+    font-size: 12px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+/* Box Kontrol Matematika (Minus / Angka / Plus) */
+.travelind-booking-wrapper .counter-math-button-group {
+    display: flex;
+    align-items: center;
+    background-color: #e6f2f5;
+    border-radius: 10px;
+    padding: 2px;
+    border: 1px solid #dbeff2;
+}
+
+.travelind-booking-wrapper .btn-math-node {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    background-color: transparent;
+    color: var(--primary-teal);
+}
+
+.travelind-booking-wrapper .btn-math-node:active:not(:disabled) {
+    transform: scale(0.9);
+}
+
+.travelind-booking-wrapper .btn-math-node:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.travelind-booking-wrapper .counter-value-display-number {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    min-width: 50px;
+    text-align: center;
+}
+
+/* 🟢 BOX HIJAU POTONGAN TRANSAKSI */
+.travelind-booking-wrapper .coin-diskon-success-green-row {
+    background-color: var(--success-green);
+    border: 1px solid #b7e1cd;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.travelind-booking-wrapper .green-checkmark-node {
+    font-size: 12px;
+    font-weight: 600;
+    color: #137333;
+}
+
+.travelind-booking-wrapper .green-amount-node {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--success-text);
+}
+
+/* Info Catatan Kecil Ratio Koin */
+.travelind-booking-wrapper .coin-footer-ratio-notice {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 0;
+}

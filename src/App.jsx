@@ -17,6 +17,7 @@ import ProfilView from './views/ProfilView';
 import LoginView from './views/LoginView';
 import RiwayatView from './views/RiwayatView';
 import EditProfilView from './views/EditProfilView';
+import CoinSayaView from './views/CoinSayaView';
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -50,6 +51,7 @@ function App() {
           <Route path="/promo" element={<PromoView />} />
           <Route path="/profil" element={<ProfilView />} />
           <Route path="/edit-profil" element={<EditProfilView />} />
+          <Route path="/coin-saya" element={<CoinSayaView />} />
         </Route>
       </Routes>
     </Router>

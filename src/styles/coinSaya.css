@@ -1,0 +1,241 @@
+/* ==========================================================================
+   🌟 TRAVELIND LUXURY COIN VIEW STYLESHEET (GOLDEN RATIO & HP PROTECTION)
+   ========================================================================== */
+
+.travelind-luxury-coin-container {
+    --navy: #0B1F3A;
+    --navy-mid: #122845;
+    --teal: #00D4B8;
+    --teal-light: #E0FAF7;
+    --white: #FFFFFF;
+    --gray-100: #F7F8FA;
+    --gray-200: #EAECF0;
+    --gray-400: #9AA3B2;
+    --gray-700: #3D4A5C;
+    --gold-start: #F5A623;
+    --gold-end: #D4AF37;
+    --income-green: #10B981;
+    --expense-gray: #6B7280;
+
+    width: 100%; 
+    max-width: 450px; 
+    height: 100vh;
+    background-color: var(--gray-100);
+    display: flex; 
+    flex-direction: column; 
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden !important;
+    overflow-y: hidden;
+}
+
+.travelind-luxury-coin-container * {
+    box-sizing: border-box !important;
+}
+
+/* HEADER NAVIGATION */
+.travelind-luxury-coin-container .coin-top-bar {
+    background-color: var(--navy);
+    padding: 20px 24px 20px 24px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    color: var(--white);
+    flex-shrink: 0;
+}
+
+.travelind-luxury-coin-container .coin-page-title { 
+    font-size: 18px; 
+    font-weight: 700; 
+    letter-spacing: -0.3px; 
+}
+
+.travelind-luxury-coin-container .back-action-btn {
+    width: 40px; height: 40px; background-color: rgba(255, 255, 255, 0.1); border-radius: 12px;
+    border: none; display: flex; align-items: center; justify-content: center; color: var(--white); cursor: pointer;
+}
+
+/* MAIN SCROLLER SCROLL */
+.travelind-luxury-coin-container .coin-main-content { 
+    padding: 20px 18px 80px 18px; /* Mengantisipasi bar Safari HP */
+    display: flex; 
+    flex-direction: column; 
+    gap: 24px; 
+    flex: 1;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    scrollbar-width: none;
+}
+.travelind-luxury-coin-container .coin-main-content::-webkit-scrollbar { display: none; }
+
+/* 🌟 LUXURY COIN CARD GRADIENT GOLDEN DISPLAY */
+.travelind-luxury-coin-container .luxury-golden-card-balance {
+    background: linear-gradient(135deg, var(--gold-start) 0%, var(--gold-end) 100%);
+    border-radius: 24px;
+    padding: 24px 22px;
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+    box-shadow: 0 10px 28px rgba(245, 166, 35, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* Efek Kilau / Ambient Light di Belakang Kartu */
+.travelind-luxury-coin-container .gold-card-bg-glow {
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 180px; height: 180px;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(40px);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.travelind-luxury-coin-container .gold-card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.travelind-luxury-coin-container .gold-card-label-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+.travelind-luxury-coin-container .gold-brand-chip-logo {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.travelind-luxury-coin-container .gold-card-amount-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.travelind-luxury-coin-container .gold-coin-icon-geometric {
+    width: 44px; height: 44px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+}
+.travelind-luxury-coin-container .gold-balance-text {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.travelind-luxury-coin-container .btn-redeem-gold-capsule {
+    background-color: var(--navy);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(11, 31, 58, 0.15);
+}
+.travelind-luxury-coin-container .btn-redeem-gold-capsule:active {
+    transform: scale(0.97);
+}
+
+/* LIST RIWAYAT TRANSAKSI */
+.travelind-luxury-coin-container .coin-history-section-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+.travelind-luxury-coin-container .coin-history-section-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.travelind-luxury-coin-container .coin-ledger-list-gap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* KARTU BARIS TRANSAKSI */
+.travelind-luxury-coin-container .coin-ledger-row-card {
+    background-color: var(--white);
+    padding: 16px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.02);
+    gap: 12px;
+}
+
+.travelind-luxury-coin-container .ledger-card-left-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.travelind-luxury-coin-container .ledger-type-badge-icon {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.travelind-luxury-coin-container .ledger-type-badge-icon.node-income {
+    background-color: #E6F4EA; color: var(--income-green);
+}
+.travelind-luxury-coin-container .ledger-type-badge-icon.node-expense {
+    background-color: var(--gray-100); color: var(--expense-gray);
+}
+
+.travelind-luxury-coin-container .ledger-meta-details {
+    display: flex;
+    flex-direction: column;
+}
+.travelind-luxury-coin-container .ledger-item-title {
+    font-size: 13px; font-weight: 700; color: var(--navy); margin: 0; line-height: 1.4;
+}
+.travelind-luxury-coin-container .ledger-item-date {
+    font-size: 11px; color: var(--gray-400); font-weight: 600; margin-top: 2px;
+}
+.travelind-luxury-coin-container .ledger-item-desc {
+    font-size: 11px; color: var(--gray-700); margin-top: 4px; line-height: 1.4; font-weight: 500;
+}
+
+/* TEXT COLOR AMOUNT UTILITY */
+.travelind-luxury-coin-container .ledger-card-right-amount {
+    font-size: 14px;
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+}
+.travelind-luxury-coin-container .ledger-card-right-amount.text-income { color: var(--income-green); }
+.travelind-luxury-coin-container .ledger-card-right-amount.text-expense { color: var(--navy); }
+
+/* EMPTY STATE CARD COIN */
+.travelind-luxury-coin-container .coin-empty-state-card {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 34px 24px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.02);
+}
+.travelind-luxury-coin-container .empty-state-icon-box {
+    width: 54px; height: 54px; background-color: var(--teal-light); color: var(--teal);
+    border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto;
+}
+.travelind-luxury-coin-container .coin-empty-state-card h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin: 0; }
+.travelind-luxury-coin-container .coin-empty-state-card p { font-size: 12px; color: var(--gray-400); line-height: 1.5; margin-top: 6px; font-weight: 500; }

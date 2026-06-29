@@ -13,6 +13,38 @@ const HomeView = () => {
   const containerRef = useRef(null);
   const feedRef = useRef(null);
 
+  // ⚡️ LAYER STATE CONTROLLER: REAL-TIME USER COINS DATABASE
+  const [userCoins, setUserCoins] = useState(0);
+  const [loadingCoins, setLoadingCoins] = useState(true);
+
+  // Fungsi mengambil saldo koin terbaru secara real-time dari tabel profiles Supabase
+  const fetchBerandaUserCoins = async () => {
+    if (!user) return;
+    try {
+      setLoadingCoins(true);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('coins')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setUserCoins(data.coins || 0);
+      }
+    } catch (err) {
+      console.error("Gagal sinkronisasi data koin di beranda:", err.message);
+      // Fallback aman ke metadata lokal jika profile belum merespons
+      setUserCoins(user.user_metadata?.coins || 0);
+    } finally {
+      setLoadingCoins(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBerandaUserCoins();
+  }, [user]);
+
   useEffect(() => {
     const elemenUtama = containerRef.current;
     if (!elemenUtama) return;
@@ -30,12 +62,12 @@ const HomeView = () => {
     return () => elemenUtama.removeEventListener('scroll', tanganiScrollParallax);
   }, []);
 
-  // LAYER STATE CONTROLLER: UI & TABS SYSTEM
+  // ⚡️ LAYER STATE CONTROLLER: UI & TABS SYSTEM
   const [activeTabProduct, setActiveTabProduct] = useState('travel'); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
-  // STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
+  // ⚡️ STATE CONTROLLER: CORE REACTIVE SEARCH ENGINE
   const [pickup, setPickup] = useState('');
   const [tujuan, setTujuan] = useState('');
   const [tanggal, setTanggal] = useState('');
@@ -233,13 +265,13 @@ const HomeView = () => {
   };
 
   return (
-    <div className="travelind-luxury-home-container">
+    <div ref={containerRef} className="travelind-luxury-home-container" style={{ overflowY: 'auto' }}>
       
-      {/* HEADER ATAS FIXED */}
+      {/* 📌 HEADER ATAS FIXED PANEL DENGAN GRUP SEJAJAR AKSI KOIN & MENU */}
       <div className="hero-top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="user-profile-zone" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           
-          {/* 🌟 USER AVATAR INTERACTIVE HUB DI HOME (SINKRON SUPABASE) */}
+          {/* USER AVATAR INTERACTIVE HUB */}
           <div 
             className="home-avatar-click-node" 
             onClick={() => navigate('/profil')}
@@ -263,12 +295,39 @@ const HomeView = () => {
           </div>
         </div>
         
-        <button type="button" className="sidebar-trigger-btn" onClick={() => setIsSidebarOpen(true)}>
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
-        </button>
+        {/* 🌟 GRUP AKSI KANAN: BADGE KOIN PREMIUM KAPSUL + BUTTON MENU BURGER (PERSIS IMAGE_11.PNG) */}
+        <div className="header-right-action-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          
+         {/* BADGE T-COIN KAPSUL EMAS INTERAKTIF */}
+{user && (
+  <div 
+    className="premium-home-coin-badge"
+    onClick={() => navigate('/coin-saya')}
+    title="Lihat Koin Saya"
+  >
+    {/* 🪙 DIGANTI DENGAN SVG VECTOR AGAR MUNCUL DI SEMUA PERANGKAT */}
+    <div className="home-coin-badge-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#F5A623" stroke="#D4AF37" strokeWidth="1.5"/>
+        <circle cx="12" cy="12" r="7" stroke="#FFFFFF" strokeWidth="1.5" strokeDasharray="3 2"/>
+        <path d="M12 7V17M9 10H14M9 14H14" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </div>
+    <span className="home-coin-badge-value">
+      {loadingCoins ? '...' : userCoins.toLocaleString('id-ID')}
+    </span>
+  </div>
+)}
+
+          <button type="button" className="sidebar-trigger-btn" onClick={() => setIsSidebarOpen(true)}>
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {/* BLOCK SLOGAN & FORM PENGISIAN */}
+      {/* BLOCK SLOGAN & HEADLINE */}
       <div className="hero-gradient-block">
         <h1 className="hero-headline-text">
           {t.headline.split('\n')[0]}<br />{t.headline.split('\n')[1]}
@@ -451,7 +510,7 @@ const HomeView = () => {
             <div className="route-arrow-down-svg">
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
             </div>
-            <div className="route-grid-item-card">Padang</div>
+            <div className="route-to">Padang</div>
             <div className="route-starting-price">Rp120K</div>
           </div>
 
@@ -466,7 +525,7 @@ const HomeView = () => {
             <div className="route-arrow-down-svg">
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
             </div>
-            <div className="route-grid-item-card">Lampung</div>
+            <div className="route-to">Lampung</div>
             <div className="route-starting-price">Rp85K</div>
           </div>
         </div>
@@ -494,22 +553,22 @@ const HomeView = () => {
 
         <footer className="main-footer" style={{ padding: '24px 0 10px 0', textAlign: 'center' }}>
             <p className="footer-title" style={{ fontSize: '12px', fontWeight: '700', color: '#9AA3B2', marginBottom: '8px' }}>{t.ikutiKami}</p>
+            <div className="social-icons" style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+                <a href="#tiktok" style={{ color: '#9AA3B2' }}><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.01 1.62 4.14.94 1.08 2.27 1.81 3.71 2.05v3.83c-1.39-.06-2.76-.53-3.92-1.32-.38-.26-.73-.56-1.04-.89v7.12c.04 1.51-.31 3.02-1.03 4.33-.89 1.61-2.31 2.89-4.01 3.52-1.74.65-3.66.75-5.46.26-1.81-.48-3.46-1.57-4.63-3.11-1.14-1.51-1.71-3.41-1.61-5.3.09-1.92.93-3.75 2.37-5.03 1.44-1.29 3.35-1.99 5.27-1.96.42 0 .84.04 1.25.11v3.97c-.64-.22-1.33-.28-1.99-.18-.69.09-1.35.41-1.85.91-.53.53-.84 1.24-.87 1.99-.05.86.32 1.72.96 2.28.62.54 1.44.81 2.26.73.83-.07 1.6-.53 2.02-1.25.26-.45.38-.96.36-1.48V0h.23z"/></svg></a>
+                <a href="#instagram" style={{ color: '#9AA3B2' }}><svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01"/></svg></a>
+                <a href="#facebook" style={{ color: '#9AA3B2' }}><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.8z"/></svg></a>
+            </div>
         </footer>
       </div>
 
-      {/* LACI SIDEBAR */}
+      {/* LACI NAVIGATION MENU SIDEBAR */}
       <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
       <div className={`sidebar-container-block ${isSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header-top">
-          <span className="sidebar-title-label">{t.navTitle}</span>
-          <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}>
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
+          <span className="sidebar-title-label"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
+          <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}>✕</button>
         </div>
-        
         <div className="sidebar-user-profile-badge" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>
-          
-          {/* 🌟 USER AVATAR SINKRONISASI DI LACI SIDEBAR */}
           <div 
             className="sidebar-avatar-circle-box"
             style={{
@@ -525,13 +584,11 @@ const HomeView = () => {
               <span style={{ fontSize: '16px', fontWeight: '800', color: 'var(--navy)' }}>{inisialProfile}</span>
             )}
           </div>
-
           <div className="profile-meta-text">
             <h6>{namaProfile}</h6>
             <p>{emailProfile}</p>
           </div>
         </div>
-
         <div className="sidebar-links-list">
           <button type="button" className="sidebar-menu-btn active-node" onClick={() => setIsSidebarOpen(false)}>{t.menuHome}</button>
           <button type="button" className="sidebar-menu-btn" onClick={() => setIsSidebarOpen(false) || navigate('/profil')}>{t.menuAkun}</button>
