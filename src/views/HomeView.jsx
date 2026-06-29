@@ -44,13 +44,12 @@ const HomeView = () => {
   const asalRef = useRef(null);
   const tujuanRef = useRef(null);
 
-  // Efek menghitung batasan tanggal minimal biar tanggal yang sudah lewat terkunci abu-abu
+  // 🌟 FIX SAFARI: Efek menghitung batasan tanggal minimal biar presisi di iOS & Android
   useEffect(() => {
     const hariIni = new Date();
-    const yyyy = hariIni.getFullYear();
-    const mm = String(hariIni.getMonth() + 1).padStart(2, '0');
-    const dd = String(hariIni.getDate()).padStart(2, '0');
-    setTanggalMinimalHariIni(`${yyyy}-${mm}-${dd}`);
+    const opsiFormat = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formatter = new Intl.DateTimeFormat('fr-CA', opsiFormat); // Menghasilkan format YYYY-MM-DD murni
+    setTanggalMinimalHariIni(formatter.format(hariIni));
   }, []);
 
   // Fungsi mengambil saldo koin terbaru secara real-time dari tabel profiles Supabase
@@ -240,10 +239,25 @@ const HomeView = () => {
     setIsDateActive(type === 'hariIni' ? 0 : 1);
   };
 
+  // 🌟 FIX SAFARI: Proteksi ganda penangkal tanggal mundur bandel di iOS
+  const handleUbahTanggalAman = (targetValue) => {
+    if (!targetValue) {
+      setTanggal('');
+      return;
+    }
+    if (targetValue < tanggalMinimalHariIni) {
+      setTanggal(tanggalMinimalHariIni);
+      setIsDateActive(0);
+    } else {
+      setTanggal(targetValue);
+      setIsDateActive(null);
+    }
+  };
+
   // 🌟 LOGIKA PENGASAHAN PENGISIAN PENUMPANG SECARA MANUAL DI HP
   const handleUbahPenumpangManual = (value) => {
     if (value === '') {
-      setPenumpang(''); // Ijinkan user menghapus angka di HP tanpa langsung mental balik
+      setPenumpang('');
       return;
     }
     const parsed = parseInt(value, 10);
@@ -254,7 +268,7 @@ const HomeView = () => {
   // Validasi saat kursor meninggalkan kotak input penumpang (On Blur)
   const handleValidasiPelepasanPenumpang = () => {
     if (penumpang === '' || penumpang <= 0) {
-      setPenumpang(1); // Balikkan otomatis ke 1 jika bernilai 0 atau kosong
+      setPenumpang(1);
     }
   };
 
@@ -471,7 +485,7 @@ const HomeView = () => {
               </div>
 
               <div className="parameter-pencarian-row">
-                {/* 🌟 FORM PICKER TANGGAL DENGAN MIN BATAS HARI INI */}
+                {/* 🌟 FORM PICKER TANGGAL DENGAN PROTEKSI MULTI-BROWSER */}
                 <div className="input-split-field">
                   <div className="field-label">{t.labelTanggal}</div>
                   <div className="field-input-wrapper">
@@ -480,7 +494,7 @@ const HomeView = () => {
                       type="date" 
                       value={tanggal} 
                       min={tanggalMinimalHariIni} 
-                      onChange={(e) => { setTanggal(e.target.value); setIsDateActive(null); }} 
+                      onChange={(e) => handleUbahTanggalAman(e.target.value)} 
                       className="date-raw-picker" 
                     />
                   </div>
@@ -490,39 +504,39 @@ const HomeView = () => {
                   </div>
                 </div>
                 
-                {/* 🌟 MODERN INTERACTIVE STEPPER COMPONENT FOR PASSENGERS */}
-<div className="input-split-field">
-  <div className="field-label">{t.labelPenumpang}</div>
-  <div className="premium-stepper-container">
-    
-    <button 
-      type="button" 
-      className="stepper-action-node minus"
-      onClick={() => setPenumpang(prev => Math.max(1, (parseInt(prev, 10) || 1) - 1))}
-    >
-      －
-    </button>
-    
-    <input 
-      type="number" 
-      pattern="[0-9]*"
-      inputMode="numeric"
-      value={penumpang} 
-      onChange={(e) => handleUbahPenumpangManual(e.target.value)}
-      onBlur={handleValidasiPelepasanPenumpang}
-      className="passenger-premium-input" 
-    />
-    
-    <button 
-      type="button" 
-      className="stepper-action-node plus"
-      onClick={() => setPenumpang(prev => (parseInt(prev, 10) || 0) + 1)}
-    >
-      ＋
-    </button>
+                {/* 🌟 FIXED STEPPER: Tombol Plus/Minus Penuh & Responsif */}
+                <div className="input-split-field">
+                  <div className="field-label">{t.labelPenumpang}</div>
+                  <div className="premium-stepper-container">
+                    
+                    <button 
+                      type="button" 
+                      className="stepper-action-node minus"
+                      onClick={() => setPenumpang(prev => Math.max(1, (parseInt(prev, 10) || 1) - 1))}
+                    >
+                      －
+                    </button>
+                    
+                    <input 
+                      type="number" 
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      value={penumpang} 
+                      onChange={(e) => handleUbahPenumpangManual(e.target.value)}
+                      onBlur={handleValidasiPelepasanPenumpang}
+                      className="passenger-premium-input" 
+                    />
+                    
+                    <button 
+                      type="button" 
+                      className="stepper-action-node plus"
+                      onClick={() => setPenumpang(prev => (parseInt(prev, 10) || 0) + 1)}
+                    >
+                      ＋
+                    </button>
 
-  </div>
-</div>
+                  </div>
+                </div>
               </div>
 
               <button type="button" className="btn-search-travel-submit" onClick={handleCariTravel}>
@@ -594,7 +608,7 @@ const HomeView = () => {
             </div>
             <div className="route-from">Medan</div>
             <div className="route-arrow-down-svg">
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7-7 7"/></svg>
             </div>
             <div className="route-to">Padang</div>
             <div className="route-starting-price">Rp120K</div>
@@ -609,7 +623,7 @@ const HomeView = () => {
             </div>
             <div className="route-from">Palembang</div>
             <div className="route-arrow-down-svg">
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7-7 7"/></svg>
             </div>
             <div className="route-to">Lampung</div>
             <div className="route-starting-price">Rp85K</div>

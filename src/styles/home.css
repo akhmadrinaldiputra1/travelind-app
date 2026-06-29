@@ -269,8 +269,28 @@
 .travelind-luxury-home-container .mini-date-btn { background: #ffffff; border: 1px solid var(--gray-200); padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; color: var(--navy); cursor: pointer; }
 .travelind-luxury-home-container .mini-date-btn.active { background-color: var(--navy); color: #ffffff; border-color: var(--navy); }
 
+/* Tombol Cari Tiket Utama dengan Efek Aktif/Tekan Minimalis */
 .travelind-luxury-home-container .btn-search-travel-submit {
-    width: 100%; background: linear-gradient(135deg, var(--teal) 0%, #00B89C 100%); color: var(--navy); font-size: 15px; font-weight: 800; padding: 16px; border-radius: 16px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,212,184,0.35);
+    width: 100%; 
+    background: linear-gradient(135deg, var(--teal) 0%, #00B89C 100%); 
+    color: var(--navy); 
+    font-size: 15px; 
+    font-weight: 800; 
+    padding: 16px; 
+    border-radius: 16px; 
+    border: none; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+    box-shadow: 0 8px 24px rgba(0,212,184,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.travelind-luxury-home-container .btn-search-travel-submit:active {
+    transform: scale(0.98) !important; 
+    box-shadow: 0 4px 12px rgba(0,212,184,0.2) !important;
 }
 
 /* ==========================================================================
@@ -287,19 +307,19 @@
     border-top-right-radius: 32px;
     box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.12);
 
-    /* 🌟 KUNCI UTAMA: Biarkan overflow bodi internal mati secara default saat di bawah */
+    /* KUNCI UTAMA: Biarkan overflow bodi internal mati secara default saat di bawah */
     overflow-y: visible; 
 }
 
-/* 🌟 KELAS DINAMIS KETIKA AKAN MENGUNCI DI ATAS (DIPICU OLEH REACT) */
+/* KELAS DINAMIS KETIKA AKAN MENGUNCI DI ATAS (DIPICU OLEH REACT) */
 .travelind-luxury-home-container .home-feed-scroll-content.is-locked {
     position: fixed !important;
-    top: 60px; /* Jarak pas di bawah nama pengguna */
+    top: 60px; 
     left: 50%;
     transform: translateX(-50%);
     max-width: 450px;
     height: calc(100vh - 60px);
-    overflow-y: auto !important; /* Pindah akses scroll ke internal disini */
+    overflow-y: auto !important; 
     scrollbar-width: none;
 }
 
@@ -387,12 +407,63 @@
 }
 .travelind-luxury-home-container .sidebar-line-separator { height: 1px; background-color: var(--gray-200); margin: 8px 16px; }
 
-.premium-popup-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(11, 31, 58, 0.4); backdrop-filter: blur(4px); z-index: 999999; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
-.premium-popup-overlay.active { opacity: 1; pointer-events: auto; }
-.premium-popup-sheet { background-color: #ffffff; width: 100%; max-width: 450px; border-radius: 24px 24px 0 0; padding: 24px; text-align: center; transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-.premium-popup-overlay.active .premium-popup-sheet { transform: translateY(0); }
-.popup-sheet-notch { width: 40px; height: 4px; background-color: var(--gray-200); border-radius: 2px; margin: 0 auto 16px auto; }
-.btn-popup-action { flex: 1; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; }
+/* 🌟 PERBAIKAN TOTAL LAYOUT POPUP UNTUK HP & IPHONE (SAFARI COMPATIBLE) */
+.premium-popup-overlay { 
+    position: fixed !important; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh !important; 
+    height: 100dvh !important; 
+    background-color: rgba(11, 31, 58, 0.4); 
+    backdrop-filter: blur(4px); 
+    z-index: 999999; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-end; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.25s ease; 
+}
+
+.premium-popup-overlay.active { 
+    opacity: 1; 
+    pointer-events: auto; 
+}
+
+.premium-popup-sheet { 
+    background-color: #ffffff; 
+    width: 100%; 
+    max-width: 450px; 
+    border-radius: 24px 24px 0 0; 
+    padding: 24px 24px calc(34px + env(safe-area-inset-bottom)) 24px !important; 
+    text-align: center; 
+    transform: translateY(100%); 
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); 
+    box-sizing: border-box !important;
+}
+
+.premium-popup-overlay.active .premium-popup-sheet { 
+    transform: translateY(0); 
+}
+
+.popup-sheet-notch { 
+    width: 40px; 
+    height: 4px; 
+    background-color: var(--gray-200); 
+    border-radius: 2px; 
+    margin: 0 auto 16px auto; 
+}
+
+.btn-popup-action { 
+    flex: 1; 
+    padding: 14px; 
+    font-size: 14px; 
+    font-weight: 700; 
+    border-radius: 12px; 
+    border: none; 
+    cursor: pointer; 
+}
 .btn-popup-action.danger { background-color: #e11d48; color: #ffffff; }
 .btn-popup-action.cancel { background-color: var(--gray-100); color: var(--gray-700); }
 
@@ -409,8 +480,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: rgba(11, 31, 58, 0.4); /* Background gelap transparan */
-    border: 1px solid rgba(245, 166, 35, 0.4); /* Garis emas tipis melingkar */
+    background-color: rgba(11, 31, 58, 0.4); 
+    border: 1px solid rgba(245, 166, 35, 0.4); 
     padding: 6px 14px 6px 10px;
     border-radius: 20px;
     cursor: pointer;
@@ -439,26 +510,25 @@
 .travelind-luxury-home-container .home-coin-badge-value {
     font-size: 13px;
     font-weight: 700;
-    color: #F5A623; /* Angka Emas Menyala */
+    color: #F5A623; 
     letter-spacing: -0.2px;
 }
 
-/* Animasi denyut koin di beranda agar memikat mata user */
 @keyframes homeCoinPulse {
     0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(245, 166, 35, 0)); }
     50% { transform: scale(1.1); filter: drop-shadow(0 0 3px rgba(245, 166, 35, 0.5)); }
 }
+
 /* ==========================================================================
    🌟 PREMIUM INTENSE-PADDING FOR INLINE LOGIN SHEET HUB (FIXED FORM STYLING)
    ========================================================================== */
 .premium-popup-sheet.intense-padding {
-    padding: 32px 24px 40px 24px !important;
-    display: block !important; /* Diubah ke block agar alur komponen mengalir ke bawah alami */
+    padding: 32px 24px calc(40px + env(safe-area-inset-bottom)) 24px !important; 
+    display: block !important; 
     text-align: center !important;
     box-sizing: border-box !important;
 }
 
-/* Memperbaiki form utama dan pembungkus eksternal agar wajib mengambil lebar penuh */
 .premium-popup-sheet.intense-padding form,
 .premium-popup-sheet.intense-padding .login-view-container,
 .premium-popup-sheet.intense-padding .auth-form-wrapper {
@@ -469,7 +539,6 @@
     box-sizing: border-box !important;
 }
 
-/* 🌟 KUNCI UTAMA: Memaksa setiap grup baris input & label konsisten melebar penuh */
 .premium-popup-sheet.intense-padding .input-group,
 .premium-popup-sheet.intense-padding .form-group-item,
 .premium-popup-sheet.intense-padding .form-control-layout {
@@ -477,38 +546,28 @@
     max-width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: stretch !important; /* Memaksa anak elemen (input) melebar penuh secara konsisten */
+    align-items: stretch !important; 
     text-align: left !important;
-    margin-bottom: 16px !important; /* Memberikan jarak antar kotak pengisian */
+    margin-bottom: 20px !important; 
     box-sizing: border-box !important;
 }
 
-/* ==========================================================================
-   ⚙️ REFINEMENT: LABEL TEKS DI ATAS INPUT (SUPER PROFESIONAL & NYAMAN DI LIHAT)
-   ========================================================================== */
+/* ⚙️ REFINEMENT: LABEL TEKS DI ATAS INPUT (SUPER PROFESIONAL & NYAMAN DI LIHAT) */
 .premium-popup-sheet.intense-padding .input-group label,
 .premium-popup-sheet.intense-padding .form-group-item label,
 .premium-popup-sheet.intense-padding .form-control-layout label {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 11.5px !important;            /* Ukuran teks dikecilkan agar elegan */
-    font-weight: 700 !important;              /* Ketebalan semi-bold/bold agar tetap terbaca jelas */
-    color: var(--gray-700) !important;         /* Menggunakan warna abu-abu gelap luxury bawaan Anda */
-    text-transform: uppercase !important;     /* Mengubah huruf menjadi kapital (gaya khas form modern) */
-    letter-spacing: 0.05em !important;        /* Memberi rongga antar huruf agar tidak rapat dan kaku */
-    margin-bottom: 8px !important;            /* Menambah jarak vertikal yang pas ke kotak input di bawahnya */
+    font-size: 11.5px !important;            
+    font-weight: 700 !important;              
+    color: var(--gray-700) !important;         
+    text-transform: uppercase !important;     
+    letter-spacing: 0.05em !important;        
+    margin-bottom: 8px !important;            
     text-align: left !important;
     display: block !important;
     width: 100% !important;
 }
 
-/* Memastikan kontainer group memiliki jarak antar baris form yang lega */
-.premium-popup-sheet.intense-padding .input-group,
-.premium-popup-sheet.intense-padding .form-group-item,
-.premium-popup-sheet.intense-padding .form-control-layout {
-    margin-bottom: 20px !important;           /* Jarak antar baris form (Email vs Sandi) dibuat lebih lega */
-}
-
-/* Pembungkus input jika di dalamnya ada ikon mata/password reveal */
 .premium-popup-sheet.intense-padding .input-password-wrapper,
 .premium-popup-sheet.intense-padding .input-field-container {
     position: relative !important;
@@ -517,32 +576,30 @@
     align-items: center !important;
 }
 
-/* 🌟 MEMBUAT UKURAN KOTAK EMAIL & SANDI KONSISTEN SAMA BESAR */
+/* 🌟 KOTAK EMAIL & SANDI PRESET PREMIUM KONSISTEN */
 .premium-popup-sheet.intense-padding input[type="text"],
 .premium-popup-sheet.intense-padding input[type="email"],
 .premium-popup-sheet.intense-padding input[type="password"] {
-    width: 100% !important; /* Wajib memenuhi lebar kontainer grup */
-    height: 48px !important; /* Dikunci tingginya agar konsisten */
-    padding: 0 16px !important; /* Proporsi padding horizontal */
+    width: 100% !important; 
+    height: 48px !important; 
+    padding: 0 16px !important; 
     border-radius: 12px !important;
     border: 1.5px solid var(--gray-200) !important;
     font-size: 14px !important;
     outline: none !important;
-    box-sizing: border-box !important; /* Mencegah padding merusak ukuran lebar */
+    box-sizing: border-box !important; 
     background-color: var(--gray-100) !important;
     color: var(--navy) !important;
-    text-align: left !important; /* Memaksa ketikan teks mulai dari kiri */
+    text-align: left !important; 
     transition: all 0.2s ease !important;
 }
 
-/* Efek fokus ketika kotak input di-klik user */
 .premium-popup-sheet.intense-padding input:focus {
     border-color: var(--teal) !important;
     background-color: var(--white) !important;
     box-shadow: 0 0 0 3px rgba(0, 212, 184, 0.1) !important;
 }
 
-/* Menyetel tombol utama 'Masuk Sekarang' agar anggun, kokoh, dan penuh */
 .premium-popup-sheet.intense-padding button[type="submit"],
 .premium-popup-sheet.intense-padding .btn-auth-submit-primary {
     width: 100% !important;
@@ -554,7 +611,7 @@
     border-radius: 12px !important;
     border: none !important;
     cursor: pointer !important;
-    margin: 24px 0 0 0 !important; /* Jarak aman di atas tombol */
+    margin: 24px 0 0 0 !important; 
     box-shadow: 0 6px 20px rgba(0, 212, 184, 0.25) !important;
     display: flex !important;
     align-items: center !important;
@@ -567,13 +624,12 @@
     transform: scale(0.98);
 }
 
-/* 🌟 MEMPERBAIKI AREA DAFTAR SEKARANG DI BAGIAN BAWAH */
 .premium-popup-sheet.intense-padding .auth-switch-text-link,
 .premium-popup-sheet.intense-padding p.bottom-switch-prompt,
 .premium-popup-sheet.intense-padding .register-prompt-text {
     font-size: 13px !important;
     color: var(--gray-400) !important;
-    margin: 20px 0 0 0 !important; /* Jarak proporsional dari tombol atasnya */
+    margin: 20px 0 0 0 !important; 
     text-align: center !important;
     display: block !important;
     width: 100% !important;
@@ -589,26 +645,25 @@
     display: inline-block !important;
     margin-left: 4px !important;
 }
+
 /* ==========================================================================
    🌟 MODERN COMPACT STEPPER CONTROL & EXPIRED DATE LOCK ENGINE
    ========================================================================== */
 
-/* Menghilangkan panah spinner nomor bawaan Chrome, Safari, Edge, & Opera di HP */
+/* 🌟 SOLVED WARNING: Properti standard 'appearance' sudah ditambahkan untuk menghilangkan warning di VS Code */
 .travelind-luxury-home-container input::-webkit-outer-spin-button,
 .travelind-luxury-home-container input::-webkit-inner-spin-button {
     -webkit-appearance: none !important;
+    appearance: none !important; 
     margin: 0 !important;
 }
 
-/* Menghilangkan panah spinner nomor bawaan Chrome, Safari, Edge, & Opera di HP */
-.travelind-luxury-home-container input::-webkit-outer-spin-button,
-.travelind-luxury-home-container input::-webkit-inner-spin-button {
+.travelind-luxury-home-container input[type=number] {
+    -moz-appearance: textfield !important;
     -webkit-appearance: none !important;
-    appearance: none !important; /* 🌟 TAMBAHKAN BARIS INI UNTUK MENGHILANGKAN WARNING */
-    margin: 0 !important;
+    appearance: none !important;
 }
 
-/* Wadah Kontainer Stepper Penumpang Modern */
 .travelind-luxury-home-container .premium-stepper-container {
     display: flex !important;
     align-items: center !important;
@@ -618,7 +673,6 @@
     margin-top: 4px !important;
 }
 
-/* Desain Kotak Input Angka Penumpang Tengah */
 .travelind-luxury-home-container .passenger-premium-input {
     flex: 1 !important;
     width: 100% !important;
@@ -634,7 +688,6 @@
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-/* Tombol Aksi Bulat Minus (－) dan Plus (＋) Minimalis */
 .travelind-luxury-home-container .stepper-action-node {
     width: 28px !important;
     height: 28px !important;
@@ -654,18 +707,15 @@
     padding: 0 !important;
 }
 
-/* Efek Klik Ringan pada Tombol Stepper */
 .travelind-luxury-home-container .stepper-action-node:active {
     transform: scale(0.9) !important;
     background-color: var(--gray-100) !important;
 }
 
-/* 🌟 LOCK TANGGAL YANG SUDAH LEWAT (DISABLED DATE INTERACTION) */
 .travelind-luxury-home-container .date-raw-picker::-webkit-calendar-picker-indicator {
     cursor: pointer !important;
 }
 
-/* Memastikan visual kalender bawaan mengikuti standar ter-lock abu-abu profesional */
 .travelind-luxury-home-container .date-raw-picker:disabled,
 .travelind-luxury-home-container .date-raw-picker[min] {
     color-scheme: light !important; 
