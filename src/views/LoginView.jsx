@@ -40,12 +40,13 @@ const LoginView = ({ initialMode = 'login', closePopup }) => {
         window.location.reload(); 
         
       } else {
+        // 🌟 PENYELARASAN MUTLAK: Hanya kirim data yang sah dan dibutuhkan
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password: password,
           options: {
             data: {
-              full_name: fullName.trim()
+              full_name: fullName.trim() // Cukup kirim ini, sisanya dihandle otomatis oleh database trigger kita di atas
             },
             emailRedirectTo: window.location.origin + '/profil'
           }
@@ -115,7 +116,6 @@ const LoginView = ({ initialMode = 'login', closePopup }) => {
               />
             </div>
 
-            {/* 🌟 KOTAK INPUT PASSWORD DENGAN SINKRONISASI TOMBOL MATA */}
             <div className="input-field">
               <label>Kata Sandi (Password)</label>
               <div style={{ position: 'relative', width: '100%' }}>
@@ -124,7 +124,7 @@ const LoginView = ({ initialMode = 'login', closePopup }) => {
                   placeholder="••••••••" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ paddingRight: '46px' }} // Memberi ruang agar teks tidak tertimpa ikon mata
+                  style={{ paddingRight: '46px' }} 
                   required 
                 />
                 <button
@@ -145,7 +145,7 @@ const LoginView = ({ initialMode = 'login', closePopup }) => {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
-                  tabIndex="-1" // Agar tidak mengganggu alur fokus tombol Tab keyboard
+                  tabIndex="-1" 
                 >
                   {showPassword ? (
                     <i className="fa-solid fa-eye-slash" style={{ color: 'var(--primary-teal)' }}></i>

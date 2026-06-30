@@ -37,9 +37,11 @@ const HomeView = () => {
   const [showAsalDropdown, setShowAsalDropdown] = useState(false);
   const [showTujuanDropdown, setShowTujuanDropdown] = useState(false);
 
-  // Supabase Live Data Promo States
+  // 🌟 SUPABASE LIVE DATA INFO PROMO (IKLAN) CAROUSEL STATES
   const [listPromo, setListPromo] = useState([]);
   const [loadingPromo, setLoadingPromo] = useState(true);
+  const [currentIndexPromo, setCurrentIndexPromo] = useState(0);
+  const promoScrollRef = useRef(null);
 
   const asalRef = useRef(null);
   const tujuanRef = useRef(null);
@@ -172,23 +174,75 @@ const HomeView = () => {
       if (tujuanRef.current && !tujuanRef.current.contains(e.target)) setShowTujuanDropdown(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
-    ambilDataPromoDariAdmin();
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 🌟 AMBIL DATA DARI TABEL IKLAN DENGAN LIVE AUTH FILTER (Sinkronisasi Otomatis saat user berubah)
   const ambilDataPromoDariAdmin = async () => {
     try {
       setLoadingPromo(true);
-      const { data, error } = await supabase.from('promo').select('*');
+      const loggedIn = !!user;
+
+      const { data, error } = await supabase
+        .from('iklan')
+        .select('*')
+        .eq('is_aktif', true)
+        .order('id', { ascending: false });
+
       if (error) throw error;
-      if (data) {
-        const promoAktif = data.filter(p => p.is_aktif === true || p.is_aktif === 'true' || p.is_aktif === 1);
-        setListPromo(promoAktif);
-      }
+
+      // Logika Penyaringan Spanduk Gambar berdasarkan Sesi Toko Auth global
+      const iklanSaringKondisi = (data || []).filter(iklan => {
+        if (loggedIn) {
+          return iklan.tampilkan_pada === 'SEMUA' || iklan.tampilkan_pada === 'SUDAH_LOGIN';
+        } else {
+          return iklan.tampilkan_pada === 'SEMUA' || iklan.tampilkan_pada === 'BELUM_LOGIN';
+        }
+      });
+
+      setListPromo(iklanSaringKondisi);
     } catch (err) {
-      console.error("Gagal sinkronisasi data tabel promo:", err);
+      console.error("Gagal sinkronisasi data tabel info promo iklan:", err);
     } finally {
       setLoadingPromo(false);
+    }
+  };
+
+  useEffect(() => {
+    ambilDataPromoDariAdmin();
+  }, [user]);
+
+  // 🌟 AUTOMATIC INFINITE SLIDER MECHANISM (Kembali ke awal jika sudah di ujung)
+  useEffect(() => {
+    if (listPromo.length <= 1) return;
+
+    const intervalSlider = setInterval(() => {
+      setCurrentIndexPromo((prevIndex) => {
+        const nextIndex = prevIndex === listPromo.length - 1 ? 0 : prevIndex + 1;
+        
+        // Pindahkan posisi scroll carousel secara mulus
+        if (promoScrollRef.current) {
+          const lebarContainer = promoScrollRef.current.clientWidth;
+          promoScrollRef.current.scrollTo({
+            left: nextIndex * lebarContainer,
+            behavior: 'smooth'
+          });
+        }
+        return nextIndex;
+      });
+    }, 4000); // Berganti otomatis setiap 4 detik
+
+    return () => clearInterval(intervalSlider);
+  }, [listPromo]);
+
+  // Deteksi indeks titik ketika pengguna menggeser slider secara manual
+  const tanganiScrollPromoManual = () => {
+    if (promoScrollRef.current) {
+      const { scrollLeft, clientWidth } = promoScrollRef.current;
+      if (clientWidth > 0) {
+        const indexTerhitung = Math.round(scrollLeft / clientWidth);
+        setCurrentIndexPromo(indexTerhitung);
+      }
     }
   };
 
@@ -239,7 +293,6 @@ const HomeView = () => {
     setIsDateActive(type === 'hariIni' ? 0 : 1);
   };
 
-  // 🌟 FIX SAFARI: Proteksi ganda penangkal tanggal mundur bandel di iOS
   const handleUbahTanggalAman = (targetValue) => {
     if (!targetValue) {
       setTanggal('');
@@ -254,7 +307,6 @@ const HomeView = () => {
     }
   };
 
-  // 🌟 LOGIKA PENGASAHAN PENGISIAN PENUMPANG SECARA MANUAL DI HP
   const handleUbahPenumpangManual = (value) => {
     if (value === '') {
       setPenumpang('');
@@ -265,7 +317,6 @@ const HomeView = () => {
     setPenumpang(parsed);
   };
 
-  // Validasi saat kursor meninggalkan kotak input penumpang (On Blur)
   const handleValidasiPelepasanPenumpang = () => {
     if (penumpang === '' || penumpang <= 0) {
       setPenumpang(1);
@@ -485,7 +536,6 @@ const HomeView = () => {
               </div>
 
               <div className="parameter-pencarian-row">
-                {/* 🌟 FORM PICKER TANGGAL DENGAN PROTEKSI MULTI-BROWSER */}
                 <div className="input-split-field">
                   <div className="field-label">{t.labelTanggal}</div>
                   <div className="field-input-wrapper">
@@ -504,11 +554,9 @@ const HomeView = () => {
                   </div>
                 </div>
                 
-                {/* 🌟 FIXED STEPPER: Tombol Plus/Minus Penuh & Responsif */}
                 <div className="input-split-field">
                   <div className="field-label">{t.labelPenumpang}</div>
                   <div className="premium-stepper-container">
-                    
                     <button 
                       type="button" 
                       className="stepper-action-node minus"
@@ -516,7 +564,6 @@ const HomeView = () => {
                     >
                       －
                     </button>
-                    
                     <input 
                       type="number" 
                       pattern="[0-9]*"
@@ -526,7 +573,6 @@ const HomeView = () => {
                       onBlur={handleValidasiPelepasanPenumpang}
                       className="passenger-premium-input" 
                     />
-                    
                     <button 
                       type="button" 
                       className="stepper-action-node plus"
@@ -534,7 +580,6 @@ const HomeView = () => {
                     >
                       ＋
                     </button>
-
                   </div>
                 </div>
               </div>
@@ -567,33 +612,68 @@ const HomeView = () => {
 
         <div className="feed-header-row-layout">
           <h3 className="feed-section-title">{t.secPromo}</h3>
-          <span className="see-all-trigger-btn" onClick={() => navigate('/promo')}>{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          <span className="see-all-trigger-btn" onClick={() => navigate('/promo')}>
+            {t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
         </div>
         
-        <div className="horizontal-carousel-promo">
+        {/* ==========================================================================
+             🌟 SEKTOR RE-DESIGNED ADS ADAPTIVE CAROUSEL SLIDER (DARI DASHBOARD ADMIN)
+             ========================================================================== */}
+        <div className="home-promo-carousel-wrapper">
           {loadingPromo ? (
-            <p style={{ fontSize: '12px', color: '#9AA3B2', padding: '10px' }}>{t.loadPromo}</p>
+            <div className="home-promo-loading-state">
+              <div className="home-mini-spinner"></div>
+              <p>{t.loadPromo}</p>
+            </div>
           ) : listPromo.length === 0 ? (
             <div className="promo-banner-card style-navy" style={{ width: '100%' }}>
               <h5 className="promo-title">{t.noPromoTitle}</h5>
               <p className="promo-sub">{t.noPromoDesc}</p>
             </div>
           ) : (
-            listPromo.map((promo) => (
-              <div key={promo.id} className={`promo-banner-card ${promo.tema_warna === 'coral' ? 'style-coral' : 'style-navy'}`}>
-                <div className="promo-tag">
-                  <svg width="10" height="10" fill="white" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                  {promo.kode_kupon || 'PROMO'}
-                </div>
-                <h5 className="promo-title">{promo.judul_promo}</h5>
-                <p className="promo-sub">{promo.deskripsi_singkat}</p>
-                <span className="promo-btn" onClick={() => navigate(`/promo`)}>Pakai Promo</span>
+            <>
+              <div 
+                className="home-promo-scroll-container" 
+                ref={promoScrollRef} 
+                onScroll={tanganiScrollPromoManual}
+              >
+                {listPromo.map((promo) => {
+                  const WrapperKomponen = promo.link_tujuan ? 'a' : 'div';
+                  const propsTambahan = promo.link_tujuan ? { href: promo.link_tujuan, target: '_blank', rel: 'noreferrer' } : {};
+
+                  return (
+                    <WrapperKomponen 
+                      key={promo.id} 
+                      className="home-promo-banner-node" 
+                      onClick={() => { if(!promo.link_tujuan) navigate('/promo') }}
+                      {...propsTambahan}
+                    >
+                      <img src={promo.gambar_url} alt={promo.judul} className="home-promo-node-img" />
+                      <div className="home-promo-node-overlay">
+                        <h4>{promo.judul}</h4>
+                      </div>
+                    </WrapperKomponen>
+                  );
+                })}
               </div>
-            ))
+
+              {/* TITIK INDIKATOR CAROUSEL (DOTS) */}
+              {listPromo.length > 1 && (
+                <div className="home-promo-carousel-dots">
+                  {listPromo.map((_, idx) => (
+                    <span 
+                      key={idx} 
+                      className={`home-promo-dot ${idx === currentIndexPromo ? 'active' : ''}`}
+                    ></span>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
-        <div className="feed-header-row-layout" style={{ marginTop: '20px' }}>
+        <div className="feed-header-row-layout" style={{ marginTop: '24px' }}>
           <h3 className="feed-section-title">{t.secRute}</h3>
           <span className="see-all-trigger-btn">{t.secLihat} <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
         </div>

@@ -332,15 +332,121 @@
 .travelind-luxury-home-container .feed-header-row-layout { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 14px; }
 .travelind-luxury-home-container .feed-section-title { font-size: 16px; font-weight: 800; color: var(--navy); }
 .travelind-luxury-home-container .see-all-trigger-btn { font-size: 13px; font-weight: 600; color: var(--teal); display: flex; align-items: center; gap: 3px; cursor: pointer; }
-.travelind-luxury-home-container .horizontal-carousel-promo { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 5px; scrollbar-width: none; }
-.travelind-luxury-home-container .horizontal-carousel-promo::-webkit-scrollbar { display: none; }
-.travelind-luxury-home-container .promo-banner-card { flex-shrink: 0; width: 255px; border-radius: 18px; padding: 18px 20px; position: relative; overflow: hidden; }
-.travelind-luxury-home-container .promo-banner-card.style-coral { background: linear-gradient(135deg, #FF6B4A 0%, #FF8C70 100%); }
-.travelind-luxury-home-container .promo-banner-card.style-navy { background: linear-gradient(135deg, #0B1F3A 0%, #1A3A60 100%); }
-.travelind-luxury-home-container .promo-tag { background: rgba(255,255,255,0.2); color: #ffffff; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 10px; }
-.travelind-luxury-home-container .promo-title { color: #ffffff; font-size: 17px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
-.travelind-luxury-home-container .promo-sub { color: rgba(255,255,255,0.75); font-size: 12px; margin-bottom: 14px; }
-.travelind-luxury-home-container .promo-btn { background: #ffffff; border-radius: 10px; padding: 7px 14px; font-size: 12px; font-weight: 700; display: inline-block; cursor: pointer; }
+
+/* ==========================================================================
+   📺 🌟 DYNAMIC ADAPTIVE PROMO SLIDER MODULE HUB (SINKRON DASHBOARD ADMIN)
+   ========================================================================== */
+.travelind-luxury-home-container .home-promo-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
+.travelind-luxury-home-container .home-promo-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 14px;
+    padding: 2px 0 10px 0;
+    scrollbar-width: none;
+}
+.travelind-luxury-home-container .home-promo-scroll-container::-webkit-scrollbar { display: none; }
+
+.travelind-luxury-home-container .home-promo-banner-node {
+    flex: 0 0 100%;
+    width: 100%;
+    scroll-snap-align: start;
+    position: relative;
+    height: 154px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(11, 31, 58, 0.08);
+    cursor: pointer;
+    display: block;
+}
+
+.travelind-luxury-home-container .home-promo-node-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.travelind-luxury-home-container .home-promo-banner-node:hover .home-promo-node-img {
+    transform: scale(1.025);
+}
+
+.travelind-luxury-home-container .home-promo-node-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 16px 14px 16px;
+    background: linear-gradient(to top, rgba(11, 31, 58, 0.85) 0%, rgba(11, 31, 58, 0.3) 65%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+}
+.travelind-luxury-home-container .home-promo-node-overlay h4 {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.travelind-luxury-home-container .home-promo-loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 140px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1.5px dashed var(--gray-200);
+    gap: 10px;
+}
+.travelind-luxury-home-container .home-mini-spinner {
+    width: 22px;
+    height: 22px;
+    border: 2.5px solid var(--gray-200);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: homePromoSpin 0.85s linear infinite;
+}
+@keyframes homePromoSpin { to { transform: rotate(360deg); } }
+.travelind-luxury-home-container .home-promo-loading-state p { font-size: 11px; color: var(--gray-400); font-weight: 600; margin: 0; }
+
+.travelind-luxury-home-container .home-promo-carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+.travelind-luxury-home-container .home-promo-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.travelind-luxury-home-container .home-promo-dot.active {
+    background: var(--teal);
+    width: 16px;
+    border-radius: 4px;
+}
+
+/* KODE PROMO LAMA KINI DIHAPUS & DIALIHKAN KE SISTEM CAROUSEL DINAMIS DI ATAS */
+.travelind-luxury-home-container .horizontal-carousel-promo { display: none; }
+
+/* RUTE DAN METRIK SINKRONISASI */
 .travelind-luxury-home-container .routes-shortcut-grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; }
 .travelind-luxury-home-container .route-grid-item-card { background: #ffffff; border-radius: 16px; padding: 16px; border: 1.5px solid transparent; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
 .travelind-luxury-home-container .route-card-top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }

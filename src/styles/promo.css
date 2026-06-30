@@ -1,427 +1,531 @@
 /* ==========================================================================
-   💎 PREMIUM ARCHITECTURE: TRAVELIND CLEAN DESIGNS
+   🌟 TRAVELIND PREMIUM PROMO STYLESHEET - PERFECT ABSOLUTE CENTERING
    ========================================================================== */
+
 .app-promo-container {
-  height: 100vh !important;
-  overflow-y: hidden !important;
-  background-color: #f8fafc;
+    --navy: #0B1F3A;
+    --navy-mid: #122845;
+    --teal: #00D4B8;
+    --teal-light: #E0FAF7;
+    --coral: #FF6B4A;
+    --white: #FFFFFF;
+    --gray-100: #F7F8FA;
+    --gray-200: #EAECF0;
+    --gray-400: #9AA3B2;
+    --gray-700: #3D4A5C;
+
+    width: 100%;
+    max-width: 450px;
+    height: 100vh !important;
+    margin: 0 auto;
+    overflow-y: hidden !important;
+    background-color: var(--gray-100);
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
+/* FIXED NAVIGATION HEADER MODULE */
+.app-promo-container .premium-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--navy);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 16px 20px !important;
+    display: flex;
+    align-items: center;
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(11, 31, 58, 0.1);
+    min-height: 68px;
+}
+
+/* 🌟 PERFECT CENTER BAR FOR TITLE TEXT */
+.app-promo-container .page-title-center {
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--white);
+    letter-spacing: -0.2px;
+    margin: 0 auto !important; 
+    text-align: center;
+    width: 100%;
+    position: relative;
+    z-index: 101;
+}
+
+/* LEFT FLUID NAVIGATION BACK BUTTON BUTTON */
+.app-promo-container .back-btn {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: background 0.2s ease, transform 0.1s ease;
+    position: absolute;
+    left: 20px;
+    z-index: 102;
+}
+.app-promo-container .back-btn:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* RIGHT FLUID NOTIFICATION BELL BUTTON BUTTON */
+.app-promo-container .header-right-icon {
+    color: var(--white);
+    font-size: 18px;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    z-index: 102;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+.app-promo-container .header-right-icon:active { transform: scale(0.9); }
+
+.app-promo-container .notif-badge-dot {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 7px;
+    height: 7px;
+    background-color: var(--coral);
+    border-radius: 50%;
+    border: 1.5px solid var(--navy);
+}
+
+/* CONTENT CONTAINER WRAPPER */
 .app-promo-container .content-wrapper {
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  padding: 24px 20px;
-  padding-bottom: 60px !important;
+    flex: 1;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px 20px;
+    padding-bottom: 80px !important;
+    scrollbar-width: none;
+}
+.app-promo-container .content-wrapper::-webkit-scrollbar { display: none; }
+
+.app-promo-container .promo-intro h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
 }
 
-.premium-header {
-  border-bottom: 1px solid #f1f5f9 !important;
-  padding: 16px 20px !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-  position: relative;
-}
-
-.header-right-icon {
-  color: #02596b;
-  font-size: 18px;
-  cursor: pointer;
-  position: relative;
-  padding: 6px;
-  transition: transform 0.2s;
-}
-.header-right-icon:active { transform: scale(0.9); }
-
-/* Titik merah kecil penanda ada notif baru di lonceng */
-.notif-badge-dot {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 8px;
-  height: 8px;
-  background-color: #e11d48;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-}
-
-.promo-intro h3 {
-  font-size: 22px;
-  font-weight: 800;
-  color: #02596b;
-  letter-spacing: -0.3px;
-}
-
-.promo-intro p {
-  font-size: 13px;
-  color: #64748b;
-  margin-top: 6px;
-  line-height: 1.5;
+.app-promo-container .promo-intro p {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-top: 6px;
+    line-height: 1.5;
+    margin-bottom: 0;
 }
 
 /* ==========================================================================
-   🎫 VIP VOUCHER CARD STYLING
+   🎫 VIP VOUCHER CARD STYLING (MODERNIZED & STABLE OVER HP DEVICES)
    ========================================================================== */
-.promo-card {
-  background: linear-gradient(135deg, #02596b 0%, #012b34 100%);
-  color: #ffffff;
+.app-promo-container .promo-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: var(--white);
   border-radius: 20px;
-  padding: 24px;
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin-top: 20px;
+  margin-bottom: 4px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 12px 24px rgba(2, 89, 107, 0.18);
+  box-shadow: 0 10px 25px rgba(11, 31, 58, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.promo-card::before, .promo-card::after {
-  content: '';
-  position: absolute;
-  top: 63%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  background-color: #f8fafc;
-  border-radius: 50%;
-  z-index: 2;
-  box-shadow: inset 2px 0 4px rgba(0,0,0,0.05);
-}
-.promo-card::before { left: -10px; }
-.promo-card::after { right: -10px; }
-
-.ticket-divider {
-  border-top: 2px dashed rgba(255, 255, 255, 0.15);
-  margin: 18px 0;
+.app-promo-container .promo-card-top {
+  padding: 22px 22px 14px 22px;
 }
 
-.promo-badge {
+.app-promo-container .promo-badge {
   display: inline-block;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(4px);
-  color: #ffffff;
+  color: var(--white);
   font-size: 10px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 30px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.promo-title {
-  font-size: 18px;
-  font-weight: 700;
+.app-promo-container .promo-title {
+  font-size: 17px;
+  font-weight: 800;
   letter-spacing: -0.2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin: 0 0 4px 0;
 }
 
-.promo-desc {
-  font-size: 13px;
-  color: #cbd5e1;
-  margin-top: 4px;
+.app-promo-container .promo-desc {
+  font-size: 12px;
+  color: var(--gray-200);
+  margin: 0 0 10px 0;
   line-height: 1.4;
 }
 
-/* Warna bawaan tag potongan harga boks biru */
-.highlight-tag {
-  color: #f2994a;
+.app-promo-container .highlight-tag {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--teal);
 }
 
-.coupon-action-row {
+/* SHAPED TICKET SPLITTER MOCKUP MECHANISM */
+.app-promo-container .ticket-divider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 20px;
+  margin: 0;
+  border-top: none;
+}
+.app-promo-container .ticket-divider .notch {
+  width: 20px;
+  height: 20px;
+  background-color: var(--gray-100);
+  border-radius: 50%;
+  position: absolute;
+  z-index: 2;
+}
+.app-promo-container .ticket-divider .notch.left { left: -10px; box-shadow: inset -3px 0 5px rgba(0,0,0,0.02); }
+.app-promo-container .ticket-divider .notch.right { right: -10px; box-shadow: inset 3px 0 5px rgba(0,0,0,0.02); }
+.app-promo-container .ticket-divider .line {
+  width: 100%;
+  height: 0px;
+  border-top: 1.5px dashed rgba(255, 255, 255, 0.2);
+  z-index: 1;
+}
+
+.app-promo-container .promo-card-bottom {
+  padding: 8px 22px 18px 22px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.app-promo-container .coupon-action-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
-.code-box {
-  background-color: rgba(0, 0, 0, 0.2);
-  border: 1px dashed rgba(255, 255, 255, 0.3);
-  padding: 10px 16px;
+.app-promo-container .code-box {
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  padding: 10px 14px;
   border-radius: 12px;
   font-family: 'Courier New', Courier, monospace;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 15px;
   letter-spacing: 1.5px;
-  color: #ffffff;
+  color: var(--white);
   flex: 1;
   text-align: center;
 }
 
-.copy-coupon-btn {
-  background-color: #ffffff;
-  color: #02596b;
+.app-promo-container .copy-coupon-btn {
+  background-color: var(--white);
+  color: var(--navy);
   border: none;
-  padding: 12px 20px;
+  padding: 11px 20px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
+.app-promo-container .copy-coupon-btn:active { transform: scale(0.96); }
+.app-promo-container .copy-coupon-btn.copied {
+  background-color: var(--teal) !important;
+  color: var(--navy) !important;
+}
 
-.copy-coupon-btn:hover {
-  background-color: #f2994a;
-  color: #ffffff;
-  transform: translateY(-1px);
+.app-promo-container .expiry-date {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
 }
 
 /* ==========================================================================
-   🎨 STRUKTUR ATURAN BARU: BOKS ORANYE PREMIUM CONTRAST FIX
+   🎨 ORANGE PREMIUM CORAL CONTRAST SINKRONISASI
    ========================================================================== */
-.promo-card.gaya-orange {
-  background: linear-gradient(135deg, #f2994a 0%, #c26d23 100%);
-  box-shadow: 0 12px 24px rgba(242, 153, 74, 0.18);
+.app-promo-container .promo-card.gaya-orange {
+  background: linear-gradient(135deg, var(--coral) 0%, #E05334 100%);
+  box-shadow: 0 10px 25px rgba(255, 107, 74, 0.2);
 }
 
-/* Paksa tulisan deskripsi menjadi toska gelap */
-.promo-card.gaya-orange .promo-desc {
-  color: #012b34 !important;
+.app-promo-container .promo-card.gaya-orange .ticket-divider .line {
+  border-top-color: rgba(255, 255, 255, 0.3);
 }
 
-/* 🌟 KUNCI PERBAIKAN: Paksa tulisan (Potongan Rp...) ikut menjadi toska gelap */
-.promo-card.gaya-orange .highlight-tag {
-  color: #012b34 !important;
+.app-promo-container .promo-card.gaya-orange .promo-desc {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.app-promo-container .promo-card.gaya-orange .highlight-tag {
+  color: var(--navy) !important;
   font-weight: 800;
 }
 
-/* Paksa tulisan tanggal kalender menjadi toska gelap */
-.promo-card.gaya-orange .expiry-date {
-  color: #012b34 !important;
-  font-weight: 700;
+.app-promo-container .promo-card.gaya-orange .expiry-date {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
-.promo-card.gaya-orange .copy-coupon-btn { color: #c26d23; }
-.promo-card.gaya-orange .copy-coupon-btn:hover { background-color: #02596b; color: #ffffff; }
-
+.app-promo-container .promo-card.gaya-orange .copy-coupon-btn { color: var(--coral); }
+.app-promo-container .promo-card.gaya-orange .copy-coupon-btn.copied { color: var(--navy); }
 
 /* ==========================================================================
-   📺 PREMIUM CAROUSEL ADS COMPONENT
+   📺 PREMIUM CAROUSEL INFO RECOMMENDATION
    ========================================================================== */
-.ads-section-wrapper {
-  margin-top: 32px;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 24px;
+.app-promo-container .ads-section-wrapper {
+  margin-top: 24px;
+  background-color: var(--white);
+  padding: 18px;
+  border-radius: 22px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--gray-200);
 }
 
-.ads-section-header {
-  font-size: 12px;
+.app-promo-container .ads-section-header {
+  font-size: 13px;
   font-weight: 800;
-  color: #02596b;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 16px;
+  color: var(--navy);
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.live-dot-pulse {
-  width: 7px;
-  height: 7px;
-  background-color: #27ae60;
+.app-promo-container .live-dot-pulse {
+  width: 6px;
+  height: 6px;
+  background-color: var(--teal);
   border-radius: 50%;
   display: inline-block;
-  box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4);
-  animation: pulseAnimation 1.6s infinite;
+  box-shadow: 0 0 0 0 rgba(0, 212, 184, 0.4);
+  animation: simpleRadarPulse 2s infinite;
 }
 
-@keyframes pulseAnimation {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.5); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(39, 174, 96, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
-}
-
-.ads-container-scroll {
+.app-promo-container .ads-container-scroll {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   overflow-x: auto;
-  padding-bottom: 4px;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
-.ads-container-scroll::-webkit-scrollbar { display: none; }
+.app-promo-container .ads-container-scroll::-webkit-scrollbar { display: none; }
 
-.ad-banner-card {
+.app-promo-container .ad-banner-card {
   flex: 0 0 100%;
+  width: 100%;
   scroll-snap-align: start;
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
-  height: 165px;
-  background-color: #f1f5f9;
+  height: 154px;
+  background-color: var(--gray-100);
+  display: block;
+  cursor: pointer;
 }
 
-.ad-banner-image {
+.app-promo-container .ad-banner-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.ad-banner-overlay-gradient {
+.app-promo-container .ad-banner-overlay-gradient {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
-  padding: 40px 16px 16px 16px;
+  background: linear-gradient(to top, rgba(11, 31, 58, 0.85) 0%, transparent 100%);
+  padding: 40px 16px 14px 16px;
   display: flex;
   align-items: flex-end;
 }
 
-.ad-banner-overlay-gradient h4 {
-  color: #ffffff;
+.app-promo-container .ad-banner-overlay-gradient h4 {
+  color: var(--white);
   font-size: 14px;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.ads-carousel-dots-group {
+.app-promo-container .ads-carousel-dots-group {
   display: flex;
   justify-content: center;
   gap: 6px;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
-.carousel-dot {
+.app-promo-container .carousel-dot {
   width: 6px;
   height: 6px;
-  background-color: #cbd5e1;
+  background-color: var(--gray-200);
   border-radius: 50%;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.carousel-dot.active {
-  width: 18px;
-  background-color: #02596b;
+.app-promo-container .carousel-dot.active {
+  width: 16px;
+  background-color: var(--teal);
   border-radius: 4px;
 }
 
 /* ==========================================================================
-   🛎️ CSS SPECIFICATION: DESIGN POPUP NOTIFIKASI LUXURY MODAL
+   🛎️ BOTTOM SHEET STYLE FOR PREMIUM DIALOG NOTIFICATION
    ========================================================================== */
-.premium-modal-overlay {
-  position: fixed;
+.app-promo-container .premium-modal-overlay {
+  position: fixed !important;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 480px; /* Menyesuaikan lebar app container HP */
-  height: 100vh;
-  background-color: rgba(1, 43, 52, 0.4);
-  backdrop-filter: blur(8px);
-  z-index: 9999;
+  max-width: 450px;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background-color: rgba(11, 31, 58, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 999999;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
-  animation: fadeIn 0.2s ease-out;
+  align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
+.app-promo-container .premium-modal-overlay.active { opacity: 1; pointer-events: auto; }
 
-.premium-modal-card {
+.app-promo-container .premium-modal-card {
   background-color: #ffffff;
   width: 100%;
-  border-radius: 28px;
-  padding: 28px;
-  box-shadow: 0 20px 50px rgba(1, 43, 52, 0.15);
-  text-align: center;
-  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 24px calc(24px + env(safe-area-inset-bottom)) 24px !important;
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box !important;
+}
+.app-promo-container .premium-modal-overlay.active .premium-modal-card { transform: translateY(0); }
+
+.app-promo-container .popup-sheet-notch {
+  width: 40px;
+  height: 4px;
+  background-color: var(--gray-200);
+  border-radius: 2px;
+  margin: 0 auto 16px auto;
 }
 
-.premium-modal-header h3 {
-  font-size: 20px;
+.app-promo-container .premium-modal-header h3 {
+  font-size: 16px;
   font-weight: 800;
-  color: #02596b;
-  margin-top: 14px;
+  color: var(--navy);
+  margin: 6px 0 2px 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.premium-modal-header p {
+.app-promo-container .premium-modal-header p {
   font-size: 12px;
-  color: #64748b;
-  margin-top: 4px;
+  color: var(--gray-400);
+  margin: 0;
 }
 
-.bell-animated-icon {
-  width: 56px;
-  height: 56px;
-  background-color: #f0fdf4;
-  color: #27ae60;
-  font-size: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.app-promo-container .bell-animated-icon {
+  color: var(--teal);
+  font-size: 20px;
   margin: 0 auto;
-}
-
-.premium-modal-body {
-  margin: 24px 0;
-  background-color: #f8fafc;
-  border-radius: 16px;
-  padding: 16px;
-  text-align: left;
-  border: 1px solid #f1f5f9;
-}
-
-.notif-item-row {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
+  justify-content: center;
 }
 
-.notif-dot-active {
-  width: 8px;
-  height: 8px;
-  background-color: #27ae60;
-  border-radius: 50%;
-  margin-top: 5px;
-  flex-shrink: 0;
+.app-promo-container .premium-modal-body {
+  margin: 20px 0 24px 0;
+  background-color: var(--gray-100);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: left;
+  border: 1px solid var(--gray-200);
 }
 
-.notif-text-content h5 {
-  font-size: 13px;
-  font-weight: 700;
-  color: #1e293b;
-}
+.app-promo-container .notif-item-row { display: flex; gap: 12px; }
+.app-promo-container .notif-dot-active { width: 8px; height: 8px; background-color: var(--teal); border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.app-promo-container .notif-text-content h5 { font-size: 13px; font-weight: 700; color: var(--navy); margin: 0 0 2px 0; }
+.app-promo-container .notif-text-content p { font-size: 12px; color: var(--gray-700); margin: 0 0 6px 0; line-height: 1.4; }
+.app-promo-container .notif-text-content span { font-size: 10px; color: var(--gray-400); font-weight: 500; }
 
-.notif-text-content p {
-  font-size: 12px;
-  color: #475569;
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
-.notif-text-content span {
-  font-size: 10px;
-  color: #94a3b8;
-  display: block;
-  margin-top: 6px;
-  font-weight: 500;
-}
-
-.premium-modal-close-btn {
+.app-promo-container .premium-modal-close-btn {
   width: 100%;
-  background-color: #02596b;
-  color: #ffffff;
+  background-color: var(--gray-100);
+  color: var(--gray-700);
   border: none;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.2s;
 }
-.premium-modal-close-btn:hover { background-color: #012b34; }
+.app-promo-container .premium-modal-close-btn:active { background-color: var(--gray-200); }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-/* Loader & State Info */
-.state-info-loading { text-align: center; padding: 40px 0; color: #64748b; font-size: 13px; }
-.premium-spinner { width: 28px; height: 28px; border: 3px solid #e2e8f0; border-top-color: #02596b; border-radius: 50%; margin: 0 auto 12px auto; animation: spin 0.8s linear infinite; }
+/* Loader States */
+.app-promo-container .state-info-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; gap: 12px; color: var(--gray-400); font-size: 12px; font-weight: 500; }
+.app-promo-container .premium-spinner { width: 26px; height: 26px; border: 3px solid var(--gray-200); border-top-color: var(--teal); border-radius: 50%; margin: 0 auto; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.app-promo-container .state-info-error, .app-promo-container .state-info-empty { text-align: center; padding: 40px 20px; color: var(--gray-400); font-size: 13px; background: white; border-radius: 16px; border: 1px dashed var(--gray-200); }
+
+@keyframes simpleRadarPulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 212, 184, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(0, 212, 184, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 212, 184, 0); }
+}
+
+/* ==========================================================================
+   📬 TOAST FEEDBACK ALERT NOTIFICATION SYSTEM
+   ========================================================================== */
+.app-promo-container .toast-feedback-alert {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%, 30px);
+    background: rgba(11, 31, 58, 0.95);
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    z-index: 9999999;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.app-promo-container .toast-feedback-alert.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}

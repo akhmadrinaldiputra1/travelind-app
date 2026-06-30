@@ -9,20 +9,26 @@ const PembayaranView = () => {
   const { user, bahasaGlobal } = useAuthStore();
 
   // --------------------------------------------------------------------------
-  // ⚡️ LAYER STATE CONTROLLER
+  // ⚡️ LAYER STATE CONTROLLER & AUTOGATHERED MANIFESTS
   // --------------------------------------------------------------------------
   const [isModalVoucherOpen, setIsModalVoucherOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('BCA');
   const [countdownText, setCountdownText] = useState('02:00:00');
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
 
+  // Manifestation State (Auto-extracted safely from Search Engine)
+  const bookingIdManifest = localStorage.getItem("booking_id") || "TRV-NEW";
+  const pickupManifest = localStorage.getItem("pickup") || "Asal";
+  const tujuanManifest = localStorage.getItem("tujuan") || "Tujuan";
+  const tanggalRawManifest = localStorage.getItem("tanggal") || "";
+
   // --------------------------------------------------------------------------
   // ⚡️ COIN DROPDOWN ENGINE STATE (MATCH IMAGE_10.PNG)
   // --------------------------------------------------------------------------
   const [userCoins, setUserCoins] = useState(0); 
-  const [isCoinUsed, setIsCoinUsed] = useState(false); // Sakelar "Pakai" (Switch)
-  const [coinInputAmount, setCoinInputAmount] = useState(0); // Jumlah koin yang diketik/diatur manual
-  const [isCoinDropdownOpen, setIsCoinDropdownOpen] = useState(false); // Dropdown expander panel counter
+  const [isCoinUsed, setIsCoinUsed] = useState(false); 
+  const [coinInputAmount, setCoinInputAmount] = useState(0); 
+  const [isCoinDropdownOpen, setIsCoinDropdownOpen] = useState(false); 
   const [loadingCoins, setLoadingCoins] = useState(true);
 
   // --------------------------------------------------------------------------
@@ -100,13 +106,11 @@ const PembayaranView = () => {
   const grandTotalAwal = (hargaTiket * jumlahPenumpang) + 2000;
   const totalSetelahVoucher = grandTotalAwal - nominalDiskonAktif;
 
-  // Nilai Rasio Tukar Koin: 1 koin = Rp 1
   const batasKoinMaksimalBisaDipakai = Math.min(userCoins, totalSetelahVoucher);
 
-  // Sinkronisasi otomatis koin ketika sakelar ON/OFF berubah
   useEffect(() => {
     if (isCoinUsed) {
-      setCoinInputAmount(batasKoinMaksimalBisaDipakai); // Ambil semua koin secara default saat di-ON
+      setCoinInputAmount(batasKoinMaksimalBisaDipakai); 
     } else {
       setCoinInputAmount(0);
     }
@@ -115,7 +119,6 @@ const PembayaranView = () => {
   const nominalPotonganKoin = isCoinUsed ? Math.min(coinInputAmount, batasKoinMaksimalBisaDipakai) : 0;
   const grandTotalFinal = totalSetelahVoucher - nominalPotonganKoin;
 
-  // Ambil saldo koin pengguna dari database Supabase
   const fetchRealTimeUserCoins = async () => {
     if (!user) return;
     try {
@@ -161,7 +164,6 @@ const PembayaranView = () => {
     return () => clearInterval(intervalCountdown);
   }, [navigate]);
 
-  // Fungsi tambah kurang counter koin
   const handleAksiCounterKoin = (tipe) => {
     if (tipe === 'tambah') {
       setCoinInputAmount(prev => Math.min(prev + 100, batasKoinMaksimalBisaDipakai));
@@ -170,12 +172,20 @@ const PembayaranView = () => {
     }
   };
 
-  // 📄 VOUCHER LOGIC ENGINE
+  const konversiFormatTanggalIndo = (stringTanggal) => {
+    if (!stringTanggal) return "-";
+    const opsi = { day: 'numeric', month: 'short', year: 'numeric' };
+    return new Date(stringTanggal).toLocaleDateString('id-ID', opsi);
+  };
+
+  // 📄 VOUCHER LOGIC ENGINE WITH CONDITIONAL AUTHENTICATION FILTER
   const bukaModalPilihVoucher = async () => {
     setIsModalVoucherOpen(true);
     setIsFetchVoucherLoading(true);
     try {
       const hariIni = new Date().toISOString().split('T')[0];
+      const loggedIn = !!user;
+
       const { data: listVoucher, error } = await supabase
         .from("promo")
         .select("*")
@@ -183,8 +193,17 @@ const PembayaranView = () => {
         .order("id", { ascending: false });
 
       if (error) throw error;
-      const voucherTersedia = listVoucher.filter(v => !(v.sekali_pakai === true && v.sudah_dipakai === true));
-      setListVoucherCloud(voucherTersedia);
+      
+      const voucherSaringAman = (listVoucher || []).filter(v => {
+        if (v.sekali_pakai && v.sudah_dipakai) return false;
+        if (loggedIn) {
+          return v.target_user === 'SEMUA' || v.target_user === 'SUDAH_LOGIN';
+        } else {
+          return v.target_user === 'SEMUA' || v.target_user === 'BELUM_LOGIN';
+        }
+      });
+
+      setListVoucherCloud(voucherSaringAman);
     } catch (err) {
       console.error(err);
     } finally {
@@ -206,6 +225,8 @@ const PembayaranView = () => {
     try {
       const hariIni = new Date().toISOString().split('T')[0];
       const emailVal = localStorage.getItem("email_penumpang") || "anonim@guest.com";
+      const loggedIn = !!user;
+
       const { data: listPromoData, error } = await supabase.from("promo").select("*").ilike("kode_promo", kodeTarget);
       if (error) throw error;
       const promoData = listPromoData && listPromoData.length > 0 ? listPromoData[0] : null;
@@ -222,6 +243,16 @@ const PembayaranView = () => {
         setVoucherStatusNotif({ text: t.valVoucherUsed, color: '#e11d48' });
         resetDiskonVoucher(); return;
       }
+      
+      if (loggedIn && promoData.target_user === 'BELUM_LOGIN') {
+        setVoucherStatusNotif({ text: '❌ Kupon ini khusus untuk pengguna yang belum login.', color: '#e11d48' });
+        resetDiskonVoucher(); return;
+      }
+      if (!loggedIn && promoData.target_user === 'SUDAH_LOGIN') {
+        setVoucherStatusNotif({ text: '❌ Kupon khusus member. Silakan login akun terlebih dahulu!', color: '#e11d48' });
+        resetDiskonVoucher(); return;
+      }
+
       if (promoData.tipe_promo === 'BARU') {
         const { data: historyTransaksi } = await supabase.from("transaksi").select("*").eq("email_penumpang", emailVal).limit(1);
         if (historyTransaksi && historyTransaksi.length > 0) {
@@ -262,7 +293,6 @@ const PembayaranView = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  // 🛡️ SECURE SUBMIT & RPC CALL
   const submitPaymentConfirmation = async () => {
     if (!selectedFile) {
       setIsWarningModalOpen(true);
@@ -272,16 +302,15 @@ const PembayaranView = () => {
     const namaVal = localStorage.getItem("nama_penumpang") || "Pengguna Anonim";
     const emailVal = localStorage.getItem("email_penumpang") || "anonim@guest.com";
     const waVal = localStorage.getItem("whatsapp_penumpang") || "-";
-    const booking_id = localStorage.getItem("booking_id") || "TRV-" + Date.now();
+    const booking_id = bookingIdManifest;
     const namaTravel = localStorage.getItem("travelNama") || "Armada Travelind";
-    const jumlahPenumpangFix = localStorage.getItem("penumpang") || "1";
-    const pickupAlamatFix = localStorage.getItem("pickup_alamat") || localStorage.getItem("pickup") || "-";
-    const tujuanAlamatFix = localStorage.getItem("tujuan_alamat") || localStorage.getItem("tujuan") || "-";
+    const jumlahPenumpangFix = jumlahPenumpang;
+    const pickupAlamatFix = localStorage.getItem("pickup_alamat") || pickupManifest || "-";
+    const tujuanAlamatFix = localStorage.getItem("tujuan_alamat") || tujuanManifest || "-";
 
     setIsSubmitting(true);
 
     try {
-      // Panggil fungsi RPC Stored Procedure jika koin digunakan
       if (isCoinUsed && nominalPotonganKoin > 0) {
         const { error: errorRpc } = await supabase.rpc('potong_koin_user', {
           user_id_input: user.id,
@@ -337,16 +366,24 @@ const PembayaranView = () => {
   return (
     <div className="travelind-booking-wrapper">
       
+      {/* 📌 LUXURY HEADER ACCORDING TO IMAGE_3.PNG & HOME DESIGN */}
       <div className="sticky-top-layout-block">
         <header className="main-header">
-          <div className="header-left">
-            <button type="button" className="back-btn" onClick={() => navigate(-1)}>
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75"/></svg>
-            </button>
-            <h2 className="page-title">{t.pageTitle}</h2>
+          <button type="button" className="back-btn" onClick={() => navigate(-1)}>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+          </button>
+          
+          {/* RENDER MANIFEST TICKET MELAYANG DI TENGAH PRESISI */}
+          <div className="header-manifest-ticket-center">
+            <span className="manifest-bid-label">Booking ID {bookingIdManifest}</span>
+            <h4 className="manifest-route-title">
+              {pickupManifest} <span className="arrow-one-way-sign">➔</span> {tujuanManifest}
+            </h4>
+            <p className="manifest-date-sub">{konversiFormatTanggalIndo(tanggalRawManifest)}</p>
           </div>
         </header>
 
+        {/* STEPPER PROGRESS TRACKER */}
         <div className="progress-container">
           <div className="steps-row-modern">
             <div className="step-node completed">
@@ -479,7 +516,7 @@ const PembayaranView = () => {
           )}
         </section>
 
-        {/* 🌟 AREA 2: MODUL KOIN GANTUNG (TEPAT DI BAWAH KUPON - SINKRON 100% IMAGE_10.PNG) */}
+        {/* 🌟 AREA 2: MODUL TIKETCOIN */}
         <section className="premium-card luxury-coin-input-box-card">
           <div className="coin-box-header-title-row">
             <div className="coin-box-label-title">🪙 Gunakan TiketCoin</div>
@@ -495,7 +532,6 @@ const PembayaranView = () => {
                 </div>
               </div>
 
-              {/* IOS STYLE TOGGLE SWITCH */}
               <div className="coin-toggle-switch-right-side">
                 <span className="toggle-label-text">Pakai</span>
                 <label className="switch-toggle-node">
@@ -505,7 +541,6 @@ const PembayaranView = () => {
               </div>
             </div>
 
-            {/* DROPDOWN EXPANDER INPUT PANEL (Hanya Muncul Jika Sakelar "Pakai" ON) */}
             {isCoinUsed && (
               <div className="coin-dropdown-expander-panel">
                 <div className="coin-dropdown-trigger-header-bar" onClick={() => setIsCoinDropdownOpen(!isCoinDropdownOpen)}>
@@ -513,7 +548,6 @@ const PembayaranView = () => {
                   <span className="dropdown-arrow-icon-indicator">{isCoinDropdownOpen ? '▲' : '▼'}</span>
                 </div>
 
-                {/* AREA COUNTER QUANTITY DROPDOWN */}
                 <div className={`coin-counter-slide-wrapper ${isCoinDropdownOpen ? 'is-open' : 'is-closed'}`}>
                   <div className="coin-counter-row-control">
                     <span className="counter-label-txt">Jumlah koin digunakan</span>
@@ -524,7 +558,6 @@ const PembayaranView = () => {
                     </div>
                   </div>
 
-                  {/* BOX HIJAU DISKON DISKRESI TRANSAKSI */}
                   <div className="coin-diskon-success-green-row">
                     <span className="green-checkmark-node">✓ Diskon dari TiketCoin</span>
                     <span className="green-amount-node">- Rp {nominalPotonganKoin.toLocaleString('id-ID')}</span>
@@ -564,7 +597,7 @@ const PembayaranView = () => {
         <div className="bottom-sticky-action-bar">
           <div className="price-display-left">
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500', textTransform: 'uppercase' }}>{t.totalBayarLabel}</span>
-            <span style={{ fontSize: '18px', fontWeight: '800', color: 'var(--primary-teal)' }}>Rp {grandTotalFinal.toLocaleString('id-ID')}</span>
+            <span style={{ fontSize: '18px', fontWeight: '800', color: 'var(--coral)' }}>Rp {grandTotalFinal.toLocaleString('id-ID')}</span>
           </div>
           <button type="button" id="btnConfirmPayment" className="btn-submit-payment" onClick={submitPaymentConfirmation} disabled={isSubmitting}>
             {isSubmitting ? t.btnProcessing : <>{t.btnActionSubmit} ❯</>}

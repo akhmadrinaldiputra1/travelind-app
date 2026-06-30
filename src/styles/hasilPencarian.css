@@ -1,18 +1,20 @@
 /* ==========================================================================
-   🌟 TRAVELIND DESIGN SYSTEM & LAYOUT ARCHITECTURE
+   🔒 ISOLATED STYLE ARCHITECTURE: SEARCH RESULTS VIEW ONLY (ANTI-LEAKAGE SYSTEM)
    ========================================================================== */
 
-.travelind-search-wrapper {
-    --primary-teal: #02596b;
-    --dark-teal: #013e4b;
-    --light-bg: #f4f7f9;
+.modern-search-wrapper {
+    --navy: #0B1F3A;
+    --navy-mid: #122845;
+    --teal: #00D4B8;
+    --teal-light: #E0FAF7;
+    --coral: #FF6B4A;
+    --white: #FFFFFF;
+    --light-bg: #F7F8FA;
     --card-bg: #ffffff;
-    --text-main: #2b2b2b;
-    --text-muted: #8c96a3;
-    --border-color: #f1f5f9;
-    --accent-orange: #f2994a;
-    --success-green: #e2f7eb;
-    --success-text: #27ae60;
+    --text-main: #0B1F3A;
+    --text-muted: #9AA3B2;
+    --border-color: #EAECF0;
+    --gray-700: #475569;
 
     position: relative;
     width: 100%;
@@ -24,738 +26,795 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.travelind-search-wrapper * {
+.modern-search-wrapper * {
     box-sizing: border-box !important;
 }
 
-/* ==========================================================================
-   📌 STICKY TOP COMPONENT PANEL (TERKUNCI DI ATAS, TIDAK IKUT SCROLL)
-   ========================================================================== */
-.travelind-search-wrapper .sticky-top-layout-block {
+/* 🧭 STICKY PANEL HEADER DESIGN */
+.modern-sticky-header-container {
     position: relative;
     width: 100%;
-    background-color: var(--light-bg);
-    z-index: 10;
+    background-color: var(--navy);
+    z-index: 100;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 20px rgba(11, 31, 58, 0.08);
 }
 
-.travelind-search-wrapper .info-card-wrapper-fixed,
-.travelind-search-wrapper .filter-bar-wrapper-fixed {
-    padding: 0 16px;
-    background-color: var(--light-bg);
-}
-
-.travelind-search-wrapper .info-card-wrapper-fixed {
-    margin-top: 12px;
-}
-
-.travelind-search-wrapper .filter-bar-wrapper-fixed {
-    margin-top: 2px;
-    padding-bottom: 8px;
-}
-
-/* ==========================================================================
-   📜 SEARCH CONTENT SCROLLER (FIX TINGGI MAKSIMAL ELASTIS FILL SCREEN)
-   ========================================================================== */
-.travelind-search-wrapper .search-content-scroller {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 10px 16px 24px 16px;
-    scrollbar-width: none !important;
+.modern-navbar {
+    padding: 16px 20px 8px 20px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
 }
 
-.travelind-search-wrapper .search-content-scroller::-webkit-scrollbar {
-    display: none !important;
-}
-
-/* 🌟 FIX UTAMA: Kunci Area Data Kosong Sempurna Mengisi Sisa Layar Bawah */
-.travelind-search-wrapper .empty-state-container {
-    flex: 1;
+.modern-back-circle-btn {
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--white);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 240px;
-    padding: 20px 0;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-.travelind-search-wrapper .empty-state-box {
-    text-align: center;
-    color: var(--text-muted);
+.modern-back-circle-btn:active {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-.travelind-search-wrapper .empty-state-box i {
-    font-size: 46px; 
-    margin-bottom: 12px; 
-    color: #cbd5e0;
-    display: block;
-}
-
-.travelind-search-wrapper .empty-state-box p {
-    font-size: 13.5px;
-    font-weight: 500;
+.modern-nav-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
     margin: 0;
+    letter-spacing: -0.3px;
 }
 
-/* Area penahan banner di bawah list agar posisi rapi */
-.travelind-search-wrapper .scroller-footer-group {
-    margin-top: auto; 
-    width: 100%;
+.modern-header-spacer {
+    width: 36px;
 }
 
-.travelind-search-wrapper .loading-state-wrapper {
-    padding: 60px 0;
-    text-align: center;
+/* 🎚️ MINIMAL PROGRESS STEPBAR */
+.modern-progress-stepper {
+    padding: 0px 24px 16px 24px;
+}
+
+.modern-step-track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.modern-step-node {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modern-step-node span {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-step-node label {
+    font-size: 11px;
     color: var(--text-muted);
-    font-size: 13.5px;
     font-weight: 500;
 }
 
-.travelind-search-wrapper .loading-state-wrapper i {
-    font-size: 26px;
-    color: var(--primary-teal);
-    margin-bottom: 8px;
-    display: inline-block;
+.modern-step-node.past span {
+    background-color: var(--white);
+    color: var(--navy);
+}
+
+.modern-step-node.past label {
+    color: var(--white);
+    opacity: 0.6;
+}
+
+.modern-step-node.active-search span {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--teal);
+    color: var(--navy);
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-step-node.active-search label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--teal);
+}
+
+.modern-step-line {
+    width: 16px;
+    height: 1.5px;
+    background-color: rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+}
+
+.modern-step-line.active {
+    background-color: var(--teal);
+}
+
+/* 🎫 ROUTE SUMMARY BOX (BENTO INNER CARD) */
+.modern-route-summary-box {
+    padding: 0 16px 12px 16px;
+}
+
+.modern-summary-card {
+    background-color: var(--navy-mid);
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modern-summary-route-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--white);
+}
+
+.modern-summary-route-title i {
+    color: var(--teal);
+    font-size: 12px;
+}
+
+.modern-summary-sub-details {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.detail-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+.detail-pill i {
+    font-size: 10px;
+    color: var(--teal);
+}
+
+.detail-pill-divider {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modern-skeleton-route {
+    height: 34px;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+    background-size: 200% 100%;
+    animation: loadingPill 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes loadingPill {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* 🛠️ INTEGRATED CONTROLLER BAR */
+.modern-controls-bar-box {
+    background-color: var(--white);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modern-controls-row {
+    display: flex;
+    align-items: center;
+    background-color: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 2px;
+}
+
+.control-action-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.control-action-btn:active {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.control-action-btn i {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.control-action-btn.is-active i,
+.control-action-btn.is-active span {
+    color: var(--coral);
+}
+
+.arrow-indicator {
+    font-size: 10px !important;
+    opacity: 0.7;
+}
+
+.control-divider-line {
+    width: 1px;
+    height: 18px;
+    background-color: var(--border-color);
 }
 
 /* ==========================================================================
-   ⚙️ HEADER RAMPING SYSTEM
+   📜 SCROLLABLE CONTENT MAIN AREA (DENGAN FIX TINGGI PRESISI HP)
    ========================================================================== */
-.travelind-search-wrapper .main-header {
-    background-color: var(--primary-teal);
-    padding: 16px 20px 10px 20px;
+.modern-search-content-scroller {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Memberikan padding area bawah agar konten terakhir tidak mentok/terpotong di HP */
+    padding: 14px 14px 80px 14px !important;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #ffffff;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: none;
 }
 
-.travelind-search-wrapper .header-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+.modern-search-content-scroller::-webkit-scrollbar {
+    display: none;
 }
 
-.travelind-search-wrapper .page-title {
-    font-size: 18px;
+/* States Layout (Loading & Empty) */
+.modern-search-loading-state {
+    padding: 60px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.modern-search-loading-state i {
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 10px;
+}
+
+.modern-search-empty-container {
+    padding: 80px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modern-search-empty-box {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.modern-search-empty-box i {
+    font-size: 44px;
+    color: var(--border-color);
+    margin-bottom: 12px;
+}
+
+.modern-search-empty-box p {
+    font-size: 13px;
     font-weight: 600;
     margin: 0;
 }
 
-.travelind-search-wrapper .back-btn {
-    width: 36px;
-    height: 36px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: #ffffff;
+/* 🎫 PREMIUM TRAVEL FLEET CARD COMPONENTS */
+.modern-travel-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modern-travel-card {
+    background-color: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.012);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-top-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--light-bg);
+}
+
+.avatar-brand-housing {
+    width: 40px;
+    height: 40px;
+    background-color: var(--light-bg);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-}
-
-.travelind-search-wrapper .menu-btn {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-/* ==========================================================================
-   📈 STEPPER PROGRESS TRACKER (MODERN MINIMALIS - SINKRON 100%)
-   ========================================================================== */
-.travelind-search-wrapper .progress-container {
-    background-color: var(--primary-teal);
-    padding: 8px 24px 16px 24px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    margin-top: -1px;
-}
-
-.travelind-search-wrapper .steps-row-modern {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.travelind-search-wrapper .step-node {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    opacity: 0.45;
-}
-
-.travelind-search-wrapper .circle-node {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.travelind-search-wrapper .node-label {
-    font-size: 11px;
-    color: #ffffff;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.travelind-search-wrapper .line-connector {
-    width: 14px;
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 1px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
     flex-shrink: 0;
 }
 
-.travelind-search-wrapper .step-node.active, 
-.travelind-search-wrapper .step-node.completed { 
-    opacity: 1; 
+.fleet-brand-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-.travelind-search-wrapper .step-node.active .circle-node, 
-.travelind-search-wrapper .step-node.completed .circle-node { 
-    background-color: #ffffff; 
-    color: var(--primary-teal); 
+.fleet-meta-info {
+    flex: 1;
+    text-align: left;
 }
 
-.travelind-search-wrapper .step-node.active .node-label { 
-    font-weight: 700; 
+.fleet-travel-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0;
+    letter-spacing: -0.2px;
 }
 
-.travelind-search-wrapper .line-connector.full { 
-    background-color: #ffffff; 
-}
-
-/* ==========================================================================
-   🗂️ BOX INFO RUTE & ACTION FILTER BUTTONS
-   ========================================================================== */
-.travelind-search-wrapper .info-card {
-    background-color: var(--card-bg);
-    border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-    border: 1px solid #eef2f5;
-}
-
-.travelind-search-wrapper .info-route-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-main);
+.fleet-rating-pill {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 2px;
-}
-
-.travelind-search-wrapper .info-sub-details {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.travelind-search-wrapper .filter-bar {
-    display: flex;
-    gap: 10px;
-}
-
-.travelind-search-wrapper .filter-btn {
-    background-color: var(--card-bg);
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 13px;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--gray-700);
+    margin-top: 2px;
     font-weight: 600;
-    color: var(--text-main);
-    cursor: pointer;
+}
+
+.fleet-rating-pill i {
+    color: #F5A623;
+}
+
+.dot-sep {
+    color: var(--text-muted);
+}
+
+.type-tag {
+    color: var(--navy);
+    background-color: var(--teal-light);
+    padding: 0px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.fleet-status-badge {
+    font-size: 10px;
+    font-weight: 700;
+    background-color: rgba(0, 212, 184, 0.12);
+    color: #00A38E;
+    padding: 2px 8px;
+    border-radius: 6px;
+    align-self: flex-start;
+}
+
+/* Middle Row Metrics */
+.card-middle-metrics {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+}
+
+.metric-item-pill {
+    background-color: var(--light-bg);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 6px;
+    font-size: 11px;
+    color: var(--gray-700);
 }
 
-.travelind-search-wrapper .flex-1 { flex: 1; }
-.travelind-search-wrapper .justify-between { flex: 1.3; justify-content: space-between; }
-.travelind-search-wrapper .icon-teal { color: var(--primary-teal); }
-.travelind-search-wrapper .arrow-muted { color: var(--text-muted); font-size: 11px; }
+.metric-item-pill i {
+    font-size: 11px;
+}
+
+.icon-navy { color: var(--navy); }
+.icon-teal { color: #00A38E; }
+
+.metric-item-pill b {
+    color: var(--navy);
+    font-size: 12px;
+}
+
+/* Visual Dash Route Map Line */
+.card-visual-route-timeline {
+    background-color: #FAFAFB;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.route-node {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    max-width: 45%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-right {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.node-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.node-dot.start { background-color: var(--navy); }
+.node-dot.end { background-color: var(--teal); }
+
+.route-connecting-dashed {
+    flex: 1;
+    height: 1px;
+    border-top: 1.5px dashed var(--border-color);
+}
+
+/* Bottom Actions Box */
+.card-bottom-pricing {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.price-tag-box {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.currency-amount {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--coral);
+    letter-spacing: -0.2px;
+}
+
+.price-label-text {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 1px;
+}
+
+.modern-btn-select-fleet {
+    background-color: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 12px rgba(11, 31, 58, 0.15);
+    transition: all 0.2s;
+}
+
+.modern-btn-select-fleet:active {
+    background-color: var(--navy-mid);
+    transform: scale(0.97);
+}
+
+.modern-btn-select-fleet i {
+    font-size: 10px;
+}
 
 /* ==========================================================================
-   🚗 TRAVEL FLEET CARD LIST
+   🛠️ FOOTER SUPPORT & GUARANTEE COMPONENTS (AUTOMATIC LOWER ANCHOR)
    ========================================================================== */
-.travelind-search-wrapper .travel-list {
+.modern-scroller-footer-group {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    /* Mendorong footer menempel sempurna di dasar kontainer scroller */
+    margin-top: auto !important; 
+    padding-top: 20px;
     width: 100%;
 }
 
-.travelind-search-wrapper .travel-card {
-    background-color: var(--card-bg);
-    border-radius: 14px;
-    padding: 16px;
-    border: 1px solid #eef2f5;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+.modern-trust-badge-banner {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 14px 16px;
     display: flex;
-    flex-direction: column;
-}
-
-.travelind-search-wrapper .card-top {
-    display: flex;
-    gap: 12px;
     align-items: center;
-    margin-bottom: 12px;
+    gap: 14px;
 }
 
-.travelind-search-wrapper .brand-img {
-    width: 65px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 8px;
-    background-color: #f8fafc;
+.trust-icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--teal-light);
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
 }
 
-.travelind-search-wrapper .meta-info {
-    flex: 1;
+.trust-strings-text {
+    text-align: left;
 }
 
-.travelind-search-wrapper .travel-name {
-    font-size: 14px;
+.trust-strings-text h5 {
+    font-size: 13px;
     font-weight: 700;
-    color: #1a202c;
+    color: var(--navy);
     margin: 0;
 }
 
-.travelind-search-wrapper .rating-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #4a5568;
-    margin-top: 2px;
-}
-
-.travelind-search-wrapper .rating-wrapper i {
-    color: var(--accent-orange);
-}
-
-.travelind-search-wrapper .status-badge {
-    background-color: var(--success-green);
-    color: var(--success-text);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-
-.travelind-search-wrapper .card-mid {
-    display: flex;
-    gap: 16px;
-    background-color: #f8fafc;
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-}
-
-.travelind-search-wrapper .info-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.travelind-search-wrapper .visual-route {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 14px;
-    padding: 0 2px;
-}
-
-.travelind-search-wrapper .route-arrow {
-    color: #cbd5e0;
-}
-
-.travelind-search-wrapper .card-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-top: 1px dashed #edf2f7;
-    padding-top: 12px;
-}
-
-.travelind-search-wrapper .amount {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--primary-teal);
-    display: block;
-}
-
-.travelind-search-wrapper .per-seat {
+.trust-strings-text p {
     font-size: 11px;
     color: var(--text-muted);
-}
-
-.travelind-search-wrapper .select-btn {
-    background-color: var(--primary-teal);
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-/* ==========================================================================
-   🛡️ BANNER KEAMANAN & FITUR BANTUAN
-   ========================================================================== */
-.travelind-search-wrapper .trust-banner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background-color: #edf7f9;
-    border-radius: 12px;
-    padding: 12px;
-    margin-top: 16px;
-    border: 1px solid rgba(2, 89, 107, 0.08);
-}
-
-.travelind-search-wrapper .trust-icon {
-    font-size: 18px;
-    color: var(--primary-teal);
-}
-
-.travelind-search-wrapper .trust-text h5 {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--dark-teal);
-    margin: 0;
-}
-
-.travelind-search-wrapper .trust-text p {
-    font-size: 11px;
-    color: #5a6573;
     margin-top: 2px;
     line-height: 1.4;
 }
 
-.travelind-search-wrapper .help-section {
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    padding: 14px;
-    margin-top: 12px;
-    border: 1px solid #eef2f5;
-    cursor: pointer;
-}
-
-.travelind-search-wrapper .help-content {
+/* Help Box Banner */
+.modern-help-card-banner {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 14px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.01);
 }
 
-.travelind-search-wrapper .help-left {
+.help-left-side {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 }
 
-.travelind-search-wrapper .help-icon {
-    font-size: 18px;
-    color: var(--primary-teal);
+.help-icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #FAFAFB;
+    border: 1px solid var(--border-color);
+    color: var(--coral);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
 }
 
-.travelind-search-wrapper .help-text h5 {
+.help-strings-text {
+    text-align: left;
+}
+
+.help-strings-text h5 {
     font-size: 13px;
     font-weight: 700;
-    color: var(--text-main);
+    color: var(--navy);
     margin: 0;
 }
 
-.travelind-search-wrapper .help-text p {
+.help-strings-text p {
     font-size: 11px;
     color: var(--text-muted);
     margin-top: 2px;
 }
 
-/* ==========================================================================
-   🚪 SIDEBAR NAVIGASI CLEAN DRAWER
-   ========================================================================== */
-.travelind-search-wrapper .sidebar-overlay {
-    display: none !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(3px);
-    z-index: 2000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+.arrow-muted-nav {
+    color: var(--text-muted);
+    font-size: 12px;
 }
 
-.travelind-search-wrapper .sidebar-overlay.active {
-    display: block !important;
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.travelind-search-wrapper .sidebar-menu {
-    position: absolute;
-    top: 0;
-    right: -290px;
-    width: 290px;
-    height: 100%;
-    background-color: #ffffff;
-    z-index: 2001;
-    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.travelind-search-wrapper .sidebar-menu.active {
-    right: 0;
-}
-
-.travelind-search-wrapper .sidebar-header {
-    padding: 24px 20px;
-    background: linear-gradient(135deg, #02596b 0%, #013e4b 100%);
-    color: #ffffff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.travelind-search-wrapper .sidebar-title {
-    font-size: 16px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.travelind-search-wrapper .close-sidebar-btn {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.travelind-search-wrapper .sidebar-profile-card {
-    padding: 16px 24px;
-    background-color: #f8fafc;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid #edf2f7;
-    cursor: pointer;
-}
-
-.travelind-search-wrapper .avatar-circle {
-    width: 38px;
-    height: 38px;
-    background-color: #02596b;
-    color: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-}
-
-.travelind-search-wrapper .profile-card-text h6 {
-    font-size: 13px;
-    color: #2c3e50;
-    margin: 0;
-    font-weight: 700;
-}
-
-.travelind-search-wrapper .profile-card-text p {
-    font-size: 11px;
-    color: #8c96a3;
-    margin: 0;
-}
-
-.travelind-search-wrapper .sidebar-content {
-    padding: 16px 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.travelind-search-wrapper .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 15px 24px;
-    color: #2c3e50;
-    font-size: 14px;
-    font-weight: 600;
-    background: none;
-    border: none;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-}
-
-.travelind-search-wrapper .menu-item i {
-    font-size: 16px;
-    color: #02596b;
-    width: 22px;
+.modern-search-screen-footer {
     text-align: center;
-}
-
-.travelind-search-wrapper .menu-divider {
-    height: 1px;
-    background-color: #edf2f7;
-    margin: 10px 24px;
-}
-
-.travelind-search-wrapper .sidebar-footer {
-    margin-top: auto;
-    padding: 20px;
-    text-align: center;
+    color: #A0AEC0;
     font-size: 11px;
-    color: #8c96a3;
-    border-top: 1px solid #edf2f7;
-    background-color: #f8fafc;
+    padding: 4px 0 12px 0 !important;
+    margin: 0 !important;
 }
 
 /* ==========================================================================
-   🥞 BOTTOM SHEET FILTERS MODAL SYSTEM
+   🥞 CORE PORTAL SYSTEM: PREMIUM BOTTOM SHEETS VIEW OVERLAYS
    ========================================================================== */
-.travelind-search-wrapper .sheet-overlay {
+.modern-search-sheet-overlay {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 3000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.travelind-search-wrapper .sheet-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.travelind-search-wrapper .bottom-sheet {
-    position: fixed;
-    bottom: -100%;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
     max-width: 450px;
-    background-color: #ffffff;
+    height: 100%;
+    background-color: rgba(11, 31, 58, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.modern-search-bottom-sheet {
+    background-color: var(--white);
+    width: 100%;
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
-    z-index: 3001;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
-    transition: bottom 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    padding: 20px 24px 34px 24px;
-}
-
-.travelind-search-wrapper .bottom-sheet.active {
-    bottom: 0;
-}
-
-.travelind-search-wrapper .sheet-notch {
-    width: 40px;
-    height: 4px;
-    background-color: #cbd5e0;
-    border-radius: 2px;
-    margin: 0 auto 16px auto;
-}
-
-.travelind-search-wrapper .sheet-header h4 {
-    font-size: 15px;
-    font-weight: 700;
-    color: #1a202c;
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 0;
-}
-
-.travelind-search-wrapper .sheet-body {
+    padding: 12px 20px 24px 20px;
+    max-height: 75vh;
     display: flex;
     flex-direction: column;
-    gap: 4px;
 }
 
-.travelind-search-wrapper .sheet-option-item {
+.modern-search-bottom-sheet.animate-slide-up {
+    animation: searchSlideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modern-search-sheet-notch {
+    width: 38px;
+    height: 4px;
+    background-color: var(--border-color);
+    border-radius: 2px;
+    margin: 0 auto 14px auto;
+}
+
+@keyframes searchSlideUpSheet {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.modern-search-sheet-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 14px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #4a5568;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.travelind-search-wrapper .sheet-option-item i:not(.check-icon) {
-    color: #02596b;
-    margin-right: 8px;
-    width: 20px;
+.modern-search-sheet-header h5 {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0;
+}
+
+.modern-search-close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.modern-search-sheet-body {
+    overflow-y: auto;
+    padding: 10px 0 4px 0;
+    scrollbar-width: none;
+}
+.modern-search-sheet-body::-webkit-scrollbar { display: none; }
+
+/* Interactive Row Items inside Sheet */
+.modern-search-option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: all 0.2s;
+}
+
+.modern-search-option-row:active {
+    background-color: var(--light-bg);
+}
+
+.option-label-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.option-label-group i {
+    font-size: 14px;
+    color: var(--text-muted);
+    width: 16px;
     text-align: center;
 }
 
-.travelind-search-wrapper .sheet-option-item .check-icon {
-    color: #27ae60;
-    opacity: 0;
+.check-indicator-icon {
+    font-size: 16px;
+    color: var(--border-color);
+    transition: color 0.2s;
 }
 
-.travelind-search-wrapper .sheet-option-item.selected {
-    background-color: #e6f0f2;
-    color: #02596b;
+/* Active State Row Sheet */
+.modern-search-option-row.is-selected {
+    background-color: var(--teal-light);
 }
 
-.travelind-search-wrapper .sheet-option-item.selected .check-icon {
-    opacity: 1;
+.modern-search-option-row.is-selected .option-label-group i,
+.modern-search-option-row.is-selected .option-label-group {
+    color: var(--navy);
 }
 
-/* 🦴 SKELETON ANIMATION */
-.travelind-search-wrapper .skeleton-loader {
-    width: 100%;
-    height: 32px;
-    background: linear-gradient(90deg, #f0f2f5 25%, #e6e8eb 50%, #f0f2f5 75%);
-    background-size: 200% 100%;
-    animation: skeleton-pulse 1.5s infinite;
-    border-radius: 6px;
-}
-
-@keyframes skeleton-pulse {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+.modern-search-option-row.is-selected .check-indicator-icon {
+    color: #00A38E;
 }

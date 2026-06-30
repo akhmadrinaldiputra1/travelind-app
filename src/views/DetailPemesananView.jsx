@@ -11,7 +11,6 @@ const DetailPemesananView = () => {
   // ----------------==========================================================
   // ⚡️ LAYER STATE CONTROLLER
   // ----------------------------------------------------------------==========
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showMapTujuan, setShowMapTujuan] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -69,11 +68,6 @@ const DetailPemesananView = () => {
       kebijakanPrivasi: 'Kebijakan Privasi',
       lanjutBtn: 'Lanjut ke Pembayaran',
       kebijakanBatal: 'Pembatalan gratis hingga 10 jam sebelum keberangkatan',
-      navTitle: 'Menu Navigasi',
-      menuHome: 'Beranda Utama',
-      menuAkun: 'Akun Saya',
-      menuTiket: 'Pesanan Saya',
-      menuBantuan: 'Pusat Bantuan',
       sheetTermsTitle: '📄 Syarat & Ketentuan TRAVELIND',
       sheetTermsIntro: 'Mohon baca regulasi pembelian tiket berikut sebelum melanjutkan pembayaran:',
       terms1: 'Data nama, email, dan WhatsApp wajib diisi secara valid demi keperluan asuransi perjalanan.',
@@ -96,8 +90,6 @@ const DetailPemesananView = () => {
       sertaText: ' serta ',
       alertGpsTitle: 'GPS',
       alertMapTitle: 'Peta',
-      
-      // Teks Baru Popup Validasi Modern & Friendly
       popupTitle: 'Yuk, Cek Datamu Kembali!',
       popupDesc: 'Ada bagian data diri yang belum terisi lengkap, nomor WhatsApp yang kurang tepat, atau Syarat & Ketentuan yang belum dicentang. Sedikit lagi data Anda siap untuk melanjutkan pemesanan!',
       popupBtn: 'Lengkapi Data Saya'
@@ -137,11 +129,6 @@ const DetailPemesananView = () => {
       kebijakanPrivasi: 'Privacy Policy',
       lanjutBtn: 'Continue to Payment',
       kebijakanBatal: 'Free cancellation up to 10 hours before departure',
-      navTitle: 'Navigation Menu',
-      menuHome: 'Main Home',
-      menuAkun: 'My Account',
-      menuTiket: 'My Bookings',
-      menuBantuan: 'Help Center',
       sheetTermsTitle: '📄 TRAVELIND Terms & Conditions',
       sheetTermsIntro: 'Please read the following ticket purchase regulations before proceeding with payment:',
       terms1: 'Passenger name, email, and WhatsApp data must be filled out validly for travel insurance purposes.',
@@ -164,17 +151,11 @@ const DetailPemesananView = () => {
       sertaText: ' and ',
       alertGpsTitle: 'GPS',
       alertMapTitle: 'Map',
-
-      // Teks Baru Popup Validasi Modern & Friendly
       popupTitle: 'Let\'s Double-Check Your Details!',
       popupDesc: 'Some personal details are incomplete, the WhatsApp number format might be incorrect, or the Terms & Conditions haven\'t been checked yet. Just a few more adjustments and you are good to go!',
       popupBtn: 'Complete My Details'
     }
   }[bahasaGlobal || 'ID'];
-
-  const namaProfile = user ? (user.user_metadata?.full_name || user.email.split("@")[0].toUpperCase()) : t.anonim;
-  const emailProfile = user?.email ? user.email : t.subAnonim;
-  const inisialProfile = user ? namaProfile.charAt(0).toUpperCase() : '?';
 
   // --------------------------------------------------------------------------
   // 🗺️ LEAFLET INSTANCE REFS
@@ -506,18 +487,6 @@ const DetailPemesananView = () => {
     }
   };
 
-  const handleOpenHelpCS = () => {
-    const pAsal = travelInfo.pickup || "Kota Asal";
-    const pTujuan = travelInfo.tujuan || "Kota Tujuan";
-    const txtWA = encodeURIComponent(`Halo CS TRAVELIND, saya butuh bantuan kendala rute travel dari ${pAsal} menuju ${pTujuan}.`);
-    window.open(`https://wa.me/6281234567890?text=${txtWA}`, '_blank');
-  };
-
-  const handleNavigasiAkun = () => {
-    setIsSidebarOpen(false);
-    navigate('/profil'); 
-  };
-
   return (
     <div className="travelind-booking-wrapper page-pemesanan-scroller-layout">
       
@@ -530,9 +499,7 @@ const DetailPemesananView = () => {
             </button>
             <h2 className="page-title">{t.pageTitle}</h2>
           </div>
-          <button type="button" className="menu-btn" onClick={() => setIsSidebarOpen(true)}>
-            <i className="fa-solid fa-bars-staggered"></i>
-          </button>
+          {/* 🍔 BURGER MENU REMOVED FOR PREMIUM MINIMAL LOOK */}
         </header>
 
         {/* PROGRESS TRACKER BAR */}
@@ -765,42 +732,6 @@ const DetailPemesananView = () => {
           </div>
         </div>
       )}
-
-      {/* MENU SIDEBAR LACI */}
-      <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
-      <nav className={`sidebar-menu ${isSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header">
-          <span className="sidebar-title"><i className="fa-solid fa-layer-group"></i> {t.navTitle}</span>
-          <button type="button" className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}>
-            <i className="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <div className="sidebar-profile-card" onClick={handleNavigasiAkun}>
-          <div className="avatar-circle">{inisialProfile}</div>
-          <div className="profile-card-text">
-            <h6>{namaProfile}</h6>
-            <p>{emailProfile}</p>
-          </div>
-        </div>
-        <div className="sidebar-content">
-          <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); navigate('/home'); }}>
-            <i className="fa-solid fa-house"></i> {t.menuHome}
-          </button>
-          <button type="button" className="menu-item" onClick={handleNavigasiAkun}>
-            <i className="fa-solid fa-circle-user"></i> {t.menuAkun}
-          </button>
-          <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); navigate('/cek-tiket'); }}>
-            <i className="fa-solid fa-ticket"></i> {t.menuTiket}
-          </button>
-          <div className="menu-divider"></div>
-          <button type="button" className="menu-item" onClick={() => { setIsSidebarOpen(false); handleOpenHelpCS(); }}>
-            <i className="fa-solid fa-headset"></i> {t.menuBantuan}
-          </button>
-        </div>
-        <div className="sidebar-footer">
-          <p>©️ 2026 TRAVELIND Startup. v2.0.0</p>
-        </div>
-      </nav>
 
     </div>
   );
