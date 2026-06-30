@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
+import dataWilayahSumatera from '../utils/datawilayah';
 import useAuthStore from '../store/authStore'; 
 import '../styles/hasilPencarian.css';
 
@@ -20,6 +21,21 @@ const HasilPencarianView = () => {
 
   const [filterTipeMobil, setFilterTipeMobil] = useState('ALL');
   const [jenisUrutan, setJenisUrutan] = useState('murah');
+
+  // 🔥 CORE INJECTED STATES: ADAPTASI DARI HOMEVIEW FORM MANAGEMENT
+  const [pickupInput, setPickupInput] = useState('');
+  const [tujuanInput, setTujuanInput] = useState('');
+  const [tanggalInput, setTanggalInput] = useState('');
+  const [penumpangInput, setPenumpangInput] = useState(1);
+  const [tanggalMinimalHariIni, setTanggalMinimalHariIni] = useState('');
+
+  const [filteredAsal, setFilteredAsal] = useState([]);
+  const [filteredTujuan, setFilteredTujuan] = useState([]);
+  const [showAsalDropdown, setShowAsalDropdown] = useState(false);
+  const [showTujuanDropdown, setShowTujuanDropdown] = useState(false);
+
+  const asalRef = useRef(null);
+  const tujuanRef = useRef(null);
 
   // Kamus Bahasa Dinamis (Otomatis Sinkron dari Zustand Profile)
   const t = {
@@ -45,9 +61,17 @@ const HasilPencarianView = () => {
       bantuanDesc: 'Hubungi tim CS kami jika ada pertanyaan atau kendala 24/7.',
       sheetUrutTitle: 'Urutkan Hasil Travel',
       sheetFilterTitle: 'Filter Tipe Kendaraan',
+      sheetUbahTitle: 'Ubah Parameter Pencarian ✦',
       allArmada: 'Tampilkan Semua Armada',
       alertEmpty: 'Data booking tidak ditemukan! Mengalihkan ke halaman utama.',
-      alertGagal: 'Gagal memuat parameter pencarian travel!'
+      alertGagal: 'Gagal memuat parameter pencarian travel!',
+      ubahPencarian: 'Ubah',
+      labelDari: 'Asal',
+      labelKe: 'Tujuan',
+      labelTanggal: 'Tanggal Pergi',
+      labelPenumpang: 'Penumpang',
+      btnSimpan: 'Terapkan Perubahan',
+      alertLengkapi: 'Silakan lengkapi semua data pencarian terlebih dahulu!'
     },
     EN: {
       pageTitle: 'Select Fleet',
@@ -71,54 +95,85 @@ const HasilPencarianView = () => {
       bantuanDesc: 'Contact our CS team if there are questions or obstacles 24/7.',
       sheetUrutTitle: 'Sort Travel Results',
       sheetFilterTitle: 'Filter Vehicle Type',
+      sheetUbahTitle: 'Modify Search Criteria ✦',
       allArmada: 'Show All Fleets',
       alertEmpty: 'Booking data not found! Redirecting to home page.',
-      alertGagal: 'Failed to load travel search parameters!'
+      alertGagal: 'Failed to load travel search parameters!',
+      ubahPencarian: 'Change',
+      labelDari: 'Origin',
+      labelKe: 'Destination',
+      labelTanggal: 'Departure Date',
+      labelPenumpang: 'Passengers',
+      btnSimpan: 'Apply Modifications',
+      alertLengkapi: 'Please complete all search data first!'
     }
   }[bahasaGlobal || 'ID'];
+
+  // 🌟 ENGINE EFFECT: SAFARI & ANDROID LIVE MINIMUM DATE MATRIX
+  useEffect(() => {
+    const hariIni = new Date();
+    const formatter = new Intl.DateTimeFormat('fr-CA', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    setTanggalMinimalHariIni(formatter.format(hariIni));
+  }, []);
+
+  // 🌟 ENGINE EFFECT: OUTSIDE CLICK LISTENER DROPDOWN FORM
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (asalRef.current && !asalRef.current.contains(e.target)) setShowAsalDropdown(false);
+      if (tujuanRef.current && !tujuanRef.current.contains(e.target)) setShowTujuanDropdown(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // ----------------==========================================================
   // 🔄 CORE LIFE-CYCLE ENGINE
   // ----------------------------------------------------------------==========
+  const loadDatabaseManifestEngine = async () => {
+    const booking_id = localStorage.getItem("booking_id");
+    if (!booking_id) {
+      alert(t.alertEmpty);
+      navigate('/home');
+      return;
+    }
+
+    try {
+      setLoadingData(true);
+      const { data: booking, error: bookingErr } = await supabase
+        .from("booking_temp")
+        .select("*")
+        .eq("id", booking_id)
+        .single();
+
+      if (bookingErr) throw bookingErr;
+      setBookingData(booking);
+
+      // Sinkronkan internal input modal form dengan data aktif cloud database
+      setPickupInput(booking.pickup_kota);
+      setTujuanInput(booking.tujuan_kota);
+      setTanggalInput(booking.tanggal);
+      setPenumpangInput(booking.penumpang);
+
+      const { data: travelList, error: travelErr } = await supabase
+        .from("travel_jadwal")
+        .select("*")
+        .eq("pickup", booking.pickup_kota)
+        .eq("tujuan", booking.tujuan_kota);
+
+      if (travelErr) throw travelErr;
+      
+      setMasterTravelData(travelList || []);
+      processAndRenderEngine(travelList || [], filterTipeMobil, jenisUrutan);
+    } catch (err) {
+      console.error("❌ Error Sync Cloud:", err);
+      alert(t.alertGagal);
+    } finally {
+      setLoadingData(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCoreManifestEngine = async () => {
-      const booking_id = localStorage.getItem("booking_id");
-      if (!booking_id) {
-        alert(t.alertEmpty);
-        navigate('/home');
-        return;
-      }
-
-      try {
-        setLoadingData(true);
-        const { data: booking, error: bookingErr } = await supabase
-          .from("booking_temp")
-          .select("*")
-          .eq("id", booking_id)
-          .single();
-
-        if (bookingErr) throw bookingErr;
-        setBookingData(booking);
-
-        const { data: travelList, error: travelErr } = await supabase
-          .from("travel_jadwal")
-          .select("*")
-          .eq("pickup", booking.pickup_kota)
-          .eq("tujuan", booking.tujuan_kota);
-
-        if (travelErr) throw travelErr;
-        
-        setMasterTravelData(travelList || []);
-        processAndRenderEngine(travelList || [], filterTipeMobil, jenisUrutan);
-      } catch (err) {
-        console.error("❌ Error Sync Cloud:", err);
-        alert(t.alertGagal);
-      } finally {
-        setLoadingData(false);
-      }
-    };
-
-    fetchCoreManifestEngine();
+    loadDatabaseManifestEngine();
   }, [navigate]);
 
   // 🛫 COMPUTED ENGINE: IN-MEMORY RE-ACTIVE FILTERING & SORTING PROCESSOR
@@ -139,6 +194,76 @@ const HasilPencarianView = () => {
     }
 
     setFilteredTravelData(result);
+  };
+
+  // ----------------==========================================================
+  // 🕹️ INTERACTION MANIPULATION HANDLERS
+  // ----------------------------------------------------------------==========
+  const handleMencariAsalManual = (inputTarget) => {
+    setPickupInput(inputTarget);
+    const textKetik = inputTarget.toLowerCase();
+    const hasilFilter = dataWilayahSumatera.filter(item => 
+      item?.nama?.toLowerCase().includes(textKetik) || item?.prov?.toLowerCase().includes(textKetik)
+    );
+    setFilteredAsal(hasilFilter);
+    setShowAsalDropdown(true);
+  };
+
+  const handleMencariTujuanManual = (inputTarget) => {
+    setTujuanInput(inputTarget);
+    const textKetik = inputTarget.toLowerCase();
+    const hasilFilter = dataWilayahSumatera.filter(item => 
+      item?.nama?.toLowerCase().includes(textKetik) || item?.prov?.toLowerCase().includes(textKetik)
+    );
+    setFilteredTujuan(hasilFilter);
+    setShowTujuanDropdown(true);
+  };
+
+  const handleTukarRuteKota = () => {
+    if (!pickupInput && !tujuanInput) return;
+    const tampung = pickupInput;
+    setPickupInput(tujuanInput);
+    setTujuanInput(tampung);
+  };
+
+  const handleSimpanModifikasiPencarian = async () => {
+    if (!pickupInput || !tujuanInput || !tanggalInput) {
+      alert(t.alertLengkapi);
+      return;
+    }
+
+    const booking_id = localStorage.getItem("booking_id");
+    const finalPassengers = penumpangInput === '' || penumpangInput <= 0 ? 1 : penumpangInput;
+
+    try {
+      setLoadingData(true);
+      setActiveBottomSheet(null);
+
+      // Jalankan operasi update langsung ke cloud Supabase booking manifest
+      const { error: updateErr } = await supabase
+        .from("booking_temp")
+        .update({
+          pickup_kota: pickupInput,
+          tujuan_kota: tujuanInput,
+          tanggal: tanggalInput,
+          penumpang: parseInt(finalPassengers, 10)
+        })
+        .eq("id", booking_id);
+
+      if (updateErr) throw updateErr;
+
+      // Sinkronkan cache localstorage untuk keperluan sub-page berikutnya
+      localStorage.setItem("pickup", pickupInput);
+      localStorage.setItem("tujuan", tujuanInput);
+      localStorage.setItem("tanggal", tanggalInput);
+      localStorage.setItem("penumpang", finalPassengers);
+
+      // Tarik ulang manifest engine tanpa refresh kasar window page
+      await loadDatabaseManifestEngine();
+    } catch (err) {
+      console.error("❌ Gagal merubah manifest pencarian travel:", err);
+      alert(t.alertGagal);
+    }
   };
 
   const handleExecuteFilter = (kategori) => {
@@ -173,17 +298,47 @@ const HasilPencarianView = () => {
   return (
     <div className="modern-search-wrapper">
       
-      {/* 🌟 STICKY TOP LAYOUT PANEL */}
+      {/* 🌟 STICKY COMPACT TOP LAYOUT PANEL */}
       <div className="modern-sticky-header-container">
         <header className="modern-navbar">
           <button type="button" className="modern-back-circle-btn" onClick={() => navigate(-1)}>
             <i className="fa-solid fa-arrow-left"></i>
           </button>
-          <h2 className="modern-nav-title">{t.pageTitle}</h2>
-          <div className="modern-header-spacer"></div>
+          
+          {/* COMPACT BENTO INFO MID SECTION */}
+          <div className="modern-nav-center-info">
+            {loadingData ? (
+              <div className="modern-skeleton-route-mini"></div>
+            ) : bookingData ? (
+              <div className="modern-header-route-layout">
+                <div className="modern-header-main-route">
+                  <span>{bookingData.pickup_kota}</span>
+                  <i className="fa-solid fa-arrow-right route-arrow-mini"></i>
+                  <span>{bookingData.tujuan_kota}</span>
+                </div>
+                <div className="modern-header-sub-details">
+                  <span>{bookingData.tanggal}</span>
+                  <span className="bullet-divider">•</span>
+                  <span>{bookingData.penumpang} {t.penumpangText}</span>
+                </div>
+              </div>
+            ) : (
+              <h2 className="modern-nav-title">{t.pageTitle}</h2>
+            )}
+          </div>
+
+          {/* 🔥 PREMIUM INTERACTIVE RE-DESIGNED ACTION BUTTON */}
+          <button 
+            type="button" 
+            className="modern-change-search-btn-premium" 
+            onClick={() => setActiveBottomSheet('ubahPencarian')}
+          >
+            <i className="fa-solid fa-magnifying-glass-location"></i>
+            <span>{t.ubahPencarian}</span>
+          </button>
         </header>
 
-        {/* PROGRESS TRACKER BAR */}
+        {/* PROGRESS TRACKER BAR (SLIM VERSION) */}
         <div className="modern-progress-stepper">
           <div className="modern-step-track">
             <div className="modern-step-node past">
@@ -208,34 +363,6 @@ const HasilPencarianView = () => {
               <span>4</span>
               <label>{t.step4}</label>
             </div>
-          </div>
-        </div>
-
-        {/* ROUTE SUMMARY INFO CARD (BENTO STYLE) */}
-        <div className="modern-route-summary-box">
-          <div className="modern-summary-card">
-            {loadingData ? (
-              <div className="modern-skeleton-route"></div>
-            ) : bookingData ? (
-              <>
-                <div className="modern-summary-route-title">
-                  <span>{bookingData.pickup_kota}</span>
-                  <i className="fa-solid fa-arrow-right"></i>
-                  <span>{bookingData.tujuan_kota}</span>
-                </div>
-                <div className="modern-summary-sub-details">
-                  <div className="detail-pill">
-                    <i className="fa-regular fa-calendar"></i>
-                    <span>{bookingData.tanggal}</span>
-                  </div>
-                  <div className="detail-pill-divider"></div>
-                  <div className="detail-pill">
-                    <i className="fa-solid fa-user"></i>
-                    <span>{bookingData.penumpang} {t.penumpangText}</span>
-                  </div>
-                </div>
-              </>
-            ) : null}
           </div>
         </div>
 
@@ -289,6 +416,7 @@ const HasilPencarianView = () => {
                     <div className="avatar-brand-housing">
                       <img className="fleet-brand-img" src={vehicleIcon} alt="Armada" />
                     </div>
+                    
                     <div className="fleet-meta-info">
                       <h4 className="fleet-travel-name">{item.nama}</h4>
                       <div className="fleet-rating-pill">
@@ -366,17 +494,142 @@ const HasilPencarianView = () => {
           </div>
           
           <div className="modern-search-screen-footer">
-            <p>© 2026 TRAVELIND. All Rights Reserved.</p>
+            <p>©️ 2026 TRAVELIND. All Rights Reserved.</p>
           </div>
         </div>
       </div>
 
       {/* ==========================================================================
-         🥞 PORTAL SYSTEM: MODERN PREMIUM BOTTOM SHEETS OVERLAYS
+         🥞 PORTAL SYSTEM: BOTTOM SHEETS MODAL OVERLAYS
          ========================================================================== */}
       {activeBottomSheet && (
         <div className="modern-search-sheet-overlay" onClick={() => setActiveBottomSheet(null)}>
           
+          {/* 🔥 NEW PORTAL LAYER: FULL REAL-TIME UBAH PENCARIAN MODAL FROM HOMEVIEW */}
+          {activeBottomSheet === 'ubahPencarian' && (
+            <div className="modern-search-bottom-sheet animate-slide-up" onClick={(e) => e.stopPropagation()}>
+              <div className="modern-search-sheet-notch"></div>
+              <div className="modern-search-sheet-header">
+                <h5>{t.sheetUbahTitle}</h5>
+                <button type="button" className="modern-search-close-btn" onClick={() => setActiveBottomSheet(null)}>
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              
+              <div className="modern-search-sheet-body explicit-overflow-visible">
+                <div className="search-form-core-group design-isolated-card">
+                  
+                  {/* ROUTE DROPDOWN MATRIX ROW */}
+                  <div className="route-selection-row">
+                    <div className="route-field-box" ref={asalRef}>
+                      <div className="route-label-sm">{t.labelDari}</div>
+                      <input 
+                        type="text" 
+                        placeholder={t.placeholderAsal}
+                        value={pickupInput}
+                        onFocus={() => { setShowAsalDropdown(true); setFilteredAsal(dataWilayahSumatera); }}
+                        onChange={(e) => handleMencariAsalManual(e.target.value)}
+                        autoComplete="off"
+                        className="route-city-input"
+                      />
+                      {showAsalDropdown && filteredAsal.length > 0 && (
+                        <div className="luxury-autocomplete-dropdown-container">
+                          <div className="luxury-autocomplete-scroll-area">
+                            {filteredAsal.map((item, idx) => (
+                              <div key={idx} className="dropdown-row-item" onMouseDown={() => { setPickupInput(item.nama); setShowAsalDropdown(false); }}>
+                                <span>{item.nama}</span>
+                                <small>{item.prov}</small>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="circle-swap-action-btn" onClick={handleTukarRuteKota}>
+                      <i className="fa-solid fa-right-left"></i>
+                    </div>
+
+                    <div className="route-field-box" ref={tujuanRef}>
+                      <div className="route-label-sm">{t.labelKe}</div>
+                      <input 
+                        type="text" 
+                        placeholder={t.placeholderTujuan}
+                        value={tujuanInput}
+                        onFocus={() => { setShowTujuanDropdown(true); setFilteredTujuan(dataWilayahSumatera); }}
+                        onChange={(e) => handleMencariTujuanManual(e.target.value)}
+                        autoComplete="off"
+                        className="route-city-input"
+                      />
+                      {showTujuanDropdown && filteredTujuan.length > 0 && (
+                        <div className="luxury-autocomplete-dropdown-container">
+                          <div className="luxury-autocomplete-scroll-area">
+                            {filteredTujuan.map((item, idx) => (
+                              <div key={idx} className="dropdown-row-item" onMouseDown={() => { setTujuanInput(item.nama); setShowTujuanDropdown(false); }}>
+                                <span>{item.nama}</span>
+                                <small>{item.prov}</small>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* STEPPER & CALENDAR VALUE MANIPULATORS */}
+                  <div className="parameter-pencarian-row">
+                    <div className="input-split-field">
+                      <div className="field-label">{t.labelTanggal}</div>
+                      <div className="field-input-wrapper">
+                        <i className="fa-regular fa-calendar-days custom-cal-icon"></i>
+                        <input 
+                          type="date" 
+                          value={tanggalInput} 
+                          min={tanggalMinimalHariIni} 
+                          onChange={(e) => setTanggalInput(e.target.value)} 
+                          className="date-raw-picker" 
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="input-split-field">
+                      <div className="field-label">{t.labelPenumpang}</div>
+                      <div className="premium-stepper-container">
+                        <button 
+                          type="button" 
+                          className="stepper-action-node minus"
+                          onClick={() => setPenumpangInput(prev => Math.max(1, (parseInt(prev, 10) || 1) - 1))}
+                        >
+                          －
+                        </button>
+                        <input 
+                          type="number" 
+                          readOnly
+                          value={penumpangInput} 
+                          className="passenger-premium-input" 
+                        />
+                        <button 
+                          type="button" 
+                          className="stepper-action-node plus"
+                          onClick={() => setPenumpangInput(prev => (parseInt(prev, 10) || 0) + 1)}
+                        >
+                          ＋
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* EXECUTE INTERACTION BUTTON */}
+                  <button type="button" className="btn-search-travel-submit" onClick={handleSimpanModifikasiPencarian}>
+                    <i className="fa-solid fa-rotate"></i>
+                    {t.btnSimpan}
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Sheet Urutkan */}
           {activeBottomSheet === 'urutkan' && (
             <div className="modern-search-bottom-sheet animate-slide-up" onClick={(e) => e.stopPropagation()}>

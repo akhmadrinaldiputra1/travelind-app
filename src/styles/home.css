@@ -186,6 +186,7 @@
     color: var(--gray-400);
     margin-bottom: 3px;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    text-align: left !important; /* Paksa label form selalu rata kiri */
 }
 
 .travelind-luxury-home-container .route-city-input {
@@ -197,6 +198,7 @@
     font-weight: 700;
     color: var(--navy);
     font-family: 'Plus Jakarta Sans', sans-serif;
+    text-align: left !important; /* Paksa teks ketikan input selalu rata kiri */
 }
 
 .travelind-luxury-home-container .circle-swap-action-btn {
@@ -213,58 +215,76 @@
 }
 
 /* ==========================================================================
-   ⚙️ MODERN LOOK DROPDOWN AUTOCOMPLETE AREA WILAYAH
+   ⚙️ MODERN LOOK DROPDOWN AUTOCOMPLETE AREA WILAYAH (FIX PRESISI MATCH)
    ========================================================================== */
 .travelind-luxury-home-container .luxury-autocomplete-dropdown-container {
-    position: absolute;
-    top: calc(100% + 8px); 
-    left: 0; 
-    right: 0;
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 16px 40px rgba(11, 31, 58, 0.18);
-    z-index: 999;
-    padding: 8px 6px;
-    border: 1px solid var(--gray-200);
+    position: absolute !important;
+    top: calc(100% + 8px) !important; 
+    left: 0 !important; 
+    right: 0 !important;
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    box-shadow: 0 16px 40px rgba(11, 31, 58, 0.18) !important;
+    z-index: 999 !important;
+    padding: 8px 6px !important;
+    border: 1px solid var(--gray-200) !important;
+    text-align: left !important; /* Netralisir semua perataan tengah */
+    display: block !important;
 }
 
 .travelind-luxury-home-container .luxury-autocomplete-scroll-area {
-    max-height: 200px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    display: block !important;
 }
-.travelind-luxury-home-container .luxury-autocomplete-scroll-area::-webkit-scrollbar { display: none; }
+.travelind-luxury-home-container .luxury-autocomplete-scroll-area::-webkit-scrollbar { display: none !important; }
 
 .travelind-luxury-home-container .dropdown-row-item {
-    padding: 11px 14px; 
-    cursor: pointer; 
-    font-size: 13px; 
-    font-weight: 700;
-    color: var(--navy); 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    border-radius: 12px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-.travelind-luxury-home-container .dropdown-row-item:hover {
-    background-color: var(--gray-100);
-    color: var(--teal);
-}
-.travelind-luxury-home-container .dropdown-row-item small { 
-    color: var(--gray-400); 
-    font-weight: 500; 
-    margin-left: auto; 
-    font-size: 11px;
+    padding: 12px 14px !important; 
+    cursor: pointer !important; 
+    font-size: 13.5px !important; 
+    font-weight: 700 !important;
+    color: var(--navy) !important; 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: space-between !important; /* Pisahkan nama kota di kiri dan provinsi di kanan */
+    gap: 12px !important; 
+    border-radius: 12px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+    text-align: left !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
+.travelind-luxury-home-container .dropdown-row-item:hover {
+    background-color: var(--gray-100) !important;
+    color: var(--teal) !important;
+}
+
+.travelind-luxury-home-container .dropdown-row-item span {
+    text-align: left !important;
+    display: inline-block !important;
+}
+
+.travelind-luxury-home-container .dropdown-row-item small { 
+    color: var(--gray-400) !important; 
+    font-weight: 600 !important; 
+    font-size: 11px !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+}
+
+/* ==========================================================================
+   FORM COMPONENT LAINNYA
+   ========================================================================== */
 .travelind-luxury-home-container .parameter-pencarian-row { display: flex; gap: 8px; margin-bottom: 16px; }
 .travelind-luxury-home-container .input-split-field { flex: 1; background: var(--gray-100); border-radius: 14px; padding: 10px 14px; position: relative; }
-.travelind-luxury-home-container .field-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400); margin-bottom: 6px; }
+.travelind-luxury-home-container .field-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400); margin-bottom: 6px; text-align: left; }
 .travelind-luxury-home-container .field-input-wrapper { display: flex; align-items: center; gap: 8px; color: var(--gray-400); }
-.travelind-luxury-home-container .date-raw-picker, .travelind-luxury-home-container .passenger-raw-picker { width: 100%; background: transparent; border: none; outline: none; font-size: 13px; font-weight: 600; color: var(--navy); }
+.travelind-luxury-home-container .date-raw-picker, .travelind-luxury-home-container .passenger-raw-picker { width: 100%; background: transparent; border: none; outline: none; font-size: 13px; font-weight: 600; color: var(--navy); text-align: left; }
 .travelind-luxury-home-container .mini-quick-date-container { display: flex; gap: 4px; margin-top: 6px; }
 .travelind-luxury-home-container .mini-date-btn { background: #ffffff; border: 1px solid var(--gray-200); padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; color: var(--navy); cursor: pointer; }
 .travelind-luxury-home-container .mini-date-btn.active { background-color: var(--navy); color: #ffffff; border-color: var(--navy); }
@@ -513,7 +533,9 @@
 }
 .travelind-luxury-home-container .sidebar-line-separator { height: 1px; background-color: var(--gray-200); margin: 8px 16px; }
 
-/* 🌟 PERBAIKAN TOTAL LAYOUT POPUP UNTUK HP & IPHONE (SAFARI COMPATIBLE) */
+/* ==========================================================================
+   🌟 LAYOUT POPUP MODAL & LOGIN OVERLAYS
+   ========================================================================== */
 .premium-popup-overlay { 
     position: fixed !important; 
     top: 0; 
@@ -580,7 +602,7 @@
 }
 
 /* ==========================================================================
-   🌟 PREMIUM HOME COIN BADGE CAPSULE (MATCH IMAGE_11.PNG)
+   🌟 PREMIUM HOME COIN BADGE CAPSULE
    ========================================================================== */
 .travelind-luxury-home-container .premium-home-coin-badge {
     display: flex;
@@ -626,7 +648,7 @@
 }
 
 /* ==========================================================================
-   🌟 PREMIUM INTENSE-PADDING FOR INLINE LOGIN SHEET HUB (FIXED FORM STYLING)
+   🌟 PREMIUM INTENSE-PADDING FOR INLINE LOGIN SHEET HUB
    ========================================================================== */
 .premium-popup-sheet.intense-padding {
     padding: 32px 24px calc(40px + env(safe-area-inset-bottom)) 24px !important; 
@@ -658,7 +680,6 @@
     box-sizing: border-box !important;
 }
 
-/* ⚙️ REFINEMENT: LABEL TEKS DI ATAS INPUT (SUPER PROFESIONAL & NYAMAN DI LIHAT) */
 .premium-popup-sheet.intense-padding .input-group label,
 .premium-popup-sheet.intense-padding .form-group-item label,
 .premium-popup-sheet.intense-padding .form-control-layout label {
@@ -682,7 +703,6 @@
     align-items: center !important;
 }
 
-/* 🌟 KOTAK EMAIL & SANDI PRESET PREMIUM KONSISTEN */
 .premium-popup-sheet.intense-padding input[type="text"],
 .premium-popup-sheet.intense-padding input[type="email"],
 .premium-popup-sheet.intense-padding input[type="password"] {
@@ -755,8 +775,6 @@
 /* ==========================================================================
    🌟 MODERN COMPACT STEPPER CONTROL & EXPIRED DATE LOCK ENGINE
    ========================================================================== */
-
-/* 🌟 SOLVED WARNING: Properti standard 'appearance' sudah ditambahkan untuk menghilangkan warning di VS Code */
 .travelind-luxury-home-container input::-webkit-outer-spin-button,
 .travelind-luxury-home-container input::-webkit-inner-spin-button {
     -webkit-appearance: none !important;

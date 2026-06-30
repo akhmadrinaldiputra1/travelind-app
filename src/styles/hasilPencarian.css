@@ -1,5 +1,5 @@
 /* ==========================================================================
-   🔒 ISOLATED STYLE ARCHITECTURE: SEARCH RESULTS VIEW ONLY (ANTI-LEAKAGE SYSTEM)
+   🔒 ISOLATED CSS ARCHITECTURE: HASIL PENCARIAN (COMPACT & PROPORTIONAL)
    ========================================================================== */
 
 .modern-search-wrapper {
@@ -15,6 +15,8 @@
     --text-muted: #9AA3B2;
     --border-color: #EAECF0;
     --gray-700: #475569;
+    --success-green: #E0FAF7;
+    --success-text: #00A38E;
 
     position: relative;
     width: 100%;
@@ -27,14 +29,14 @@
     flex-direction: column;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .modern-search-wrapper * {
     box-sizing: border-box !important;
 }
 
-/* 🧭 STICKY PANEL HEADER DESIGN */
+/* 🧭 COMPACT TOP STICKY HEADER (REDUCED VERTICAL SPACE) */
 .modern-sticky-header-container {
     position: relative;
     width: 100%;
@@ -42,20 +44,20 @@
     z-index: 100;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 20px rgba(11, 31, 58, 0.08);
+    box-shadow: 0 4px 20px rgba(11, 31, 58, 0.1);
 }
 
 .modern-navbar {
-    padding: 16px 20px 8px 20px;
+    padding: 12px 16px 6px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 64px;
+    min-height: 54px;
 }
 
 .modern-back-circle-btn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     background-color: rgba(255, 255, 255, 0.1);
     border: none;
     color: var(--white);
@@ -65,45 +67,109 @@
     justify-content: center;
     cursor: pointer;
     transition: background 0.2s;
+    font-size: 13px;
 }
-
 .modern-back-circle-btn:active {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* CENTER ROUTE INFO IN NAVBAR */
+.modern-nav-center-info {
+    flex: 1;
+    margin: 0 12px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modern-header-route-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-header-main-route {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.route-arrow-mini {
+    font-size: 11px;
+    color: var(--teal);
+}
+
+.modern-header-sub-details {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.bullet-divider {
+    color: rgba(255, 255, 255, 0.2);
+}
+
 .modern-nav-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--white);
     margin: 0;
-    letter-spacing: -0.3px;
 }
 
-.modern-header-spacer {
-    width: 36px;
+/* 🔥 PREMIUM INTERACTIVE RE-DESIGNED ACTION BUTTON */
+.modern-change-search-btn-premium {
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--teal);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(4px);
 }
 
-/* 🎚️ MINIMAL PROGRESS STEPBAR */
+.modern-change-search-btn-premium:active {
+    background-color: var(--teal);
+    color: var(--navy);
+    transform: scale(0.95);
+}
+
+.modern-change-search-btn-premium i {
+    font-size: 11px;
+}
+
+/* SLIM PROGRESS STEPBAR */
 .modern-progress-stepper {
-    padding: 0px 24px 16px 24px;
+    padding: 4px 16px 12px 16px;
 }
 
 .modern-step-track {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
+    justify-content: space-between;
 }
 
 .modern-step-node {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .modern-step-node span {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.15);
     color: var(--white);
@@ -115,291 +181,179 @@
 }
 
 .modern-step-node label {
-    font-size: 11px;
+    font-size: 10.5px;
     color: var(--text-muted);
     font-weight: 500;
 }
 
-.modern-step-node.past span {
-    background-color: var(--white);
-    color: var(--navy);
+.modern-step-line {
+    flex: 1;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.15);
+    margin: 0 6px;
 }
 
-.modern-step-node.past label {
+.modern-step-node.past span {
+    background-color: rgba(255, 255, 255, 0.25);
     color: var(--white);
-    opacity: 0.6;
 }
 
 .modern-step-node.active-search span {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
     background-color: var(--teal);
     color: var(--navy);
-    font-size: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .modern-step-node.active-search label {
-    font-size: 11px;
     font-weight: 700;
     color: var(--teal);
-}
-
-.modern-step-line {
-    width: 16px;
-    height: 1.5px;
-    background-color: rgba(255, 255, 255, 0.15);
-    flex-shrink: 0;
 }
 
 .modern-step-line.active {
     background-color: var(--teal);
 }
 
-/* 🎫 ROUTE SUMMARY BOX (BENTO INNER CARD) */
-.modern-route-summary-box {
-    padding: 0 16px 12px 16px;
+/* SKELETON PLACEHOLDER */
+.modern-skeleton-route-mini {
+    width: 120px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    animation: pulse 1.5s infinite;
 }
 
-.modern-summary-card {
-    background-color: var(--navy-mid);
-    border-radius: 12px;
-    padding: 12px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.6; }
 }
 
-.modern-summary-route-title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--white);
-}
-
-.modern-summary-route-title i {
-    color: var(--teal);
-    font-size: 12px;
-}
-
-.modern-summary-sub-details {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 6px;
-}
-
-.detail-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 500;
-}
-
-.detail-pill i {
-    font-size: 10px;
-    color: var(--teal);
-}
-
-.detail-pill-divider {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.modern-skeleton-route {
-    height: 34px;
-    width: 100%;
-    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-    background-size: 200% 100%;
-    animation: loadingPill 1.5s infinite;
-    border-radius: 8px;
-}
-
-@keyframes loadingPill {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* 🛠️ INTEGRATED CONTROLLER BAR */
+/* INTEGRATED FILTER BAR CONTROLLER */
 .modern-controls-bar-box {
-    background-color: var(--white);
+    background-color: var(--navy-mid);
     padding: 10px 16px;
-    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid rgba(255,255,255,0.05);
 }
 
 .modern-controls-row {
     display: flex;
     align-items: center;
-    background-color: var(--light-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
     padding: 2px;
 }
 
 .control-action-btn {
     flex: 1;
-    background: none;
+    background: transparent;
     border: none;
-    padding: 8px 12px;
+    color: var(--white);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 8px 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--navy);
+    gap: 6px;
     cursor: pointer;
-    border-radius: 8px;
-    transition: background 0.2s;
-}
-
-.control-action-btn:active {
-    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 10px;
+    transition: all 0.2s;
 }
 
 .control-action-btn i {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
 }
 
-.control-action-btn.is-active i,
-.control-action-btn.is-active span {
-    color: var(--coral);
+.control-action-btn .arrow-indicator {
+    font-size: 9px;
+    opacity: 0.7;
 }
 
-.arrow-indicator {
-    font-size: 10px !important;
-    opacity: 0.7;
+.control-action-btn.is-active {
+    color: var(--teal);
+}
+.control-action-btn.is-active i {
+    color: var(--teal);
 }
 
 .control-divider-line {
     width: 1px;
     height: 18px;
-    background-color: var(--border-color);
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* ==========================================================================
-   📜 SCROLLABLE CONTENT MAIN AREA (DENGAN FIX TINGGI PRESISI HP)
+   📜 LARGE SCROLLER SELECTION AREA (MORE SPACIOUS & COMFORTABLE)
    ========================================================================== */
 .modern-search-content-scroller {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    /* Memberikan padding area bawah agar konten terakhir tidak mentok/terpotong di HP */
-    padding: 14px 14px 80px 14px !important;
+    padding: 14px 14px 40px 14px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     scrollbar-width: none;
 }
-
 .modern-search-content-scroller::-webkit-scrollbar {
     display: none;
 }
 
-/* States Layout (Loading & Empty) */
-.modern-search-loading-state {
-    padding: 60px 0;
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.modern-search-loading-state i {
-    font-size: 26px;
-    color: var(--navy);
-    margin-bottom: 10px;
-}
-
-.modern-search-empty-container {
-    padding: 80px 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modern-search-empty-box {
-    text-align: center;
-    color: var(--text-muted);
-}
-
-.modern-search-empty-box i {
-    font-size: 44px;
-    color: var(--border-color);
-    margin-bottom: 12px;
-}
-
-.modern-search-empty-box p {
-    font-size: 13px;
-    font-weight: 600;
-    margin: 0;
-}
-
-/* 🎫 PREMIUM TRAVEL FLEET CARD COMPONENTS */
-.modern-travel-cards-list {
+/* 🎫 BENTO PREMIUM TRAVEL CARDS */
+.modern-travel-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 14px rgba(11, 31, 58, 0.015);
     display: flex;
     flex-direction: column;
     gap: 12px;
-}
-
-.modern-travel-card {
-    background-color: var(--white);
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-    padding: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.012);
-    display: flex;
-    flex-direction: column;
 }
 
 .card-top-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--light-bg);
 }
 
+/* 🔥 FIX: HOUSING LOGO/FOTO ARMADA DENGAN ASPEK RASIO PRESISI */
 .avatar-brand-housing {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
     background-color: var(--light-bg);
-    border-radius: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     padding: 4px;
-    border: 1px solid var(--border-color);
-    flex-shrink: 0;
 }
 
 .fleet-brand-img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
+    object-position: center;
 }
 
 .fleet-meta-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     text-align: left;
 }
 
 .fleet-travel-name {
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--navy);
     margin: 0;
-    letter-spacing: -0.2px;
 }
 
 .fleet-rating-pill {
@@ -408,7 +362,6 @@
     gap: 4px;
     font-size: 11px;
     color: var(--gray-700);
-    margin-top: 2px;
     font-weight: 600;
 }
 
@@ -421,75 +374,70 @@
 }
 
 .type-tag {
+    background-color: var(--light-bg);
     color: var(--navy);
-    background-color: var(--teal-light);
-    padding: 0px 6px;
+    padding: 1px 6px;
     border-radius: 4px;
     font-size: 10px;
     font-weight: 700;
+    letter-spacing: 0.2px;
 }
 
 .fleet-status-badge {
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 700;
-    background-color: rgba(0, 212, 184, 0.12);
-    color: #00A38E;
-    padding: 2px 8px;
-    border-radius: 6px;
-    align-self: flex-start;
+    color: var(--success-text);
+    background-color: var(--success-green);
+    padding: 4px 8px;
+    border-radius: 8px;
 }
 
-/* Middle Row Metrics */
+/* METRICS COMPONENT */
 .card-middle-metrics {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 0;
+    gap: 8px;
 }
 
 .metric-item-pill {
     background-color: var(--light-bg);
     border: 1px solid var(--border-color);
-    padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 11.5px;
+    color: var(--gray-700);
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
-    color: var(--gray-700);
+    flex: 1;
 }
-
-.metric-item-pill i {
-    font-size: 11px;
-}
-
-.icon-navy { color: var(--navy); }
-.icon-teal { color: #00A38E; }
 
 .metric-item-pill b {
     color: var(--navy);
-    font-size: 12px;
+    font-weight: 700;
 }
 
-/* Visual Dash Route Map Line */
+.icon-navy { color: var(--navy); }
+.icon-teal { color: var(--teal); }
+
+/* VISUAL TIMELINE DASHED ROUTE */
 .card-visual-route-timeline {
-    background-color: #FAFAFB;
-    border-radius: 10px;
+    background: var(--light-bg);
+    border-radius: 12px;
     padding: 10px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 12px;
     position: relative;
+    gap: 8px;
 }
 
 .route-node {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--navy);
     max-width: 45%;
     white-space: nowrap;
@@ -497,9 +445,8 @@
     text-overflow: ellipsis;
 }
 
-.text-right {
+.route-node.text-right {
     justify-content: flex-end;
-    text-align: right;
 }
 
 .node-dot {
@@ -508,23 +455,23 @@
     border-radius: 50%;
     flex-shrink: 0;
 }
-
 .node-dot.start { background-color: var(--navy); }
 .node-dot.end { background-color: var(--teal); }
 
 .route-connecting-dashed {
     flex: 1;
     height: 1px;
-    border-top: 1.5px dashed var(--border-color);
+    border-top: 1px dashed var(--text-muted);
+    opacity: 0.5;
 }
 
-/* Bottom Actions Box */
+/* PRICING & CTA ZONE */
 .card-bottom-pricing {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-top: 10px;
-    border-top: 1px dashed var(--border-color);
+    justify-content: space-between;
+    padding-top: 4px;
+    border-top: 1px solid var(--light-bg);
 }
 
 .price-tag-box {
@@ -534,164 +481,156 @@
 }
 
 .currency-amount {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
     color: var(--coral);
     letter-spacing: -0.2px;
 }
 
 .price-label-text {
-    font-size: 10px;
+    font-size: 10.5px;
     color: var(--text-muted);
     font-weight: 500;
-    margin-top: 1px;
 }
 
+/* 🔥 TOMBOL SELEKSI MENGGUNAKAN WARNA TOSCA KHAS TRAVELIND */
 .modern-btn-select-fleet {
-    background-color: var(--navy);
-    color: var(--white);
+    background-color: var(--teal) !important;
+    color: var(--navy) !important;
     border: none;
     padding: 10px 18px;
     border-radius: 10px;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 4px;
-    box-shadow: 0 4px 12px rgba(11, 31, 58, 0.15);
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0, 212, 184, 0.2);
     transition: all 0.2s;
 }
 
 .modern-btn-select-fleet:active {
-    background-color: var(--navy-mid);
-    transform: scale(0.97);
-}
-
-.modern-btn-select-fleet i {
-    font-size: 10px;
+    transform: scale(0.96);
+    background-color: #00BFA5 !important;
 }
 
 /* ==========================================================================
-   🛠️ FOOTER SUPPORT & GUARANTEE COMPONENTS (AUTOMATIC LOWER ANCHOR)
+   ⚙️ FOOTER SYSTEM & EMPTY STATE HANDLERS
    ========================================================================== */
 .modern-scroller-footer-group {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    /* Mendorong footer menempel sempurna di dasar kontainer scroller */
-    margin-top: auto !important; 
+    margin-top: auto !important;
     padding-top: 20px;
-    width: 100%;
 }
 
 .modern-trust-badge-banner {
-    background-color: var(--white);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 14px 16px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
+    background-color: var(--success-green);
+    border: 1px solid rgba(0, 212, 184, 0.08);
+    border-radius: 12px;
+    padding: 12px;
 }
 
 .trust-icon-circle {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background-color: var(--teal-light);
-    color: var(--navy);
+    background-color: var(--white);
+    color: var(--success-text);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 13px;
     flex-shrink: 0;
 }
 
 .trust-strings-text {
     text-align: left;
 }
+.trust-strings-text h5 { margin: 0; font-size: 12px; font-weight: 700; color: var(--navy); }
+.trust-strings-text p { margin: 2px 0 0 0; font-size: 10.5px; color: var(--gray-700); line-height: 1.4; }
 
-.trust-strings-text h5 {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--navy);
-    margin: 0;
-}
-
-.trust-strings-text p {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-    line-height: 1.4;
-}
-
-/* Help Box Banner */
 .modern-help-card-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: var(--white);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 14px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
+    border-radius: 12px;
+    padding: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.01);
 }
 
 .help-left-side {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
 .help-icon-circle {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background-color: #FAFAFB;
-    border: 1px solid var(--border-color);
-    color: var(--coral);
+    background-color: var(--light-bg);
+    color: var(--navy);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 13px;
     flex-shrink: 0;
 }
 
 .help-strings-text {
     text-align: left;
 }
-
-.help-strings-text h5 {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--navy);
-    margin: 0;
-}
-
-.help-strings-text p {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
+.help-strings-text h5 { margin: 0; font-size: 12px; font-weight: 700; color: var(--navy); }
+.help-strings-text p { margin: 2px 0 0 0; font-size: 10.5px; color: var(--text-muted); }
 
 .arrow-muted-nav {
-    color: var(--text-muted);
     font-size: 12px;
+    color: var(--text-muted);
 }
 
 .modern-search-screen-footer {
     text-align: center;
-    color: #A0AEC0;
+    padding: 8px 0;
     font-size: 11px;
-    padding: 4px 0 12px 0 !important;
-    margin: 0 !important;
+    color: #A0AEC0;
 }
 
+/* STATES */
+.modern-search-loading-state {
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--navy);
+}
+.modern-search-loading-state i { font-size: 26px; color: var(--teal); }
+.modern-search-loading-state p { font-size: 13px; font-weight: 600; margin: 0; }
+
+.modern-search-empty-container {
+    padding: 60px 20px;
+}
+.modern-search-empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-muted);
+    gap: 12px;
+}
+.modern-search-empty-box i { font-size: 40px; opacity: 0.6; }
+.modern-search-empty-box p { font-size: 13px; font-weight: 500; margin: 0; }
+
+
 /* ==========================================================================
-   🥞 CORE PORTAL SYSTEM: PREMIUM BOTTOM SHEETS VIEW OVERLAYS
+   🥞 PORTAL OVERLAYS & CORE SEARCH FORM MODAL (INJECTED FROM HOMEVIEW)
    ========================================================================== */
 .modern-search-sheet-overlay {
     position: fixed;
@@ -706,97 +645,324 @@
     z-index: 2000;
     display: flex;
     align-items: flex-end;
-    justify-content: center;
 }
 
 .modern-search-bottom-sheet {
-    background-color: var(--white);
     width: 100%;
+    background-color: var(--white);
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
-    padding: 12px 20px 24px 20px;
-    max-height: 75vh;
+    padding: 16px 20px 24px 20px;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 -10px 30px rgba(11, 31, 58, 0.15);
+    max-height: 85vh;
 }
 
-.modern-search-bottom-sheet.animate-slide-up {
-    animation: searchSlideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.explicit-overflow-visible {
+    overflow: visible !important;
 }
 
 .modern-search-sheet-notch {
-    width: 38px;
+    width: 36px;
     height: 4px;
     background-color: var(--border-color);
     border-radius: 2px;
-    margin: 0 auto 14px auto;
-}
-
-@keyframes searchSlideUpSheet {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+    margin: 0 auto 16px auto;
 }
 
 .modern-search-sheet-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-color);
+    justify-content: space-between;
+    margin-bottom: 16px;
 }
 
 .modern-search-sheet-header h5 {
-    font-size: 14px;
+    margin: 0;
+    font-size: 15px;
     font-weight: 800;
     color: var(--navy);
-    margin: 0;
 }
 
 .modern-search-close-btn {
     background: none;
     border: none;
-    font-size: 18px;
     color: var(--text-muted);
+    font-size: 16px;
     cursor: pointer;
 }
 
 .modern-search-sheet-body {
-    overflow-y: auto;
-    padding: 10px 0 4px 0;
-    scrollbar-width: none;
-}
-.modern-search-sheet-body::-webkit-scrollbar { display: none; }
-
-/* Interactive Row Items inside Sheet */
-.modern-search-option-row {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* 🎫 INTEGRATED DYNAMIC FORM LAYOUT FROM HOMEVIEW ARCHITECTURE */
+.design-isolated-card {
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.route-selection-row {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.route-field-box {
+    position: relative;
+    width: 100%;
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.route-label-sm {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    text-align: left;
+}
+
+.route-city-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--navy);
+    padding: 2px 0 0 0;
+}
+.route-city-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* MIDDLE ROUND SWAP MATRIX TRIGGER */
+.circle-swap-action-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    color: var(--teal);
+    display: flex;
     align-items: center;
-    padding: 14px 10px;
-    border-radius: 10px;
+    justify-content: center;
     cursor: pointer;
-    margin-top: 4px;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     transition: all 0.2s;
 }
+.circle-swap-action-btn:active {
+    transform: translateY(-50%) scale(0.9) rotate(180deg);
+}
 
-.modern-search-option-row:active {
+/* PARAMETERS DUAL COLUMN LAYOUT */
+.parameter-pencarian-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.input-split-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-700);
+    text-align: left;
+}
+
+.field-input-wrapper {
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+}
+
+.custom-cal-icon {
+    color: var(--navy);
+    font-size: 13px;
+}
+
+.date-raw-picker {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+/* STEPPER CONTROLLER COMPONENT */
+.premium-stepper-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    height: 44px;
+    padding: 2px;
+}
+
+.stepper-action-node {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: var(--white);
+    color: var(--navy);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+.stepper-action-node:active { background: var(--border-color); }
+
+.passenger-premium-input {
+    width: 30px;
+    background: transparent;
+    border: none;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    outline: none;
+}
+/* Sembunyikan panah input type number */
+.passenger-premium-input::-webkit-outer-spin-button,
+.passenger-premium-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* SUBMIT BUTTON SYSTEM MENGGUNAKAN TEAL TOSCA */
+.btn-search-travel-submit {
+    width: 100%;
+    background: var(--teal);
+    color: var(--navy);
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(0, 212, 184, 0.25);
+    transition: all 0.2s;
+}
+.btn-search-travel-submit:active {
+    transform: scale(0.98);
+}
+
+/* 🌟 LUXURY AUTOCOMPLETE DROPDOWN CONTAINER PACK */
+.luxury-autocomplete-dropdown-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-top: 4px;
+    box-shadow: 0 10px 25px rgba(11, 31, 58, 0.12);
+    z-index: 9999;
+    max-height: 180px;
+    overflow: hidden;
+}
+
+.luxury-autocomplete-scroll-area {
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.dropdown-row-item {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.dropdown-row-item:hover {
     background-color: var(--light-bg);
 }
 
-.option-label-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.dropdown-row-item span {
     font-size: 13px;
     font-weight: 700;
     color: var(--navy);
 }
 
+.dropdown-row-item small {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+/* OPTION ROWS INSIDE OTHER BOTTOMSHEETS */
+.modern-search-option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: var(--light-bg);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.option-label-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+}
 .option-label-group i {
     font-size: 14px;
     color: var(--text-muted);
-    width: 16px;
-    text-align: center;
 }
 
 .check-indicator-icon {
@@ -805,16 +971,24 @@
     transition: color 0.2s;
 }
 
-/* Active State Row Sheet */
+/* SELECTED STATUS FOR ROWS */
 .modern-search-option-row.is-selected {
     background-color: var(--teal-light);
+    border-color: rgba(0, 212, 184, 0.2);
 }
-
-.modern-search-option-row.is-selected .option-label-group i,
-.modern-search-option-row.is-selected .option-label-group {
+.modern-search-option-row.is-selected .option-label-group i {
     color: var(--navy);
 }
-
 .modern-search-option-row.is-selected .check-indicator-icon {
     color: #00A38E;
+}
+
+/* ANIMATIONS ENGINE */
+.animate-slide-up {
+    animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sheetSlideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
 }
