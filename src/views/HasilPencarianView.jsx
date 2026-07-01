@@ -4,6 +4,8 @@ import { supabase } from '../config/supabaseClient';
 import dataWilayahSumatera from '../utils/datawilayah';
 import useAuthStore from '../store/authStore'; 
 import '../styles/hasilPencarian.css';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
 
 const HasilPencarianView = () => {
   const navigate = useNavigate();
@@ -227,41 +229,60 @@ const HasilPencarianView = () => {
   };
 
   const handleSimpanModifikasiPencarian = async () => {
-    if (!pickupInput || !tujuanInput || !tanggalInput) {
-      alert(t.alertLengkapi);
-      return;
+    // 1. Bersihkan input teks dari potensi suntikan kode HTML/Script (Anti-XSS)
+    const pickupBersih = DOMPurify.sanitize(pickupInput.trim());
+    const tujuanBersih = DOMPurify.sanitize(tujuanInput.trim());
+    const tanggalBersih = DOMPurify.sanitize(tanggalInput.trim());
+    const finalPassengers = penumpangInput === '' || penumpangInput <= 0 ? 1 : penumpangInput;
+
+    // 2. Definisikan aturan skema validasi data secara ketat menggunakan Zod
+    const modifySearchSchema = z.object({
+      pickup_kota: z.string().min(2, { message: t.alertLengkapi }),
+      tujuan_kota: z.string().min(2, { message: t.alertLengkapi }),
+      tanggal: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: t.alertLengkapi }),
+      penumpang: z.number().int().min(1, { message: "Minimal 1 penumpang" }).max(4, { message: "Maksimal 4 penumpang per transaksi" })
+    });
+
+    // 3. Susun data payload yang akan divalidasi
+    const dataPayload = {
+      pickup_kota: pickupBersih,
+      tujuan_kota: tujuanBersih,
+      tanggal: tanggalBersih,
+      penumpang: parseInt(finalPassengers, 10)
+    };
+
+    // 4. Eksekusi validasi Zod sebelum menyentuh cloud database
+    const hasilValidasi = modifySearchSchema.safeParse(dataPayload);
+
+    if (!hasilValidasi.success) {
+      const pesanError = hasilValidasi.error.errors[0].message;
+      alert(pesanError);
+      return; // Batalkan proses jika terdeteksi anomali data
     }
 
+    // 5. Jika lolos sensor keamanan, jalankan mutasi data ke Supabase
     const booking_id = localStorage.getItem("booking_id");
-    const finalPassengers = penumpangInput === '' || penumpangInput <= 0 ? 1 : penumpangInput;
 
     try {
       setLoadingData(true);
       setActiveBottomSheet(null);
 
-      // Jalankan operasi update langsung ke cloud Supabase booking manifest
       const { error: updateErr } = await supabase
         .from("booking_temp")
-        .update({
-          pickup_kota: pickupInput,
-          tujuan_kota: tujuanInput,
-          tanggal: tanggalInput,
-          penumpang: parseInt(finalPassengers, 10)
-        })
+        .update(dataPayload)
         .eq("id", booking_id);
 
       if (updateErr) throw updateErr;
 
-      // Sinkronkan cache localstorage untuk keperluan sub-page berikutnya
-      localStorage.setItem("pickup", pickupInput);
-      localStorage.setItem("tujuan", tujuanInput);
-      localStorage.setItem("tanggal", tanggalInput);
+      // Amankan pembaharuan cache lokal untuk halaman DetailPemesananView mendatang
+      localStorage.setItem("pickup", pickupBersih);
+      localStorage.setItem("tujuan", tujuanBersih);
+      localStorage.setItem("tanggal", tanggalBersih);
       localStorage.setItem("penumpang", finalPassengers);
 
-      // Tarik ulang manifest engine tanpa refresh kasar window page
       await loadDatabaseManifestEngine();
     } catch (err) {
-      console.error("❌ Gagal merubah manifest pencarian travel:", err);
+      console.error("❌ Gagal merubah manifest pencarian travel:", err.message);
       alert(t.alertGagal);
     }
   };

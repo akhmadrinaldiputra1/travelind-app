@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../config/supabaseClient';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
 
 const LoginView = ({ initialMode = 'login', closePopup }) => {
   const [mode, setMode] = useState(initialMode); // 'login' | 'register'
@@ -13,16 +15,50 @@ const LoginView = ({ initialMode = 'login', closePopup }) => {
   // 🌟 STATE UNTUK TOMBOL MATA PASSWORD
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmitAction = async (e) => {
+ const handleSubmitAction = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMsg('');
+    setShowEmailAlert(false);
 
+    // 1. Bersihkan Data Input dari Karakter Ilegal (Anti-XSS Injection)
+    const emailClean = email.trim();
+    const passwordClean = password;
+    const fullNameClean = DOMPurify.sanitize(fullName.trim());
+
+    // 2. Definisikan Aturan Skema Keamanan Menggunakan Zod
+    const loginSchema = z.object({
+      email: z.string().email({ message: "Format email resmi tidak valid." }),
+      password: z.string().min(6, { message: "Kata sandi minimal harus terdiri dari 6 karakter." })
+    });
+
+    const registerSchema = z.object({
+      fullName: z.string().min(3, { message: "Nama lengkap minimal harus terdiri dari 3 karakter." }),
+      email: z.string().email({ message: "Format email resmi tidak valid." }),
+      password: z.string().min(6, { message: "Kata sandi pendaftaran minimal harus 6 karakter demi keamanan." })
+    });
+
+    // 3. Eksekusi Validasi Sesuai Mode Auth
+    const dataToValidate = mode === 'login' 
+      ? { email: emailClean, password: passwordClean }
+      : { fullName: fullNameClean, email: emailClean, password: passwordClean };
+
+    const hasilValidasi = mode === 'login' 
+      ? loginSchema.safeParse(dataToValidate)
+      : registerSchema.safeParse(dataToValidate);
+
+    if (!hasilValidasi.success) {
+      setErrorMsg(hasilValidasi.error.errors[0].message);
+      setIsLoading(false);
+      return; // Stop eksekusi, blokir request ke Supabase Auth
+    }
+
+    // 4. Jalankan Alur Autentikasi Supabase Jika Lolos Sensor Keamanan
     try {
       if (mode === 'login') {
         const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password: password,
+          email: emailClean,
+          password: passwordClean,
         });
         
         if (error) {
@@ -40,13 +76,12 @@ const LoginView = ({ initialMode = 'login', closePopup }) => {
         window.location.reload(); 
         
       } else {
-        // 🌟 PENYELARASAN MUTLAK: Hanya kirim data yang sah dan dibutuhkan
         const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
-          password: password,
+          email: emailClean,
+          password: passwordClean,
           options: {
             data: {
-              full_name: fullName.trim() // Cukup kirim ini, sisanya dihandle otomatis oleh database trigger kita di atas
+              full_name: fullNameClean // Data nama yang masuk ke trigger database sudah 100% bersih
             },
             emailRedirectTo: window.location.origin + '/profil'
           }

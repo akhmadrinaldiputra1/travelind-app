@@ -5,6 +5,8 @@ import dataWilayahSumatera from '../utils/datawilayah';
 import useAuthStore from '../store/authStore'; 
 import LoginView from './LoginView';
 import '../styles/home.css'; 
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
 
 const HomeView = () => {
   const navigate = useNavigate();
@@ -323,28 +325,48 @@ const HomeView = () => {
     }
   };
 
-  const handleCariTravel = async () => {
-    if (!pickup || !tujuan || !tanggal) {
-      alert(t.alertLengkapi);
-      return;
-    }
-
+ const handleCariTravel = async () => {
+    // 1. Bersihkan input string dari karakter HTML/Skrip ilegal (Anti-XSS)
+    const pickupBersih = DOMPurify.sanitize(pickup.trim());
+    const tujuanBersih = DOMPurify.sanitize(tujuan.trim());
+    const tanggalBersih = DOMPurify.sanitize(tanggal.trim());
     const nilaiPenumpangFinal = penumpang === '' || penumpang <= 0 ? 1 : penumpang;
+
+    // 2. Buat Aturan Skema Validasi yang Ketat menggunakan Zod
+    const bookingSchema = z.object({
+      pickup_kota: z.string().min(2, { message: t.alertLengkapi }),
+      tujuan_kota: z.string().min(2, { message: t.alertLengkapi }),
+      tanggal: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: t.alertLengkapi }), // Format YYYY-MM-DD
+      penumpang: z.number().int().min(1, { message: "Minimal 1 penumpang" }).max(4, { message: "Maksimal 4 penumpang per transaksi" }) // Sesuaikan batas maksimal armada Anda
+    });
+
+    // 3. Siapkan Payload Data
     const emailTerbaca = user?.email || localStorage.getItem("email_penumpang") || null;
     const namaTerbaca = user?.user_metadata?.full_name || "Pengguna Anonim";
 
     const dataPayload = {
-      pickup_kota: pickup,
-      tujuan_kota: tujuan,
-      tanggal: tanggal,
+      pickup_kota: pickupBersih,
+      tujuan_kota: tujuanBersih,
+      tanggal: tanggalBersih,
       penumpang: parseInt(nilaiPenumpangFinal, 10),
-      nama_penumpang: namaTerbaca,
+      nama_penumpang: DOMPurify.sanitize(namaTerbaca),
       email_penumpang: emailTerbaca, 
       pickup_alamat: "Menunggu penentuan lokasi",
       pickup_lat: -0.9471, 
       pickup_lng: 100.4172
     };
 
+    // 4. Eksekusi Validasi Zod Sebelum Dikirim ke Supabase
+    const hasilValidasi = bookingSchema.safeParse(dataPayload);
+
+    if (!hasilValidasi.success) {
+      // Jika validasi gagal, ambil pesan error pertama dan tampilkan
+      const pesanError = hasilValidasi.error.errors[0].message;
+      alert(pesanError);
+      return; // Stop proses, tidak akan menembak Supabase
+    }
+
+    // 5. Jika Lolos Validasi, Baru Kirim ke Supabase Booking_Temp
     try {
       const { data, error } = await supabase
         .from("booking_temp")
@@ -354,16 +376,18 @@ const HomeView = () => {
 
       if (error) throw error;
 
+      // Amankan data ke penyimpanan lokal untuk halaman HasilPencarianView
       localStorage.setItem("booking_id", data.id);
-      localStorage.setItem("pickup", pickup);
-      localStorage.setItem("tujuan", tujuan);
-      localStorage.setItem("tanggal", tanggal);
+      localStorage.setItem("pickup", pickupBersih);
+      localStorage.setItem("tujuan", tujuanBersih);
+      localStorage.setItem("tanggal", tanggalBersih);
       localStorage.setItem("penumpang", nilaiPenumpangFinal);
       localStorage.setItem("fresh_search_trigger", "true"); 
 
       navigate('/hasil-pencarian');
     } catch (err) {
-      console.error(err);
+      console.error("Terjadi kendala keamanan atau jaringan:", err.message);
+      // Fallback aman jika database mendeteksi anomali
       navigate('/hasil-pencarian');
     }
   };

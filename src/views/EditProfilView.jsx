@@ -4,6 +4,8 @@ import useAuthStore from '../store/authStore';
 // Impor client supabase kamu (sesuaikan path impor ini dengan proyekmu)
 import { supabase } from '../config/supabaseClient'; 
 import '../styles/editProfil.css';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
 
 const EditProfilView = () => {
   const navigate = useNavigate();
@@ -39,6 +41,11 @@ const EditProfilView = () => {
   const handleGantiFoto = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Batasi ukuran file maksimal 5MB agar hemat bandwidth storage
+      if (file.size > 5 * 1024 * 1024) {
+        alert(bahasaGlobal === 'ID' ? '❌ Ukuran foto melebihi batas maksimal 5MB!' : '❌ File size exceeds maximum limit of 5MB!');
+        return;
+      }
       setFileFoto(file);
       setPreviewFoto(URL.createObjectURL(file));
     }
@@ -49,16 +56,36 @@ const handleFormSubmit = async (e) => {
     setLoading(true);
     setStatusMsg('');
 
+    // 1. Sanitasi dan Pembersihan Input Teks (Anti-XSS Injection)
+    const namaClean = DOMPurify.sanitize(namaLengkap.trim());
+    const phoneClean = nomorTelepon.replace(/[^0-9]/g, ''); // Hanya izinkan angka desimal murni
+
+    // 2. Definisikan Skema Validasi Menggunakan Zod
+    const profileSchema = z.object({
+      nama: z.string().min(3, { message: bahasaGlobal === 'ID' ? "❌ Nama lengkap minimal harus 3 karakter." : "❌ Full name must be at least 3 characters." }),
+      phone: z.string().min(10, { message: bahasaGlobal === 'ID' ? "❌ Nomor telepon minimal harus 10 digit angka murni." : "❌ Phone number must be at least 10 digits." }).max(15, { message: "❌ Maksimal 15 digit." })
+    });
+
+    const hasilValidasi = profileSchema.safeParse({
+      nama: namaClean,
+      phone: phoneClean
+    });
+
+    if (!hasilValidasi.success) {
+      setStatusMsg(hasilValidasi.error.errors[0].message);
+      setLoading(false);
+      return; // Stop mutasi data jika melanggar skema
+    }
+
     try {
       let finalAvatarUrl = previewFoto;
 
-      // 1. Jika user mendeteksi ada file baru yang dipilih
+      // 3. Jika user mendeteksi ada file baru yang dipilih
       if (fileFoto) {
         const fileExt = fileFoto.name.split('.').pop();
         const fileName = `${user.id}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        // 🌟 KUNCI FIX SESSION: Ambil token sesi aktif saat ini secara real-time dari Supabase
         const { data: sessionData } = await supabase.auth.getSession();
         const tokenAman = sessionData?.session?.access_token;
 
@@ -66,13 +93,11 @@ const handleFormSubmit = async (e) => {
           throw new Error("Sesi login kamu kedaluwarsa. Silakan keluar lalu masuk akun kembali.");
         }
 
-        // Upload file ke bucket 'avatars' dengan menyisipkan Authorization header token aktif
         const { error: uploadError } = await supabase.storage
           .from('avatars')
           .upload(filePath, fileFoto, { 
             cacheControl: '0', 
             upsert: true,
-            // Lampirkan token secara manual ke metadata request untuk menjamin otentikasi diterima
             headers: {
               Authorization: `Bearer ${tokenAman}`
             }
@@ -80,7 +105,6 @@ const handleFormSubmit = async (e) => {
 
         if (uploadError) throw uploadError;
 
-        // Ambil URL publik yang valid dari bucket Supabase
         const { data } = supabase.storage
           .from('avatars')
           .getPublicUrl(filePath);
@@ -89,22 +113,20 @@ const handleFormSubmit = async (e) => {
           throw new Error("Gagal mendapatkan Public URL dari Storage.");
         }
 
-        // Trick anti-cache agar browser langsung merender gambar baru
         finalAvatarUrl = `${data.publicUrl}?t=${Date.now()}`;
       }
 
-      // 2. Update user_metadata akun di Supabase Auth
+      // 4. Update user_metadata akun di Supabase Auth dengan data ter-sanitasi
       const { error: updateError } = await supabase.auth.updateUser({
         data: {
-          full_name: namaLengkap,
-          phone: nomorTelepon,
+          full_name: namaClean,
+          phone: phoneClean,
           avatar_url: finalAvatarUrl
         }
       });
 
       if (updateError) throw updateError;
 
-      // 3. PANGGIL SYNC GLOBAL ke Zustand Store
       if (typeof checkUser === 'function') {
         await checkUser();
       }

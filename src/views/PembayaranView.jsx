@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import useAuthStore from '../store/authStore';
 import '../styles/pembayaran.css'; 
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
+import imageCompression from 'browser-image-compression';
 
 const PembayaranView = () => {
   const navigate = useNavigate();
@@ -277,12 +280,43 @@ const PembayaranView = () => {
   };
 
   const handleZoneWrapperClick = () => { if (fileInputRef.current) fileInputRef.current.click(); };
-  const handleFileChangeTrigger = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { alert(t.fileSizeAlert); return; }
+  const handleFileChangeTrigger = async (e) => {
+    const file = e.target.value ? e.target.files[0] : null;
+    if (!file) return;
+
+    // Tampilkan status mikro-loading pada notifikasi voucher
+    setVoucherStatusNotif({ text: '⏳ Mengompres foto bukti transfer...', color: '#f5a623' });
+
+    try {
+      // 🌟 Konfigurasi Kompresi Bukti Pembayaran (Teks Harus Tetap Terbaca)
+      const options = {
+        maxSizeMB: 0.4,            // Target ukuran maksimal file ±400KB (Sangat hemat!)
+        maxWidthOrHeight: 1280,    // Batasi lebar/tinggi 1280px agar tulisan struk bank tetap tajam
+        useWebWorker: true         // Berjalan di background proses agar HP tidak hang/freeze
+      };
+
+      const compressedBlob = await imageCompression(file, options);
+      
+      // Kembalikan objek Blob hasil kompresi menjadi struktur File Objek standar JavaScript
+      const optimizedFile = new File([compressedBlob], file.name, {
+        type: file.type,
+        lastModified: Date.now()
+      });
+
+      setSelectedFile(optimizedFile);
+      setImagePreviewUrl(URL.createObjectURL(optimizedFile));
+      setVoucherStatusNotif({ text: ' ' });
+
+    } catch (error) {
+      console.error('Gagal mengompres gambar:', error);
+      // Fallback Aman: Jika kompresi gagal total karena anomali sistem, gunakan file asli selama di bawah 5MB
+      if (file.size > 5 * 1024 * 1024) {
+        alert(t.fileSizeAlert);
+        return;
+      }
       setSelectedFile(file);
       setImagePreviewUrl(URL.createObjectURL(file));
+      setVoucherStatusNotif({ text: '', color: '#4a5568' });
     }
   };
   const handleRemovePreviewImage = (e) => {
@@ -299,9 +333,10 @@ const PembayaranView = () => {
       return;
     }
 
-    const namaVal = localStorage.getItem("nama_penumpang") || "Pengguna Anonim";
+    // 1. Ambil & Sanitasi Cache Lokal (Anti-XSS)
+    const namaVal = DOMPurify.sanitize(localStorage.getItem("nama_penumpang") || "Pengguna Anonim");
     const emailVal = localStorage.getItem("email_penumpang") || "anonim@guest.com";
-    const waVal = localStorage.getItem("whatsapp_penumpang") || "-";
+    const waVal = DOMPurify.sanitize(localStorage.getItem("whatsapp_penumpang") || "-");
     const booking_id = bookingIdManifest;
     const namaTravel = localStorage.getItem("travelNama") || "Armada Travelind";
     const jumlahPenumpangFix = jumlahPenumpang;
@@ -311,33 +346,79 @@ const PembayaranView = () => {
     setIsSubmitting(true);
 
     try {
-      if (isCoinUsed && nominalPotonganKoin > 0) {
-        const { error: errorRpc } = await supabase.rpc('potong_koin_user', {
-          user_id_input: user.id,
-          jumlah_potong: nominalPotonganKoin
-        });
-        if (errorRpc) throw new Error(errorRpc.message);
+      // 2. SECURE PRICE & VOUCHER RE-CALCULATION (Anti-Price Tampering)
+      let diskonResmiCloud = 0;
+      
+      // Jika pengguna menyertakan kode kupon, tarik langsung nominalnya dari DB cloud
+      if (idVoucherTerpakai !== null) {
+        const { data: voucherCloud, error: voucherErr } = await supabase
+          .from("promo")
+          .select("nominal_potongan, is_aktif")
+          .eq("id", idVoucherTerpakai)
+          .single();
+        
+        if (!voucherErr && voucherCloud) {
+          diskonResmiCloud = parseInt(voucherCloud.nominal_potongan || 0);
+        }
       }
 
+      // Validasi ulang formula kalkulasi akhir di sisi client terlindungi
+      const totalTiketReal = hargaTiket * jumlahPenumpangFix;
+      const grandTotalAwalReal = totalTiketReal + 2000;
+      const totalSetelahVoucherReal = grandTotalAwalReal - diskonResmiCloud;
+      const nominalPotonganKoinReal = isCoinUsed ? Math.min(coinInputAmount, Math.min(userCoins, totalSetelahVoucherReal)) : 0;
+      
+      // Definisikan nominal final yang dihitung mutlak dari record cloud tepercaya
+      const grandTotalFinalTerproteksi = Math.max(0, totalSetelahVoucherReal - nominalPotonganKoinReal);
+
+      // 3. Eksekusi Skema Validasi Skema Zod Sebelum Operasi Database
+      const paymentSchema = z.object({
+        booking_id: z.string().min(1),
+        total_bayar: z.number().positive(),
+        email_penumpang: z.string().email()
+      });
+
+      const validasiBayar = paymentSchema.safeParse({
+        booking_id: booking_id,
+        total_bayar: grandTotalFinalTerproteksi,
+        email_penumpang: emailVal
+      });
+
+      if (!validasiBayar.success) {
+        throw new Error("Struktur data billing transaksi tidak valid.");
+      }
+
+      // 4. Jalankan Pemotongan Saldo Koin via RPC Server
+      if (isCoinUsed && nominalPotonganKoinReal > 0) {
+        const { error: errorRpc } = await supabase.rpc('potong_koin_user', {
+          user_id_input: user.id,
+          jumlah_potong: nominalPotonganKoinReal
+        });
+        if (errorRpc) throw new Error(`Kegagalan otorisasi saldo koin: ${errorRpc.message}`);
+      }
+
+      // 5. Proses Pengunggahan Berkas Bukti Transfer
       const fileExtension = selectedFile.name.split('.').pop();
       const namaFileUnik = `${booking_id}-${Date.now()}.${fileExtension}`;
       const { error: storageError } = await supabase.storage.from("bukti-transfer").upload(namaFileUnik, selectedFile);
-      if (storageError) throw new Error("Gagal mengunggah foto.");
+      if (storageError) throw new Error("Gagal mengunggah foto bukti transfer.");
 
       const { data: publicUrlData } = supabase.storage.from("bukti-transfer").getPublicUrl(namaFileUnik);
       const urlGambarBukti = publicUrlData.publicUrl;
 
+      // Tandai voucher telah digunakan jika ada
       if (idVoucherTerpakai !== null) {
         await supabase.from("promo").update({ sudah_dipakai: true }).eq("id", idVoucherTerpakai);
       }
 
+      // 6. Masukkan Catatan Transaksi Resmi yang Telah Terverifikasi Aman
       const { error: dbError } = await supabase.from("transaksi").insert([
         {
           booking_id: booking_id,
           metode_pembayaran: paymentMethod,
           nama_travel: namaTravel,
           status_pesanan: "Menunggu Konfirmasi",
-          total_bayar: grandTotalFinal,
+          total_bayar: grandTotalFinalTerproteksi, // Nominal tepercaya masuk ke sistem billing
           nama_penumpang: namaVal,
           email_penumpang: emailVal, 
           whatsapp_penumpang: waVal,
@@ -348,15 +429,15 @@ const PembayaranView = () => {
         }
       ]);
 
-      if (dbError) throw new Error("Gagal menyimpan catatan transaksi.");
+      if (dbError) throw new Error("Gagal menyimpan catatan billing transaksi.");
 
       localStorage.setItem("status_pesanan", "Menunggu Konfirmasi");
       localStorage.setItem("metode_pembayaran", paymentMethod);
-      localStorage.setItem("total_bayar_final", grandTotalFinal);
+      localStorage.setItem("total_bayar_final", grandTotalFinalTerproteksi);
       navigate('/success'); 
 
     } catch (err) {
-      console.error(err.message);
+      console.error("❌ Transaksi Gagal Diolah:", err.message);
       alert(`❌ Transaksi Gagal: ${err.message}`);
     } finally {
       setIsSubmitting(false);

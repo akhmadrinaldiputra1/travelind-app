@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
 import useAuthStore from '../store/authStore'; // 🌟 Integrasi Zustand Store Global
 import '../styles/detailPemesanan.css';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
 
 const DetailPemesananView = () => {
   const navigate = useNavigate();
@@ -404,56 +406,71 @@ const DetailPemesananView = () => {
     }
   };
 
-  const handleExecuteBookingFinal = async () => {
-    const namaClean = formPassenger.nama.trim();
-    const whatsappClean = formPassenger.whatsapp.trim();
-    const emailClean = formPassenger.email.trim();
+ const handleExecuteBookingFinal = async () => {
+    // 1. Sanitasi Input Form Penumpang (Anti-XSS)
+    const namaClean = DOMPurify.sanitize(formPassenger.nama.trim());
+    const whatsappClean = DOMPurify.sanitize(formPassenger.whatsapp.trim());
+    const emailClean = DOMPurify.sanitize(formPassenger.email.trim());
 
-    if (!namaClean || !whatsappClean || !emailClean || !isAgreed) {
-      setShowValidationAlert(true);
-      return;
-    }
+    // 2. Skema Validasi Ketat Menggunakan Zod
+    const passengerSchema = z.object({
+      nama: z.string().min(3, { message: t.popupDesc }),
+      whatsapp: z.string().min(10, { message: t.popupDesc }).regex(/^[0-9]+$/, { message: t.popupDesc }),
+      email: z.string().email({ message: t.popupDesc })
+    });
 
-    const patternAngkaBerulang = /([0-9])\1{4}/; 
-    if (patternAngkaBerulang.test(whatsappClean)) {
-      setShowValidationAlert(true);
-      return;
-    }
+    const hasilValidasi = passengerSchema.safeParse({
+      nama: namaClean,
+      whatsapp: whatsappClean,
+      email: emailClean
+    });
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailClean.includes('@') || !emailRegex.test(emailClean)) {
-      setShowValidationAlert(true);
-      return;
-    }
-
-    if (whatsappClean.length < 10) {
+    // Pengecekan dasar persetujuan S&K dan regex angka berulang ilegal
+    const patternAngkaBerulang = /([0-9])\1{4}/;
+    if (!hasilValidasi.success || !isAgreed || patternAngkaBerulang.test(whatsappClean)) {
       setShowValidationAlert(true);
       return;
     }
 
     setIsSubmitting(true);
     const booking_id = localStorage.getItem("booking_id");
-    const payload = {
-      nama_penumpang: namaClean,
-      whatsapp_penumpang: whatsappClean,
-      email_penumpang: emailClean,
-      pickup_alamat: localStorage.getItem("pickup_alamat") || alamatPickupText,
-      tujuan_alamat: localStorage.getItem("tujuan_alamat") || alamatTujuanMain,
-      pickup_lat: parseFloat(localStorage.getItem("pickup_lat")) || DEFAULT_LAT_SUMATERA,
-      pickup_lng: parseFloat(localStorage.getItem("pickup_lng")) || DEFAULT_LNG_SUMATERA,
-      tujuan_lat: parseFloat(localStorage.getItem("tujuan_lat")) || DEFAULT_LAT_SUMATERA,
-      tujuan_lng: parseFloat(localStorage.getItem("tujuan_lng")) || DEFAULT_LNG_SUMATERA,
-      pickup_kota: localStorage.getItem("pickup_kota") || travelInfo.pickup,
-      tujuan_kota: localStorage.getItem("tujuan_kota") || travelInfo.tujuan,
-      tanggal: travelInfo.tanggal,
-      penumpang: travelInfo.penumpang
-    };
+    const travelIdReal = localStorage.getItem("travelId");
 
     try {
+      // 3. SECURE PRICE LOCK: Tarik data harga resmi langsung dari database Cloud, bukan LocalStorage!
+      const { data: realTravel, error: travelErr } = await supabase
+        .from("travel_jadwal")
+        .select("harga, nama")
+        .eq("id", travelIdReal)
+        .single();
+
+      if (travelErr || !realTravel) throw new Error("Manifest armada tidak valid");
+
+      // Kalkulasi ulang harga di sisi server-client tepercaya
+      const totalTiketReal = Number(realTravel.harga) * travelInfo.penumpang;
+      const grandTotalReal = totalTiketReal + 2000;
+
+      const payload = {
+        nama_penumpang: namaClean,
+        whatsapp_penumpang: whatsappClean,
+        email_penumpang: emailClean,
+        pickup_alamat: localStorage.getItem("pickup_alamat") || alamatPickupText,
+        tujuan_alamat: localStorage.getItem("tujuan_alamat") || alamatTujuanMain,
+        pickup_lat: parseFloat(localStorage.getItem("pickup_lat")) || DEFAULT_LAT_SUMATERA,
+        pickup_lng: parseFloat(localStorage.getItem("pickup_lng")) || DEFAULT_LNG_SUMATERA,
+        tujuan_lat: parseFloat(localStorage.getItem("tujuan_lat")) || DEFAULT_LAT_SUMATERA,
+        tujuan_lng: parseFloat(localStorage.getItem("tujuan_lng")) || DEFAULT_LNG_SUMATERA,
+        pickup_kota: localStorage.getItem("pickup_kota") || travelInfo.pickup,
+        tujuan_kota: localStorage.getItem("tujuan_kota") || travelInfo.tujuan,
+        tanggal: travelInfo.tanggal,
+        penumpang: travelInfo.penumpang
+      };
+
       localStorage.setItem("nama_penumpang", namaClean);
       localStorage.setItem("whatsapp_penumpang", whatsappClean);
       localStorage.setItem("email_penumpang", emailClean);
 
+      // Update data booking sementara
       const { data, error } = await supabase
         .from("booking_temp")
         .upsert({ id: booking_id, ...payload })
@@ -461,11 +478,9 @@ const DetailPemesananView = () => {
 
       if (error) throw error;
 
-      if (data && data[0] && !booking_id) {
-        localStorage.setItem("booking_id", data[0].id);
-      }
-
       const current_booking_id = booking_id || (data && data[0] ? data[0].id : "TRV-TEMP");
+      
+      // 4. Masukkan data billing transaksi dengan Nominal Harga Asli dari database
       await supabase
         .from("transaksi")
         .upsert({
@@ -473,16 +488,17 @@ const DetailPemesananView = () => {
           nama_penumpang: namaClean,
           whatsapp_penumpang: whatsappClean,
           email_penumpang: emailClean,
-          nama_travel: localStorage.getItem("travelNama") || "Armada Travelind",
-          total_bayar: pricing.grandTotal,
+          nama_travel: realTravel.nama,
+          total_bayar: grandTotalReal, // Menggunakan nominal terproteksi cloud
           status_pesanan: "Menunggu Pembayaran"
         }, { onConflict: 'booking_id' });
 
       setIsSubmitting(false);
       navigate('/pembayaran');
     } catch (err) {
-      console.error("❌ Eror Sinkronisasi:", err);
+      console.error("❌ Eror Keamanan Transaksi:", err.message);
       setIsSubmitting(false);
+      // Fallback aman untuk mencegah user macet di UI
       navigate('/pembayaran');
     }
   };
