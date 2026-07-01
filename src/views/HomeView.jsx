@@ -4,6 +4,7 @@ import { supabase } from '../config/supabaseClient';
 import dataWilayahSumatera from '../utils/datawilayah';
 import useAuthStore from '../store/authStore'; 
 import LoginView from './LoginView';
+import WisataTerdekatContainer from '../components/WisataTerdekatContainer'; // 👈 IMPORT FILE BARU DISINI
 import '../styles/home.css'; 
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
@@ -44,19 +45,18 @@ const HomeView = () => {
   const [loadingPromo, setLoadingPromo] = useState(true);
   const [currentIndexPromo, setCurrentIndexPromo] = useState(0);
   const promoScrollRef = useRef(null);
+  
 
   const asalRef = useRef(null);
   const tujuanRef = useRef(null);
 
-  // 🌟 FIX SAFARI: Efek menghitung batasan tanggal minimal biar presisi di iOS & Android
   useEffect(() => {
     const hariIni = new Date();
     const opsiFormat = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    const formatter = new Intl.DateTimeFormat('fr-CA', opsiFormat); // Menghasilkan format YYYY-MM-DD murni
+    const formatter = new Intl.DateTimeFormat('fr-CA', opsiFormat);
     setTanggalMinimalHariIni(formatter.format(hariIni));
   }, []);
 
-  // Fungsi mengambil saldo koin terbaru secara real-time dari tabel profiles Supabase
   const fetchBerandaUserCoins = async () => {
     if (!user) {
       setLoadingCoins(false);
@@ -103,12 +103,10 @@ const HomeView = () => {
     return () => elemenUtama.removeEventListener('scroll', tanganiScrollParallax);
   }, []);
 
-  // ⚡️ LAYER STATE CONTROLLER: UI & TABS SYSTEM
   const [activeTabProduct, setActiveTabProduct] = useState('travel'); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
-  // Dictionary Kamus Terjemahan Bahasa Dinamis Lengkap
   const t = {
     ID: {
       pagi: 'Selamat pagi', siang: 'Selamat siang', sore: 'Selamat sore', malam: 'Selamat malam',
@@ -135,7 +133,10 @@ const HomeView = () => {
       coinPopupTitle: 'Yuk, Gabung Member Travelind! 🌟',
       coinPopupDesc: 'Silakan masuk atau daftar akun terlebih dahulu untuk mulai mengumpulkan dan melihat jumlah Travelind Coins spesial milikmu.',
       coinPopupBtnAction: 'Masuk / Daftar Sekarang',
-      coinPopupBtnCancel: 'Nanti Saja'
+      coinPopupBtnCancel: 'Nanti Saja',
+      secWisata: 'Wisata Populer Terdekat',
+      btnRute: 'Petunjuk Arah',
+      kmJarak: 'KM dari lokasi Anda'
     },
     EN: {
       pagi: 'Good morning', siang: 'Good afternoon', sore: 'Good evening', malam: 'Good night',
@@ -162,7 +163,10 @@ const HomeView = () => {
       coinPopupTitle: 'Join Travelind Member! 🌟',
       coinPopupDesc: 'Please sign in or create an account first to start collecting and viewing your special Travelind Coins.',
       coinPopupBtnAction: 'Sign In / Sign Up Now',
-      coinPopupBtnCancel: 'Later'
+      coinPopupBtnCancel: 'Later',
+      secWisata: 'Nearby Popular Attractions',
+      btnRute: 'Get Directions',
+      kmJarak: 'KM from your location'
     }
   }[bahasaGlobal || 'ID'];
 
@@ -179,7 +183,6 @@ const HomeView = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🌟 AMBIL DATA DARI TABEL IKLAN DENGAN LIVE AUTH FILTER (Sinkronisasi Otomatis saat user berubah)
   const ambilDataPromoDariAdmin = async () => {
     try {
       setLoadingPromo(true);
@@ -193,7 +196,6 @@ const HomeView = () => {
 
       if (error) throw error;
 
-      // Logika Penyaringan Spanduk Gambar berdasarkan Sesi Toko Auth global
       const iklanSaringKondisi = (data || []).filter(iklan => {
         if (loggedIn) {
           return iklan.tampilkan_pada === 'SEMUA' || iklan.tampilkan_pada === 'SUDAH_LOGIN';
@@ -214,15 +216,12 @@ const HomeView = () => {
     ambilDataPromoDariAdmin();
   }, [user]);
 
-  // 🌟 AUTOMATIC INFINITE SLIDER MECHANISM (Kembali ke awal jika sudah di ujung)
   useEffect(() => {
     if (listPromo.length <= 1) return;
 
     const intervalSlider = setInterval(() => {
       setCurrentIndexPromo((prevIndex) => {
         const nextIndex = prevIndex === listPromo.length - 1 ? 0 : prevIndex + 1;
-        
-        // Pindahkan posisi scroll carousel secara mulus
         if (promoScrollRef.current) {
           const lebarContainer = promoScrollRef.current.clientWidth;
           promoScrollRef.current.scrollTo({
@@ -232,12 +231,11 @@ const HomeView = () => {
         }
         return nextIndex;
       });
-    }, 4000); // Berganti otomatis setiap 4 detik
+    }, 4000);
 
     return () => clearInterval(intervalSlider);
   }, [listPromo]);
 
-  // Deteksi indeks titik ketika pengguna menggeser slider secara manual
   const tanganiScrollPromoManual = () => {
     if (promoScrollRef.current) {
       const { scrollLeft, clientWidth } = promoScrollRef.current;
@@ -325,22 +323,19 @@ const HomeView = () => {
     }
   };
 
- const handleCariTravel = async () => {
-    // 1. Bersihkan input string dari karakter HTML/Skrip ilegal (Anti-XSS)
+  const handleCariTravel = async () => {
     const pickupBersih = DOMPurify.sanitize(pickup.trim());
     const tujuanBersih = DOMPurify.sanitize(tujuan.trim());
     const tanggalBersih = DOMPurify.sanitize(tanggal.trim());
     const nilaiPenumpangFinal = penumpang === '' || penumpang <= 0 ? 1 : penumpang;
 
-    // 2. Buat Aturan Skema Validasi yang Ketat menggunakan Zod
     const bookingSchema = z.object({
       pickup_kota: z.string().min(2, { message: t.alertLengkapi }),
       tujuan_kota: z.string().min(2, { message: t.alertLengkapi }),
-      tanggal: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: t.alertLengkapi }), // Format YYYY-MM-DD
-      penumpang: z.number().int().min(1, { message: "Minimal 1 penumpang" }).max(4, { message: "Maksimal 4 penumpang per transaksi" }) // Sesuaikan batas maksimal armada Anda
+      tanggal: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: t.alertLengkapi }),
+      penumpang: z.number().int().min(1).max(4)
     });
 
-    // 3. Siapkan Payload Data
     const emailTerbaca = user?.email || localStorage.getItem("email_penumpang") || null;
     const namaTerbaca = user?.user_metadata?.full_name || "Pengguna Anonim";
 
@@ -356,17 +351,12 @@ const HomeView = () => {
       pickup_lng: 100.4172
     };
 
-    // 4. Eksekusi Validasi Zod Sebelum Dikirim ke Supabase
     const hasilValidasi = bookingSchema.safeParse(dataPayload);
-
     if (!hasilValidasi.success) {
-      // Jika validasi gagal, ambil pesan error pertama dan tampilkan
-      const pesanError = hasilValidasi.error.errors[0].message;
-      alert(pesanError);
-      return; // Stop proses, tidak akan menembak Supabase
+      alert(hasilValidasi.error.errors[0].message);
+      return;
     }
 
-    // 5. Jika Lolos Validasi, Baru Kirim ke Supabase Booking_Temp
     try {
       const { data, error } = await supabase
         .from("booking_temp")
@@ -376,7 +366,6 @@ const HomeView = () => {
 
       if (error) throw error;
 
-      // Amankan data ke penyimpanan lokal untuk halaman HasilPencarianView
       localStorage.setItem("booking_id", data.id);
       localStorage.setItem("pickup", pickupBersih);
       localStorage.setItem("tujuan", tujuanBersih);
@@ -387,7 +376,6 @@ const HomeView = () => {
       navigate('/hasil-pencarian');
     } catch (err) {
       console.error("Terjadi kendala keamanan atau jaringan:", err.message);
-      // Fallback aman jika database mendeteksi anomali
       navigate('/hasil-pencarian');
     }
   };
@@ -399,16 +387,18 @@ const HomeView = () => {
   };
 
   const handleCoinBadgeClick = () => {
-    if (user) {
-      navigate('/coin-saya');
-    } else {
-      setIsCoinAuthPopupOpen(true);
-    }
+    if (user) navigate('/coin-saya');
+    else setIsCoinAuthPopupOpen(true);
   };
 
   const pemicuPopupAuthBeranda = (modeDipilih) => {
     setAuthMode(modeDipilih);
     setIsLoginPopupOpen(true);
+  };
+
+  const handleBukaPetaNavigasi = (namaTempat) => {
+    const queryPeta = encodeURIComponent(namaTempat);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${queryPeta}`, '_blank');
   };
 
   return (
@@ -417,13 +407,9 @@ const HomeView = () => {
       {/* 📌 HEADER ATAS FIXED PANEL */}
       <div className="hero-top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="user-profile-zone" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          
           <div 
             className="home-avatar-click-node" 
-            onClick={() => {
-              if (user) navigate('/profil');
-              else pemicuPopupAuthBeranda('login');
-            }}
+            onClick={() => { if (user) navigate('/profil'); else pemicuPopupAuthBeranda('login'); }}
             style={{ 
               width: '42px', height: '42px', borderRadius: '12px', 
               background: 'rgba(255,255,255,0.15)', overflow: 'hidden', 
@@ -581,13 +567,7 @@ const HomeView = () => {
                 <div className="input-split-field">
                   <div className="field-label">{t.labelPenumpang}</div>
                   <div className="premium-stepper-container">
-                    <button 
-                      type="button" 
-                      className="stepper-action-node minus"
-                      onClick={() => setPenumpang(prev => Math.max(1, (parseInt(prev, 10) || 1) - 1))}
-                    >
-                      －
-                    </button>
+                    <button type="button" className="stepper-action-node minus" onClick={() => setPenumpang(prev => Math.max(1, (parseInt(prev, 10) || 1) - 1))}>－</button>
                     <input 
                       type="number" 
                       pattern="[0-9]*"
@@ -597,13 +577,7 @@ const HomeView = () => {
                       onBlur={handleValidasiPelepasanPenumpang}
                       className="passenger-premium-input" 
                     />
-                    <button 
-                      type="button" 
-                      className="stepper-action-node plus"
-                      onClick={() => setPenumpang(prev => (parseInt(prev, 10) || 0) + 1)}
-                    >
-                      ＋
-                    </button>
+                    <button type="button" className="stepper-action-node plus" onClick={() => setPenumpang(prev => (parseInt(prev, 10) || 0) + 1)}>＋</button>
                   </div>
                 </div>
               </div>
@@ -641,9 +615,7 @@ const HomeView = () => {
           </span>
         </div>
         
-        {/* ==========================================================================
-             🌟 SEKTOR RE-DESIGNED ADS ADAPTIVE CAROUSEL SLIDER (DARI DASHBOARD ADMIN)
-             ========================================================================== */}
+        {/* RE-DESIGNED ADS CAROUSEL */}
         <div className="home-promo-carousel-wrapper">
           {loadingPromo ? (
             <div className="home-promo-loading-state">
@@ -657,45 +629,33 @@ const HomeView = () => {
             </div>
           ) : (
             <>
-              <div 
-                className="home-promo-scroll-container" 
-                ref={promoScrollRef} 
-                onScroll={tanganiScrollPromoManual}
-              >
+              <div className="home-promo-scroll-container" ref={promoScrollRef} onScroll={tanganiScrollPromoManual}>
                 {listPromo.map((promo) => {
                   const WrapperKomponen = promo.link_tujuan ? 'a' : 'div';
                   const propsTambahan = promo.link_tujuan ? { href: promo.link_tujuan, target: '_blank', rel: 'noreferrer' } : {};
-
                   return (
-                    <WrapperKomponen 
-                      key={promo.id} 
-                      className="home-promo-banner-node" 
-                      onClick={() => { if(!promo.link_tujuan) navigate('/promo') }}
-                      {...propsTambahan}
-                    >
+                    <WrapperKomponen key={promo.id} className="home-promo-banner-node" onClick={() => { if(!promo.link_tujuan) navigate('/promo') }} {...propsTambahan}>
                       <img src={promo.gambar_url} alt={promo.judul} className="home-promo-node-img" />
-                      <div className="home-promo-node-overlay">
-                        <h4>{promo.judul}</h4>
-                      </div>
+                      <div className="home-promo-node-overlay"><h4>{promo.judul}</h4></div>
                     </WrapperKomponen>
                   );
                 })}
               </div>
-
-              {/* TITIK INDIKATOR CAROUSEL (DOTS) */}
               {listPromo.length > 1 && (
                 <div className="home-promo-carousel-dots">
                   {listPromo.map((_, idx) => (
-                    <span 
-                      key={idx} 
-                      className={`home-promo-dot ${idx === currentIndexPromo ? 'active' : ''}`}
-                    ></span>
+                    <span key={idx} className={`home-promo-dot ${idx === currentIndexPromo ? 'active' : ''}`}></span>
                   ))}
                 </div>
               )}
             </>
           )}
         </div>
+
+        {/* ==========================================================================
+             🗺️ PEMANGGILAN KOMPONEN REKOMENDASI WISATA TERDEKAT (RAMPUNG & BERSIH)
+             ========================================================================== */}
+        <WisataTerdekatContainer/>
 
         <div className="feed-header-row-layout" style={{ marginTop: '24px' }}>
           <h3 className="feed-section-title">{t.secRute}</h3>
@@ -778,15 +738,7 @@ const HomeView = () => {
           <button type="button" className="close-sidebar-trigger" onClick={() => setIsSidebarOpen(false)}>✕</button>
         </div>
         <div className="sidebar-user-profile-badge" onClick={() => { setIsSidebarOpen(false); if (user) navigate('/profil'); else pemicuPopupAuthBeranda('login'); }}>
-          <div 
-            className="sidebar-avatar-circle-box"
-            style={{
-              width: '44px', height: '44px', borderRadius: '12px',
-              background: 'var(--teal-light)', overflow: 'hidden',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid var(--gray-200)', flexShrink: 0
-            }}
-          >
+          <div className="sidebar-avatar-circle-box" style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--teal-light)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--gray-200)', flexShrink: 0 }}>
             {user?.user_metadata?.avatar_url ? (
               <img src={user.user_metadata.avatar_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
@@ -803,29 +755,23 @@ const HomeView = () => {
             <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
             {t.menuHome}
           </button>
-          
           <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); if (user) navigate('/profil'); else pemicuPopupAuthBeranda('login'); }}>
             <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
             {t.menuAkun}
           </button>
-          
           <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); navigate('/cek-tiket'); }}>
             <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-3-12h.008v.008H13.5V6Zm0 6h.008v.008H13.5V12Zm0 6h.008v.008H13.5V18s-6 2.472-6-3.414c0-5.886 6-3.414 6-3.414ZM2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Z" /></svg>
             {t.menuTiket}
           </button>
-          
           <div className="sidebar-line-separator"></div>
-          
           <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); navigate('/promo'); }}>
             <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6Z" /></svg>
             {t.menuPromo}
           </button>
-          
           <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className="sidebar-menu-btn" style={{ textDecoration: 'none' }}>
             <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-2.833A7.96 7.96 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
             {t.menuBantuan}
           </a>
-          
           {user && (
             <button type="button" className="sidebar-menu-btn" onClick={() => { setIsSidebarOpen(false); setIsLogoutConfirmOpen(true); }} style={{ color: '#eb5757' }}>
               <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
@@ -835,35 +781,20 @@ const HomeView = () => {
         </div>
       </div>
 
-      {/* MODAL BOTTOM SHEET: AJAKAN DAFTAR COIN */}
+      {/* MODAL MEMBER/COIN */}
       <div className={`premium-popup-overlay ${isCoinAuthPopupOpen ? 'active' : ''}`} onClick={() => setIsCoinAuthPopupOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
-          <h4 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '10px', color: '#0B1F3A' }}>
-            {t.coinPopupTitle}
-          </h4>
-          <p style={{ fontSize: '13px', color: '#657786', lineHeight: '1.5', marginBottom: '24px', padding: '0 8px' }}>
-            {t.coinPopupDesc}
-          </p>
+          <h4 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '10px', color: '#0B1F3A' }}>{t.coinPopupTitle}</h4>
+          <p style={{ fontSize: '13px', color: '#657786', lineHeight: '1.5', marginBottom: '24px', padding: '0 8px' }}>{t.coinPopupDesc}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
-              className="btn-popup-action danger" 
-              style={{ background: 'linear-gradient(135deg, var(--teal) 0%, #00B89C 100%)', color: 'var(--navy)' }}
-              onClick={() => { 
-                setIsCoinAuthPopupOpen(false); 
-                pemicuPopupAuthBeranda('login');
-              }}
-            >
-              {t.coinPopupBtnAction}
-            </button>
-            <button className="btn-popup-action cancel" onClick={() => setIsCoinAuthPopupOpen(false)}>
-              {t.coinPopupBtnCancel}
-            </button>
+            <button className="btn-popup-action danger" style={{ background: 'linear-gradient(135deg, var(--teal) 0%, #00B89C 100%)', color: 'var(--navy)' }} onClick={() => { setIsCoinAuthPopupOpen(false); pemicuPopupAuthBeranda('login'); }}>{t.coinPopupBtnAction}</button>
+            <button className="btn-popup-action cancel" onClick={() => setIsCoinAuthPopupOpen(false)}>{t.coinPopupBtnCancel}</button>
           </div>
         </div>
       </div>
 
-      {/* SLIDE-UP POPUP LOGIN SHEET ASLI */}
+      {/* POPUP LOGIN */}
       <div className={`premium-popup-overlay ${isLoginPopupOpen ? 'active' : ''}`} onClick={() => setIsLoginPopupOpen(false)}>
         <div className="premium-popup-sheet intense-padding" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>
@@ -871,7 +802,7 @@ const HomeView = () => {
         </div>
       </div>
 
-      {/* MODAL BOTTOM SHEET: LOGOUT CONFIRM */}
+      {/* MODAL LOGOUT */}
       <div className={`premium-popup-overlay ${isLogoutConfirmOpen ? 'active' : ''}`} onClick={() => setIsLogoutConfirmOpen(false)}>
         <div className="premium-popup-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="popup-sheet-notch"></div>

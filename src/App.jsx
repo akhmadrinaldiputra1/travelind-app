@@ -18,6 +18,7 @@ import LoginView from './views/LoginView';
 import RiwayatView from './views/RiwayatView';
 import EditProfilView from './views/EditProfilView';
 import CoinSayaView from './views/CoinSayaView';
+import HasilWisataView from './views/HasilWisataView';
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -52,6 +53,7 @@ function App() {
           <Route path="/profil" element={<ProfilView />} />
           <Route path="/edit-profil" element={<EditProfilView />} />
           <Route path="/coin-saya" element={<CoinSayaView />} />
+          <Route path="/wisata-terdekat" element={<HasilWisataView />} />
         </Route>
       </Routes>
     </Router>
