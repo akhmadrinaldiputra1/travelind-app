@@ -36,7 +36,11 @@ const dataWilayahSumatera = [
   { nama: "Kab. Tapanuli Utara", prov: "Sumatera Utara" }, { nama: "Kab. Tapanuli Tengah", prov: "Sumatera Utara" },
   { nama: "Kab. Tapanuli Selatan", prov: "Sumatera Utara" }, { nama: "Kab. Mandailing Natal", prov: "Sumatera Utara" },
   { nama: "Kab. Nias", prov: "Sumatera Utara" }, { nama: "Kab. Serdang Bedagai", prov: "Sumatera Utara" },
-  { nama: "Kab. Batu Bara", prov: "Sumatera Utara" },
+  { nama: "Kab. Batu Bara", prov: "Sumatera Utara" }, { nama: "Kab. Dairi", prov: "Sumatera Utara"},
+  { nama: "Kab. Humbang Hasundutan", prov: "Sumatera Utara" }, { nama: "Kab. Labuhanbatu Selatan", prov: "Sumatera Utara" }, { nama: "Kab. Labuhanbatu Utara", prov: "Sumatera Utara" },
+  { nama: "Kab. Nias Barat", prov: "Sumatera Utara" }, { nama: "Kab. Nias Selatan", prov: "Sumatera Utara" }, { nama: "Kab. Nias Utara", prov: "Sumatera Utara" },
+  { nama: "Kab. Padang Lawas", prov: "Sumatera Utara" },  { nama: "Kab. Padang Lawas Utara", prov: "Sumatera Utara" },
+   { nama: "Kab. Pakpak Bharat", prov: "Sumatera Utara" },  { nama: "Kab. Samosir", prov: "Sumatera Utara" }, { nama: "Kab. Toba", prov: "Sumatera Utara" },
 
   // --- JAMBI & BENGKULU ---
   { nama: "Kota Jambi", prov: "Jambi" }, { nama: "Kota Sungai Penuh", prov: "Jambi" },
@@ -46,17 +50,19 @@ const dataWilayahSumatera = [
   { nama: "Kab. Kerinci", prov: "Jambi" }, { nama: "Kab. Batanghari", prov: "Jambi" },
   { nama: "Kab. Tanjung Jabung Barat", prov: "Jambi" }, { nama: "Kab. Tanjung Jabung Timur", prov: "Jambi" },
   { nama: "Kab. Rejang Lebong", prov: "Bengkulu" }, { nama: "Kab. Muko-Muko", prov: "Bengkulu" },
-  { nama: "Kab. Bengkulu Tengah", prov: "Bengkulu"},
+  { nama: "Kab. Bengkulu Tengah", prov: "Bengkulu"}, { nama: "Kab. Bengkulu Selatan", prov: "Bengkulu"}, { nama: "Kab. Kaur", prov: "Bengkulu"}, { nama: "Kab. Kepahiang", prov: "Bengkulu"},{ nama: "Kab. Lebong", prov: "Bengkulu"},
 
   // --- SUMATERA SELATAN, LAMPUNG & BANGKA BELITUNG ---
   { nama: "Kota Palembang", prov: "Sumatera Selatan" }, { nama: "Kota Lubuklinggau", prov: "Sumatera Selatan" },
   { nama: "Kota Pagar Alam", prov: "Sumatera Selatan" }, { nama: "Kota Prabumulih", prov: "Sumatera Selatan" },
   { nama: "Kota Bandar Lampung", prov: "Lampung" }, { nama: "Kota Metro", prov: "Lampung" },
-  { nama: "Kota Pangkalpinang", prov: "Bangka Belitung" }, { nama: "Kab. Ogan Komering Ilir", prov: "Sumatera Selatan" },
-  { nama: "Kab. Ogan Komering Ulu", prov: "Sumatera Selatan" }, { nama: "Kab. Muara Enim", prov: "Sumatera Selatan" },
-  { nama: "Kab. Lahat", prov: "Sumatera Selatan" }, { nama: "Kab. Musi Banyuasin", prov: "Sumatera Selatan" },
-  { nama: "Kab. Lampung Selatan", prov: "Lampung" }, { nama: "Kab. Lampung Tengah", prov: "Lampung" },
+  { nama: "Kota Pangkalpinang", prov: "Bangka Belitung" }, { nama: "Kab. Ogan Komering Ilir", prov: "Sumatera Selatan" }, { nama: "Kab. Ogan llir", prov: "Sumatera Selatan" },
+  { nama: "Kab. Ogan Komering Ulu", prov: "Sumatera Selatan" }, { nama: "Kab. Muara Enim", prov: "Sumatera Selatan" }, { nama: "Kab. Ogan Komering Ulu Timur", prov: "Sumatera Selatan" },
+  { nama: "Kab. Lahat", prov: "Sumatera Selatan" }, { nama: "Kab. Musi Banyuasin", prov: "Sumatera Selatan" }, { nama: "Kab. Musi Rawas", prov: "Sumatera Selatan" }, { nama: "Kab. Banyuasin", prov: "Sumatera Selatan" }, { nama: "Kab. Ogan Komering Ulu Selatan", prov: "Sumatera Selatan" },
+  { nama: "Kab. Lampung Selatan", prov: "Lampung" }, { nama: "Kab. Lampung Tengah", prov: "Lampung" }, { nama: "Kab. Lampung Barat", prov: "Lampung" }, { nama: "Kab. Lampung Timur", prov: "Lampung" },
   { nama: "Kab. Lampung Utara", prov: "Lampung" }, { nama: "Kab. Bangka", prov: "Bangka Belitung" }, { nama: "Kab. Belitung", prov: "Bangka Belitung" },
+  { nama: "Kab. Pesisir Barat", prov: "Lampung" }, { nama: "Kab. Pesawaran", prov: "Lampung" },
+  { nama: "Kab. Empat Lawang", prov: "Sumatera Selatan" }, 
 
   // --- ACEH ---
   { nama: "Kota Banda Aceh", prov: "Aceh" }, { nama: "Kota Lhokseumawe", prov: "Aceh" },
